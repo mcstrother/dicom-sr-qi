@@ -4,11 +4,14 @@ import xlrd
 class Syngo_Procedure_Data(object):
 	IVRFU_CPT = "-99999"
 	
-	def __init__(self, MPI, RAD1, RAD2, DOS_Start, CPTs):
-		self.MPI = MPI
+	def __init__(self, MPI, RAD1, RAD2, DOS_Start, CPTs, DOS_Time):
+                if not isinstance(MPI,int):
+                        raise TypeError("Invalid type for MPI. Expected int, received " + str(type(MPI)))
+		self.MPI = MPI #should always be an int
 		self.RAD1 = RAD1
 		self.RAD2 = RAD2
-		self.DOS_Start = DOS_Start
+		self.DOS_Start = DOS_Start#datetime.date
+		self.DOS_Time = DOS_Time #datetime.time
 		if CPTs.__class__ == ''.__class__:
 			self.CPTs = self._CPTs_from_string(CPTs)
 		else:
@@ -24,8 +27,14 @@ class Syngo_Procedure_Data(object):
 				out.append(int(cpt))
 		return cpts
 
+        def get_start(self):
+                """Returns a Python datetime
+                object representing the start
+                of the procedure
+                """
+                return datetime.datetime.combine(self.DOS_Start, self.DOS_time)
 
-_COLUMNS = ["MPI","RAD1","RAD2","DOS Start","CPTs"]
+_COLUMNS = ["MPI","RAD1","RAD2","DOS Start","CPTs", "DOS Time"]
 		
 def parse_syngo_file(file_name):
 	wb = xlrd.open_workbook(file_name)
@@ -43,7 +52,9 @@ def parse_syngo_file(file_name):
 		cpts = s.cell(r,column_numbers["CPTs"]).value
 		rad1 = s.cell(r,column_numbers["RAD1"]).value
 		rad2 = s.cell(r,column_numbers["RAD2"]).value
-		procedures.append(Syngo_Procedure_Data(mpi,rad1,rad2,sd,cpts))
+                dos_time_tuple = xlrd.xldate_as_tuple(s.cell(r,column_numbers["DOS Time"]).value, wb.datemode)
+                dos_time = datetime.time(hour = dos_time_tuple[-3],minute=dos_time_tuple[-2],second=dos_time_tuple[-1])
+		procedures.append(Syngo_Procedure_Data(mpi,rad1,rad2,sd,cpts,dos_time))
 	return procedures
 	
 	

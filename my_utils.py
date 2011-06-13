@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 import csv
+import ReadXML
 
 BJH_SYNGO_FILES = ['./Data/BJH/April_Output_Org.xls', './Data/BJH/May_Output_Org.xls']
 BJH_XML_FILE = './Data/BJH/all bjh.xml'
@@ -28,3 +29,19 @@ def multiply_timedelta(td, x):
 def transposed(lists):
    if not lists: return []
    return map(lambda *row: list(row), *lists)
+
+def get_procs(group = 'all'):
+        if group == 'bjh':
+                procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
+        elif group == 'slch':
+                procs = ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+        elif group == 'all':
+                procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
+                procs = procs + ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+        return procs
+
+
+def average_fps(events):
+        """Gets the average FPS weighted by event duration"""
+        total_fluoro_time = sum([e.get_duration() for e in events],timedelta(0) )
+	return total_seconds(sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0)))/total_seconds(total_fluoro_time)

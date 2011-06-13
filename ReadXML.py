@@ -5,6 +5,7 @@ from xml.dom import minidom
 import datetime
 import my_utils
 import numbers
+import my_exceptions
 
 
 SYNGO_FILE_NAMES = ['./GetCPT Data/April_Output_Org.xls', './GetCPT Data/May_Output_Org.xls']
@@ -78,15 +79,20 @@ class Event(object):
 		return int(round(num_pulses))
 	
 	def is_valid(self):
-		"""Does several sanity checks on the event for validity.
+		"""Does several sanity checks on the event. Returns
+                False if data in the event appears nonsensical (e.g.
+                negative values for things that can't possibly be
+                negative).
+
+                Method is a work in progress, so it isn't guaranteed
+                to return False if the event is invalid in a way
+                that isn't being checked for yet.
 		"""
 		out = True
 		out = out and (self.Exposure >0)
 		out = out and (self.Pulse_Width >= 0)
 		if not out: #have to check if we can terminate yet, since the next checks require the previous checks to have passed, or else they will throw exceptions
 			return False
-		num_pulses = self.Exposure_Time / self.Pulse_Width 
-		out = out and (abs(num_pulses - round(num_pulses)) < .01) # exposure time should be an integer multiple of pulse width
 		return out
 	
 	def get_end_time(self):
@@ -101,7 +107,7 @@ class Procedure(object):
 	IVRFU_CPT = "-99999"
 	
 	
-	def __init__(self, dose_info_element):
+	def __init__(self, dose_info_element, syngo =None):
 		die = dose_info_element
 		self.events = [Event(aquisition_element) for aquisition_element in dose_info_element.getElementsByTagName('CT_Acquisition')]
 		#store PatientID as an int unless it absolutely needs to be a string
@@ -118,6 +124,9 @@ class Procedure(object):
 				setattr(self, attr, die.attributes[attr].value)
 			except KeyError:
 				setattr(self, attr, None)
+		self._syngo = None
+		if syngo:
+                        self.add_syngo(syngo)
 	
 	def valid_events(self):
 		if not hasattr(self, _valid_events_cache):
@@ -135,7 +144,7 @@ class Procedure(object):
 		of the first event of in the procedure
 		"""
 		if len(self.events) == 0:
-			raise RuntimeError("Procedure has no radiation events.")
+			raise my_exceptions.DataMissingError("Procedure has no radiation events.")
 		first_event = min(self.events, key = lambda x:x.DateTime_Started)
 		return first_event.DateTime_Started
 	
@@ -149,13 +158,19 @@ class Procedure(object):
 		return last_event.get_end_time()
 	
 	def get_cpts(self):
-		if self.syngo == None:
-			return []
+                """Returns cpts as a string with codes
+                separated by commas
+                """
+		if self._syngo == None:
+			raise my_exceptions.DataMissingError("Procedure object has no syngo data")
 		else:
-			return self.syngo.CPTs
+			return self._syngo.CPTs
 	
 	def is_valid(self):
-		"""Does sanity checks for broken data"""
+		"""Does several sanity checks on the procedure. Returns
+                False if data in the event appears nonsensical (e.g.
+                negative values for things that can't possibly be
+                negative)"""
 		return True
 	
 	def is_real(self):
@@ -168,7 +183,39 @@ class Procedure(object):
 		out = out and self.is_valid()
 		return out
 		
+        def set_syngo(self,syngo =None):
+                """Stores the syngo after checking
+                to make sure it really corresponds. Raises
+                DataMismatchError if self and syngo
+                do not correspond.
+                """
+                if not syngo:
+                        self._syngo = None
+                        return
+                if not self.PatientID == syngo.MPI:
+                        raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_Data have different patient ids")
+                if not self.StudyDate == syngo.DOS_Start:
+                        raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_Data have different study dates")
+                try:
+                        #check that there isn't more than an hour dispairity between start times
+                        if my_utils.total_seconds(abs(self.get_start_time() - syngo.DOS_Time)) > 3600:
+                                raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_data start times differ by more than an hour")
+                except my_exceptions.DataMissingError as dme:
+                        pass #if you can't do the check, you can't do the check
+                self._syngo = syngo
 
+        def get_syngo(self):
+                if not self._syngo:
+                        raise my_exceptions.DataMissingError("Procedure object has no syngo data")
+                return self._syngo
+
+        def has_syngo(self):
+                return not self._syngo is None
+        
+        def get_number_of_pulses(self):
+                return sum([e.Number_of_Pulses for e in self.events])
+                
+                
 import GetCPT
 def add_CPTs_to_procedures(procedures, cpt_file_names):
 	"""DEPRECATED
@@ -189,15 +236,20 @@ def add_CPTs_to_procedures(procedures, cpt_file_names):
 		
 
 def add_syngo_to_procedures(procs, syngo_procs):
+        """Matches procedure information from DICOM-SR (procs)
+        to procedure information from Syngo files (syngo_procs)
+        according to the patient ID number and the start date
+        of the procedure
+        """
 	lookup = {}
 	for sproc in syngo_procs:
 		lookup[(sproc.MPI, sproc.DOS_Start)] = sproc
 	for proc in procs:
 		try:
 			sproc = lookup[(proc.PatientID,proc.StudyDate)]
-			proc.syngo = sproc
+			proc.set_syngo(sproc)
 		except KeyError: #can't find the procedure in the lookup
-			proc.syngo = None
+			proc.set_syngo(None)
 		
 	
 		
