@@ -69,7 +69,8 @@ def remove_attendings(table,num_periods):
         for period in table[attending].keys():
             event_num = event_num + len(table[attending][period])
         if event_num <most_events/2:
-            del table[attending]"""
+            del table[attending]
+            """
     
     for attending in table.keys():
         if len(table[attending].keys()) < num_periods/2: #must work at least every other period

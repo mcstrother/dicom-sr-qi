@@ -153,7 +153,7 @@ class Procedure(object):
                 of the last event in the procedure
                 """
                 if len(self.events) == 0:
-                        raise RuntimeError("Procedure has no radiation events.")
+                        raise my_exceptions.DataMissingError("Procedure has no radiation events.")
                 last_event = max(self.events, key = lambda x:x.DateTime_Started)
                 return last_event.get_end_time()
         
@@ -198,8 +198,8 @@ class Procedure(object):
                         raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_Data have different study dates")
                 try:
                         #check that there isn't more than an hour dispairity between start times
-                        if my_utils.total_seconds(abs(self.get_start_time() - syngo.get_start())) > 3600:
-                                raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_data start times differ by more than an hour")
+                        if my_utils.total_seconds(abs(self.get_end_time() - syngo.get_end())) > 7200:
+                                raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_data end times differ by more than two hours")
                 except my_exceptions.DataMissingError as dme:
                         pass #if you can't do the check, you can't do the check
                 self._syngo = syngo
@@ -256,8 +256,8 @@ def add_syngo_to_procedures(procs, syngo_procs):
                         try:
                                 proc.set_syngo(sproc)
                         except my_exceptions.DataMismatchError as dme:
-                                print "Rejected match for " + str(sproc.MPI) + ', ' + str(sproc.get_start())
-                                continue
+                                #print "Rejected match for " + str(sproc.MPI) + ', ' + str(sproc.get_end()) +". Doesn't match " + str(proc.get_end_time()) 
+                                continue#TODO: currently justs checks for "good enough" match. can change this to look for "best match" in sproc_list
                 
         
                 
