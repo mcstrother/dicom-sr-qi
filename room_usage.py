@@ -1,5 +1,9 @@
+"""Create a heat map of room usage by day of the week.
+Divides the day up into chunks of RESOLUTION seconds
+"""
 import my_utils
 import my_exceptions
+import csv
 
 def add_period(table,weekday, start_seconds,end_seconds):
     """table[weekday][block]
@@ -35,13 +39,27 @@ for proc in procs:
     else:
         raise RuntimeError("This should not have happened")
 
-import matplotlib.pyplot as plt
 
-out = []
-for row in table:
-    out = out + [row]*30
-plt.imshow(my_utils.transposed(out),interpolation='nearest')
-plt.grid(True)
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy as np
+import datetime
+
+a = np.array(table)
+my_utils.write_csv(my_utils.transposed(table))
+plt.matshow(a.transpose(), cmap=cm.get_cmap('gray'), aspect='auto')
+plt.grid(False)
+new_labels = [0]
+for t in range(8):
+    s = t*num_blocks/8
+    seconds = s*RESOLUTION
+    hours = int(seconds/3600)
+    minutes = int((seconds -hours*3600)/60)
+    seconds = int(seconds - (hours*60+minutes)*60)
+    new_labels.append(str(datetime.time(hour=hours,minute=minutes,second=seconds)))
+print new_labels
+plt.gca().set_yticklabels(new_labels)
+plt.gca().set_xticklabels(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
 plt.title("Usage of BJH Room 812")
 plt.xlabel("Day of week (Monday - Sunday)")
 plt.ylabel("Time of Day (block number)")
