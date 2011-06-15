@@ -155,7 +155,10 @@ def rdxf_to_wtxf(rdxf, rdbook):
     return wtxf
 
 def process_file(code_groups, input_file_name):
+    print "Reading input file..."
     rb = xlrd.open_workbook(input_file_name, formatting_info=True)
+    print "Done."
+    print "Processing..."
     rs = rb.sheet_by_index(1)
     #find the columns representing cpt codes
     header_row = [cell.value for cell in rs.row(0)]
@@ -206,8 +209,12 @@ def process_file(code_groups, input_file_name):
 
 
 def main():
+    print "Processing code groups file..."
     code_groups = get_code_groups()
+    print "Done"
+    print "Looking for input files..."
     in_file_name = find_input_file()
+    print "Done. Using " + str(in_file_name) +" as input."
     process_file(code_groups,in_file_name)
 
 if __name__ =='__main__':
