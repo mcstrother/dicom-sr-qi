@@ -1,5 +1,5 @@
 """A utility program to help extract rows from
-processed Syngo ouput according to the CPT codes
+Syngo ouput according to the CPT codes
 of the procedures that the rows reprsent.
 """
 
@@ -161,7 +161,7 @@ def process_file(code_groups, input_file_name):
     header_row = [cell.value for cell in rs.row(0)]
     first_cpt_col = header_row.index('CPT1')
     last_cpt_col = first_cpt_col
-    while header_row[last_cpt_col][:3] == 'CPT':
+    while last_cpt_col<rs.ncols and header_row[last_cpt_col][:3] == 'CPT':
         last_cpt_col = last_cpt_col +1
     last_cpt_col = last_cpt_col -1
     #find the cpt codes assocaited with each row
