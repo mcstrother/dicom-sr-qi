@@ -47,7 +47,12 @@ import datetime
 
 a = np.array(table)
 my_utils.write_csv(my_utils.transposed(table))
-plt.matshow(a.transpose(), cmap=cm.get_cmap('gray'), aspect='auto')
+fig = plt.figure()
+ax = fig.add_subplot(111)
+cax = ax.matshow(a.transpose(), cmap=cm.get_cmap('gray_r'), aspect='auto')
+max_count = a.max()
+cbar = fig.colorbar(cax, ticks = [0,int(max_count/3), int((max_count*2)/3), max_count])
+cbar.set_label("Number of Procedures")
 plt.grid(False)
 """
 #TODO: Figure out how to make time labels for different resolutions
@@ -69,10 +74,7 @@ for x in old_labels:
         minutes = int((seconds -hours*3600)/60)
         seconds = int(seconds - (hours*60+minutes)*60)
         new_labels.append(str(datetime.time(hour = hours, minute = minutes, second=seconds)))
-print new_labels
 plt.gca().set_yticklabels(new_labels)
-for x in plt.gca().get_xticklabels():
-    print x.get_text()
 plt.gca().set_xticklabels(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
 plt.title("Usage of BJH Room 812")
 plt.xlabel("Day of week (Monday - Sunday)")
