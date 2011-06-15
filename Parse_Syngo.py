@@ -43,7 +43,7 @@ class Syngo(object):
                                 out.append(self.IVRFU_CPT)
                         else:
                                 out.append(int(cpt))
-                return cpts
+                return out
 
         def get_start(self):
                 """Returns a Python datetime
@@ -135,24 +135,6 @@ def parse_syngo_file(file_name):
         procedures = []
         for r in xrange(1,s.nrows):
                 procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
-        """
-        for r in xrange(1,s.nrows):
-                mpi = int(s.cell(r,column_numbers["MPI"]).value)
-                sd = s.cell(r,column_numbers["DOS Start"]).value
-                date_tuple = xlrd.xldate_as_tuple(sd,wb.datemode)[:3]
-                sd = datetime.date(*date_tuple)#convert from xl to python date
-                ed = s.cell(r,column_numbers["End DATE"]).value
-                e_date_tuple = xlrd.xldate_as_tuple(ed,wb.datemode)[:3]
-                ed = datetime.date(*e_date_tuple)
-                cpts = s.cell(r,column_numbers["CPTs"]).value
-                rad1 = s.cell(r,column_numbers["RAD1"]).value
-                rad2 = s.cell(r,column_numbers["RAD2"]).value
-                dos_time_tuple = xlrd.xldate_as_tuple(s.cell(r,column_numbers["DOS Time"]).value, wb.datemode)
-                dos_time = datetime.time(hour = dos_time_tuple[-3],minute=dos_time_tuple[-2],second=dos_time_tuple[-1])
-                end_time_tuple = xlrd.xldate_as_tuple(s.cell(r,column_numbers["End Time"]).value, wb.datemode)
-                end_time = datetime.time(hour = end_time_tuple[-3],minute=end_time_tuple[-2],second=end_time_tuple[-1])
-                procedures.append(Syngo_Procedure_Data(mpi,rad1,rad2,sd,cpts,dos_time,ed,end_time))
-                """
         return procedures
         
         

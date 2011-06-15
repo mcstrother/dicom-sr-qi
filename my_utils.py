@@ -45,3 +45,32 @@ def average_fps(events):
         """Gets the average FPS weighted by event duration"""
         total_fluoro_time = sum([e.get_duration() for e in events],timedelta(0) )
 	return total_seconds(sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0)))/total_seconds(total_fluoro_time)
+
+
+def is_subset(list1, list2):
+    """Returns true if list 1 is a subset of list 2
+    (assumes neither list has any repeats)
+    """
+    for item in list1:
+        if not item in list2:
+            return False
+    return True
+
+def same_contents(list1,list2):
+    """Returns true if list 1 has the exact same
+    contents as list 2. (assumes neither list has
+    any repeats)
+    """
+    if not len(list1) == len(list2):
+        return False
+    return is_subset(list1,list2)
+
+def matches(list1,list2):
+    """Returns is_subset or same_contents
+    depending on whether or not the last
+    item in list1 is -99
+    """
+    if list1[-1] == -99:
+        return same_contents(list1[:-1],list2)
+    else:
+        return is_subset(list1,list2)
