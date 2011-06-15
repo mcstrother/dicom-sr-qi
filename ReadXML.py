@@ -214,6 +214,9 @@ class Procedure(object):
         
         def get_number_of_pulses(self):
                 return sum([e.Number_of_Pulses for e in self.events])
+
+        def has_events(self):
+                return not len(self.events) == 0
                 
                 
 import GetCPT

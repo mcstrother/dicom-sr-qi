@@ -14,7 +14,7 @@ class Syngo_Procedure_Data(object):
                 self.DOS_Time = DOS_Time #datetime.time
                 self.end_date = end_date #datetime.date
                 self.end_time = end_time #datetime.time
-                if CPTs.__class__ == ''.__class__:
+                if isinstance(CPTs, basestring):
                         self.CPTs = self._CPTs_from_string(CPTs)
                 else:
                         self.CPTs = CPTs
