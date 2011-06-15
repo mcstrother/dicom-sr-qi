@@ -164,7 +164,7 @@ class Procedure(object):
                 if self._syngo == None:
                         raise my_exceptions.DataMissingError("Procedure object has no syngo data")
                 else:
-                        return self._syngo.CPTs
+                        return self._syngo.cpts
         
         def is_valid(self):
                 """Does several sanity checks on the procedure. Returns
@@ -192,9 +192,9 @@ class Procedure(object):
                 if not syngo:
                         self._syngo = None
                         return
-                if not self.PatientID == syngo.MPI:
+                if not self.PatientID == syngo.mpi:
                         raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_Data have different patient ids")
-                if not self.StudyDate == syngo.DOS_Start:
+                if not self.StudyDate == syngo.dos_start:
                         raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_Data have different study dates")
                 try:
                         #check that there isn't more than an hour dispairity between start times
@@ -233,9 +233,9 @@ def add_CPTs_to_procedures(procedures, cpt_file_names):
                                         int_cpts.append(int(x))
                                 else:
                                         int_cpts.append(proc.IVRFU_CPT)
-                        proc.CPTs = tuple(int_cpts)
+                        proc.cpts = tuple(int_cpts)
                 except KeyError: #can't find the procedure in the cpt lookup
-                        proc.CPTs = ()
+                        proc.cpts = ()
                 
 
 def add_syngo_to_procedures(procs, syngo_procs):
@@ -246,9 +246,9 @@ def add_syngo_to_procedures(procs, syngo_procs):
         """
         lookup = {}
         for sproc in syngo_procs:
-                if not (sproc.MPI, sproc.DOS_Start) in lookup:
-                        lookup[(sproc.MPI, sproc.DOS_Start)] = []
-                lookup[(sproc.MPI, sproc.DOS_Start)].append(sproc)
+                if not (sproc.mpi, sproc.dos_start) in lookup:
+                        lookup[(sproc.mpi, sproc.dos_start)] = []
+                lookup[(sproc.mpi, sproc.dos_start)].append(sproc)
         for proc in procs:
                 try:
                         sproc_list = lookup[(proc.PatientID,proc.StudyDate)]
@@ -274,9 +274,6 @@ def process_file(xml_file_name, cpt_file_names):
         procedures = [Procedure(dose_info_element) for dose_info_element in xmldoc.getElementsByTagName('DoseInfo')]
         syngo_procs = Parse_Syngo.parse_syngo_files(cpt_file_names)
         add_syngo_to_procedures(procedures, syngo_procs)
-        #add_CPTs_to_procedures(procedures, cpt_file_names)
-        #only return procedures with valid patient ids
-        an_int = 1 
         return [proc for proc in procedures if proc.is_real()] 
                 
         
