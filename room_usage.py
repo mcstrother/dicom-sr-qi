@@ -59,9 +59,9 @@ for t in range(8):
     minutes = int((seconds -hours*3600)/60)
     seconds = int(seconds - (hours*60+minutes)*60)
     new_labels.append(str(datetime.time(hour=hours,minute=minutes,second=seconds)))"""
-"""
+
 #TODO: Figure out this labeling thing at all. This isn't working
-old_labels = [0,0,20,40,60,80,120,140]
+old_labels = [0,0,20,40,60,80,100,120,140]
 new_labels = []
 for x in old_labels:
         seconds = x*RESOLUTION
@@ -70,7 +70,7 @@ for x in old_labels:
         seconds = int(seconds - (hours*60+minutes)*60)
         new_labels.append(str(datetime.time(hour = hours, minute = minutes, second=seconds)))
 print new_labels
-plt.gca().set_yticklabels(new_labels)"""
+plt.gca().set_yticklabels(new_labels)
 for x in plt.gca().get_xticklabels():
     print x.get_text()
 plt.gca().set_xticklabels(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
