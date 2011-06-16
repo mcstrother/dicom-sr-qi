@@ -46,6 +46,15 @@ def find_input_file():
         if f.split('.')[-1] == 'xls' and not f.split('.')[0] == 'code_groups':
             return f
 
+def find_input_files():
+    files = os.listdir('.')
+    out = []
+    for f in files:
+        split = f.split('.')
+        if split[-1] =='xls' and not split[0] == 'code_groups':
+            out.append(f)
+    return out
+
 def is_subset(list1, list2):
     """Returns true if list 1 is a subset of list 2
     (assumes neither list has any repeats)
@@ -155,7 +164,7 @@ def rdxf_to_wtxf(rdxf, rdbook):
     return wtxf
 
 def process_file(code_groups, input_file_name):
-    print "Reading input file..."
+    print "Reading input file " + input_file_name + "..."
     rb = xlrd.open_workbook(input_file_name, formatting_info=True)
     print "Done."
     print "Processing..."
@@ -188,13 +197,17 @@ def process_file(code_groups, input_file_name):
                 if matches(cpt_combo, row_cpts[r]):
                     group_rows[group_name].append(r)
                     break
-    #get the stle for each column
+    #get the style for each column
     col_styles = []
     for c in range(rs.ncols):
         cell = rs.cell(1,c)
         rdxf = rb.xf_list[cell.xf_index]
         style = rdxf_to_wtxf(rdxf,rb)
         col_styles.append(style)
+    return (group_rows, col_styles, rs)
+
+def write_output(group_rows, col_styles, rs):
+    #rs is the sheet
     #write the relevant rows
     wb = xlwt.Workbook()
     for group_name, row_numbers in group_rows.iteritems():
@@ -207,15 +220,40 @@ def process_file(code_groups, input_file_name):
                     s.write(out_r,c,rs.cell(in_r,c).value)
     wb.save('output.xls')
 
+def write_combined_output(triple_list):
+    #takes a list of 3-tuples, (group_rows,col_styles,rs)
+    #complicated way of merging output from several process_file runs
+    wb = xlwt.Workbook()
+    tracker = {}
+    col_styles = triple_list[0][1]
+    for group_rows,ignored_col_styles, rs in triple_list:
+        for group_name, row_numbers in group_rows.iteritems():
+            if not group_name in tracker:
+                tracker[group_name] = {'sheet':wb.add_sheet(group_name),\
+                                       'first_row':0}
+            s = tracker[group_name]['sheet']
+            for out_r,in_r in enumerate(row_numbers):
+                for c in range(rs.ncols):
+                    if in_r>0:
+                        s.write(out_r+tracker[group_name]['first_row'],\
+                                c,rs.cell(in_r,c).value, col_styles[c])
+                    else:
+                        s.write(out_r+tracker[group_name]['first_row'],\
+                                c,rs.cell(in_r,c).value)
+            tracker[group_name]['first_row'] = 1+out_r+tracker[group_name]['first_row']
+    wb.save('output.xls')
 
 def main():
     print "Processing code groups file..."
     code_groups = get_code_groups()
     print "Done"
     print "Looking for input files..."
-    in_file_name = find_input_file()
-    print "Done. Using " + str(in_file_name) +" as input."
-    process_file(code_groups,in_file_name)
+    in_file_names = find_input_files()
+    triple_list = []
+    for file_name in in_file_names:
+        triple_list.append(process_file(code_groups,file_name))
+    write_combined_output(triple_list)
+    
 
 if __name__ =='__main__':
     main()
