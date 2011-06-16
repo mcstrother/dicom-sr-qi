@@ -180,6 +180,8 @@ def write_syngo_file(file_name, sdict):
         wb = xlwt.Workbook()
         for sheet_name, slist in sdict.iteritems():
                 sheet = wb.add_sheet(sheet_name)
+                if len(slist) ==0:
+                        continue
                 for i,heading in enumerate(slist[0].get_heading_list()):
                         sheet.write(0,i,heading)
                 for r,syngo in enumerate(slist):
