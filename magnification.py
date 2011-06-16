@@ -1,3 +1,9 @@
+"""Makes box plots for DAP and exposure
+vs magnification. Can change some things
+in line to change the data source (bjh vs. slch)
+and to decide between graphing DAP and Exposure
+"""
+
 import my_utils
 import ReadXML
 import csv
