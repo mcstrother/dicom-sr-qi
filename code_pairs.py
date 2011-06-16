@@ -3,7 +3,7 @@ import Parse_Syngo
 import xlrd, xlwt
 import datetime
 
-INPUT_FILE_NAME = "code_pairs.xls"
+PAIR_FILE_NAME = "code_pairs.xls"
 EXCUSIVE_CODE = -99
 
 def get_code_pairs(in_file_name):
@@ -16,10 +16,19 @@ def get_code_pairs(in_file_name):
         code_pairs[sheet.name]['combo2'] = [int(x.value) for x in sheet.row(2)[1:]]
     return code_pairs
 
+import os
+def get_syngo_file_names():
+    files = os.listdir('.')
+    out = []
+    for f in files:
+        split = f.split('.')
+        if split[-1] =='.xls' and not split[0] == 'code_pairs':
+            out.append(f)
+    return out
 
-procs = Parse_Syngo.parse_syngo_files(my_utils.BJH_SYNGO_FILES)
+procs = Parse_Syngo.parse_syngo_files(get_syngo_file_names())
 procs.sort(key= lambda x:x.dos)#sort procs by start time
-cps = get_code_pairs(INPUT_FILE_NAME)
+cps = get_code_pairs(PAIR_FILE_NAME)
 
 out = {}
 for sheet_name, spec in cps.iteritems():
