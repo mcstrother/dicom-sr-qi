@@ -9,9 +9,15 @@ import my_exceptions
 
 
 class Event(object):
-        FLOAT_ATTRS = ['Positioner_Primary_Angle', 'Pulse_Rate', 'Number_of_Pulses', 'Positioner_Secondary_Angle'] #attrs that are pure floats in the xml and will be used as such
-        STRING_ATTRS = ['Acquisition_Protocol','Irradiation_Event_UID','Target_Region','Fluoro_Mode','Acquisition_Plane_in_Irradiation_Event','Irradiation_Event_Type' ] #attrs that are pure strings
-        SPLIT_FLOAT_ATTRS = ['Exposure_Time', 'Table_Lateral_Position', 'Pulse_Width', 'Table_Height_Position', 'Exposure','Focal_Spot_Size','Dose_Area_Product','Dose_RP','Distance_Source_to_Detector','KVP','Distance_Source_to_Isocenter','X-Ray_Tube_Current','Table_Longitudinal_Position'] #attrs that are stored in the xml as a float value, then a space, then a unit of measurement
+        FLOAT_ATTRS = ['Positioner_Primary_Angle', 'Pulse_Rate', 'Number_of_Pulses',\
+                       'Positioner_Secondary_Angle'] #attrs that are pure floats in the xml and will be used as such
+        STRING_ATTRS = ['Acquisition_Protocol','Irradiation_Event_UID','Target_Region',\
+                        'Fluoro_Mode','Acquisition_Plane_in_Irradiation_Event','Irradiation_Event_Type' ] #attrs that are pure strings
+        SPLIT_FLOAT_ATTRS = ['Exposure_Time', 'Table_Lateral_Position', 'Pulse_Width',\
+                             'Table_Height_Position', 'Exposure','Focal_Spot_Size','Dose_Area_Product',\
+                             'Dose_RP','Distance_Source_to_Detector','KVP',\
+                             'Distance_Source_to_Isocenter','X-Ray_Tube_Current',\
+                             'Table_Longitudinal_Position'] #attrs that are stored in the xml as a float value, then a space, then a unit of measurement
         OTHER_ATTRS = ['Reference_Point_Definition','Comment','DateTime_Started']
         
         
@@ -127,7 +133,7 @@ class Procedure(object):
                         self.add_syngo(syngo)
         
         def valid_events(self):
-                if not hasattr(self, _valid_events_cache):
+                if not hasattr(self, '_valid_events_cache'):
                         self._valid_events_cache = [e for e in self.events if e.is_valid()]
                 return self._valid_events_cache
                 
