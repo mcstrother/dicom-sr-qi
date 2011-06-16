@@ -101,7 +101,10 @@ class Syngo(object):
                 """
                 d = {}
                 for attr in self._ALL_ATTRS:
-                        value = r[col_nums[attr]].value
+                        if attr == 'CPTs' and isinstance(col_nums[attr],list):
+                                value = ','.join([r[c] for c in col_nums[attr]])
+                        else:
+                                value = r[col_nums[attr]].value
                         if not value == '':
                                 d[attr] = value
                         else:
@@ -154,7 +157,16 @@ def parse_syngo_file(file_name):
         headings = [c.value for c in s.row(0)]
         column_numbers = {}
         for col_name in _COLUMNS:
-                column_numbers[col_name] = headings.index(col_name)
+                if col_name == 'CPTs' and not col_name in headings:
+                        cpt_cols = []
+                        col = headings.index('CPT1')
+                        cpt_cols.append(col)
+                        col = col+1
+                        while col < s.ncols and s.cell(0,col).value[:3] =="CPT":
+                                cpt_cols.append(col)
+                        column_numbers['CPTs'] = cpt_cols
+                else:
+                        column_numbers[col_name] = headings.index(col_name)
         procedures = []
         for r in xrange(1,s.nrows):
                 procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
