@@ -8,8 +8,6 @@ import numbers
 import my_exceptions
 
 
-SYNGO_FILE_NAMES = ['./GetCPT Data/April_Output_Org.xls', './GetCPT Data/May_Output_Org.xls']
-        
 class Event(object):
         FLOAT_ATTRS = ['Positioner_Primary_Angle', 'Pulse_Rate', 'Number_of_Pulses', 'Positioner_Secondary_Angle'] #attrs that are pure floats in the xml and will be used as such
         STRING_ATTRS = ['Acquisition_Protocol','Irradiation_Event_UID','Target_Region','Fluoro_Mode','Acquisition_Plane_in_Irradiation_Event','Irradiation_Event_Type' ] #attrs that are pure strings
@@ -217,25 +215,6 @@ class Procedure(object):
 
         def has_events(self):
                 return not len(self.events) == 0
-                
-                
-import GetCPT
-def add_CPTs_to_procedures(procedures, cpt_file_names):
-        """DEPRECATED
-        """
-        lookup = GetCPT.get_CPTs_from_files(cpt_file_names)
-        for proc in procedures:
-                try:
-                        cpts = lookup[(proc.PatientID,proc.StudyDate)].split(',')
-                        int_cpts = []
-                        for x in cpts:
-                                if not x == 'IVRFU':
-                                        int_cpts.append(int(x))
-                                else:
-                                        int_cpts.append(proc.IVRFU_CPT)
-                        proc.cpts = tuple(int_cpts)
-                except KeyError: #can't find the procedure in the cpt lookup
-                        proc.cpts = ()
                 
 
 def add_syngo_to_procedures(procs, syngo_procs):
