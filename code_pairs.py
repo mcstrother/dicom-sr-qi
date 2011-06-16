@@ -22,7 +22,7 @@ def get_syngo_file_names():
     out = []
     for f in files:
         split = f.split('.')
-        if split[-1] =='.xls' and not split[0] == 'code_pairs':
+        if split[-1] =='xls' and not split[0] == 'code_pairs':
             out.append(f)
     return out
 
