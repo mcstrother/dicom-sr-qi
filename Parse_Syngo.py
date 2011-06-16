@@ -121,7 +121,30 @@ class Syngo(object):
                                 d[time_attr] =None
                 self._init_from_dict(d)
                 
+        def get_data_list(self):
+                """Return a list of all of the data in the object
+                so that it can be written to a row of an excel or csv
+                object
+                """
+                attr_list = [x.lower().replace(' ','_') for x in self.get_heading_list()]
+                out = []
+                for attr in attr_list:
+                        if attr == 'cpts':
+                                out.append(','.join([str(x) for x in self.cpts]))
+                        else:
+                                out.append(getattr(self,attr))
+                return out
 
+        def get_heading_list(self):
+                """Return a list of column headings as
+                they appear in processed Syngo output
+                """
+                return  ['MPI', 'MRN', 'RAD1', 'RAD2', 'ACC', 'DOS Start', 'DOS Time', \
+                         'End DATE', 'End Time', 'READ DATE', 'Read Time', 'SIGN DATE',\
+                         'Sign Time', 'ADD DATE','Add Time', 'TECH', 'LOCATION', 'DEPT',\
+                         'FLUORO', 'CPTs']
+        
+        
 _COLUMNS = Syngo._ALL_ATTRS
 
                 
@@ -145,3 +168,33 @@ def parse_syngo_files(file_names):
         for name in file_names:
                 out = out + parse_syngo_file(name)
         return out
+
+import xlwt
+def write_syngo_file(file_name, sdict):
+        """Write an excel file of Syngo data similar
+        to the syngo files that we normally read in.
+
+        file_name - the name of file to be written (usually ending in .xls)
+        sdict - sheet_name(string)->syngo_list(list of syngo objects)
+        """
+        wb = xlwt.Workbook()
+        for sheet_name, slist in sdict.iteritems():
+                sheet = wb.add_sheet(sheet_name)
+                for i,heading in enumerate(slist[0].get_heading_list()):
+                        sheet.write(0,i,heading)
+                for r,syngo in enumerate(slist):
+                        for c,data in enumerate(syngo.get_data_list()):
+                                xf=None
+                                if isinstance(data, datetime.date):
+                                        xf = xlwt.easyxf(num_format_str='MM/DD/YYYY')
+                                elif isinstance(data, datetime.time):
+                                        xf = xlwt.easyxf(num_format_str='HH:MM:SS')
+                                elif isinstance(data, datetime.datetime):
+                                        xf = xlwt.easyxf(num_format_str='MM/DD/YYYY HH:MM:SS')
+                                if xf:
+                                        sheet.write(r+1,c,data, xf)
+                                else:
+                                        sheet.write(r+1,c,data)
+        wb.save(file_name)
+
+        

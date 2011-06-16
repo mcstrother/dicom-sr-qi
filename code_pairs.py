@@ -36,12 +36,9 @@ for sheet_name, spec in cps.iteritems():
             continue
         for proc2 in lookup[proc.mpi]:
             if proc2.dos > proc.dos and (proc2.dos -proc.dos) < spec['separation']:
-                out[sheet_name].append((proc,proc2))
-                    
-wb = xlwt.Workbook()
-for sheet_name, pairs in out.iteritems():
-    s = wb.add_sheet(sheet_name)
-    for i, pair in enumerate(pairs):
-        s.write(i,0,pair[0].acc)
-        s.write(i,1,pair[1].acc)
-wb.save('output.xls')
+                out[sheet_name].append(proc)
+                out[sheet_name].append(proc2)
+
+
+Parse_Syngo.write_syngo_file('output.xls',out )                    
+
