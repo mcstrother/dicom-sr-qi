@@ -37,7 +37,9 @@ for sheet_name, spec in cps.iteritems():
     print "Working on code pair " + sheet_name
     print "Finding matches for code combinations..."
     combo1_matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)]
+    print "Combo 1 matches " + str(len(combo1_matches)) + " codes."
     combo2_matches = [x for x in procs if my_utils.matches(spec['combo2'],x.cpts)]
+    print "Combo 2 matches " + str(len(combo2_matches)) + " codes."
     print "Done."
     print "Sorting by patient identifier..."
     lookup = {}#comob2_matches sorted by mpi
