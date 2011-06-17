@@ -1,5 +1,6 @@
 import datetime
 import xlrd
+import my_utils
 
 class Syngo(object):
         IVRFU_CPT = "-99999"
@@ -28,8 +29,10 @@ class Syngo(object):
                 for cpt in cpts:
                         if cpt == "IVRFU":
                                 out.append(self.IVRFU_CPT)
+                        elif cpt == '':
+                                continue
                         else:
-                                out.append(int(cpt))
+                                out.append(cpt)
                 return out
 
         def get_start(self):
@@ -81,15 +84,19 @@ class Syngo(object):
                 if isinstance(cpts, basestring):
                         self.cpts = self._CPTs_from_string(cpts)
                 else:
-                        self.cpts = cpts
+                        self.cpts = list(cpts)
+                #ensure all cpts are standardized by the end
+                self.cpts = [my_utils.standard_cpt(cpt) for cpt in self.cpts]
 
         def _init_from_row(self,r,col_nums,datemode):
                 """Initialize from a list of xlrd.Sheet.Cell objects
+                Works by converting the input into something that can
+                be passed to self._init_from_dict
                 """
                 d = {}
                 for attr in self._ALL_ATTRS:
                         if attr == 'CPTs' and isinstance(col_nums[attr],list):
-                                value = ','.join([r[c] for c in col_nums[attr]])
+                                value = [str(r[c].value) for c in col_nums[attr]]
                         else:
                                 value = r[col_nums[attr]].value
                         if not value == '':
@@ -151,6 +158,7 @@ def parse_syngo_file(file_name):
                         col = col+1
                         while col < s.ncols and s.cell(0,col).value[:3] =="CPT":
                                 cpt_cols.append(col)
+                                col = col +1
                         column_numbers['CPTs'] = cpt_cols
                 else:
                         column_numbers[col_name] = headings.index(col_name)
@@ -177,6 +185,9 @@ def write_syngo_file(file_name, sdict):
         sdict - sheet_name(string)->syngo_list(list of syngo objects)
         """
         wb = xlwt.Workbook()
+        date_xf = xlwt.easyxf(num_format_str='MM/DD/YYYY')
+        time_xf = xlwt.easyxf(num_format_str='HH:MM:SS')
+        datetime_xf = xlwt.easyxf(num_format_str='MM/DD/YYYY HH:MM:SS')
         for sheet_name, slist in sdict.iteritems():
                 sheet = wb.add_sheet(sheet_name)
                 if len(slist) ==0:
@@ -187,11 +198,11 @@ def write_syngo_file(file_name, sdict):
                         for c,data in enumerate(syngo.get_data_list()):
                                 xf=None
                                 if isinstance(data, datetime.date):
-                                        xf = xlwt.easyxf(num_format_str='MM/DD/YYYY')
+                                        xf = date_xf
                                 elif isinstance(data, datetime.time):
-                                        xf = xlwt.easyxf(num_format_str='HH:MM:SS')
+                                        xf = time_xf
                                 elif isinstance(data, datetime.datetime):
-                                        xf = xlwt.easyxf(num_format_str='MM/DD/YYYY HH:MM:SS')
+                                        xf = datetime_xf
                                 if xf:
                                         sheet.write(r+1,c,data, xf)
                                 else:
