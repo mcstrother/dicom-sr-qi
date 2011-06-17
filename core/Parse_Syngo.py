@@ -86,7 +86,7 @@ class Syngo(object):
                 else:
                         self.cpts = list(cpts)
                 #ensure all cpts are standardized by the end
-                self.cpts = [my_utils.standard_cpt(cpt) for cpt in self.cpts]
+                self.cpts = [my_utils.standard_cpt(cpt) for cpt in self.cpts if cpt]
 
         def _init_from_row(self,r,col_nums,datemode):
                 """Initialize from a list of xlrd.Sheet.Cell objects
