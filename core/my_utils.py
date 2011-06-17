@@ -74,3 +74,20 @@ def matches(list1,list2):
         return same_contents(list1[:-1],list2)
     else:
         return is_subset(list1,list2)
+
+import numbers
+def standard_cpt(cpt):
+        """Given a cpt code as an integer, float
+        or string, convert it to a string in a
+        standard format.
+        * no leading or trailing whitespace
+        * no '.0' at the end of integers
+        * letters are all capitalized
+        """
+        if isinstance(cpt, numbers.Number):
+                return str(int(cpt))
+        elif isinstance(cpt,basestring):
+                out = cpt.split('.')[0]
+                out = out.strip()
+                out = out.upper()
+                return out
