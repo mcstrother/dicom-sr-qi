@@ -57,6 +57,7 @@ for sheet_name, spec in cps.iteritems():
             if proc2.dos_start > proc.dos_start and (proc2.dos_start -proc.dos_start) < spec['separation']:
                 out[sheet_name].append(proc)
                 out[sheet_name].append(proc2)
+                break #only find the first removal
     print "Done."
 
 
