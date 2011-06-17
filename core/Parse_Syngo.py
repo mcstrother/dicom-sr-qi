@@ -144,8 +144,21 @@ class Syngo(object):
         
 _COLUMNS = Syngo._ALL_ATTRS
 
+def no_dupes(procs):
+        """Given a list of syngo procedures,
+        remove duplicates. Also changes the order
+        of the procedures to something random.
+        """
+        table = {}
+        no_acc_table = {}
+        for proc in procs:
+                if proc.acc:
+                        table[proc.acc] = proc
+                else:
+                        no_acc_table[(proc.mpi,proc.dos_start)] = proc
+        return table.values() + no_acc_table.values()
                 
-def parse_syngo_file(file_name):
+def parse_syngo_file(file_name, no_dupes = True):
         wb = xlrd.open_workbook(file_name)
         s = wb.sheet_by_index(1)
         headings = [c.value for c in s.row(0)]
@@ -165,7 +178,7 @@ def parse_syngo_file(file_name):
         procedures = []
         for r in xrange(1,s.nrows):
                 procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
-        return procedures
+        return no_dupes(procedures)
         
         
 
@@ -173,8 +186,8 @@ def parse_syngo_file(file_name):
 def parse_syngo_files(file_names):
         out = []
         for name in file_names:
-                out = out + parse_syngo_file(name)
-        return out
+                out = out + parse_syngo_file(name, no_dupes = False)
+        return no_dupes(out)
 
 import xlwt
 def write_syngo_file(file_name, sdict):
