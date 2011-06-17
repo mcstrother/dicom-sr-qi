@@ -21,19 +21,6 @@ class Syngo(object):
                         self._init_from_row(args[0], args[1], args[2])
                 else:
                         raise ValueError("Invalid inputs to Syngo.__init__")
-                """if not isinstance(MPI,int):
-                        raise TypeError("Invalid type for MPI. Expected int, received " + str(type(MPI)))
-                self.MPI = MPI #should always be an int
-                self.RAD1 = RAD1
-                self.RAD2 = RAD2
-                self.DOS_Start = DOS_Start#datetime.date
-                self.DOS_Time = DOS_Time #datetime.time
-                self.end_date = end_date #datetime.date
-                self.end_time = end_time #datetime.time
-                if isinstance(CPTs, basestring):
-                        self.CPTs = self._CPTs_from_string(CPTs)
-                else:
-                        self.CPTs = CPTs"""
         
         def _CPTs_from_string(self, cpts_string):
                 cpts = cpts_string.split(',')
