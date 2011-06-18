@@ -158,7 +158,7 @@ def no_dupes(procs):
                         no_acc_table[(proc.mpi,proc.dos_start)] = proc
         return table.values() + no_acc_table.values()
                 
-def parse_syngo_file(file_name, run_no_dupes = True):
+def parse_syngo_file(file_name, no_dupes = True):
         wb = xlrd.open_workbook(file_name)
         s = wb.sheet_by_index(1)
         headings = [c.value for c in s.row(0)]
@@ -178,10 +178,7 @@ def parse_syngo_file(file_name, run_no_dupes = True):
         procedures = []
         for r in xrange(1,s.nrows):
                 procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
-        if run_no_dupes:
-                return no_dupes(procedures)
-        else:
-                return procedures
+        return no_dupes(procedures)
         
         
 
@@ -189,7 +186,7 @@ def parse_syngo_file(file_name, run_no_dupes = True):
 def parse_syngo_files(file_names):
         out = []
         for name in file_names:
-                out = out + parse_syngo_file(name, run_no_dupes = False)
+                out = out + parse_syngo_file(name, no_dupes = False)
         return no_dupes(out)
 
 import xlwt
