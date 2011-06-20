@@ -53,6 +53,7 @@ if __name__ == '__main__':
 	bjh_events, slch_events = main(bjh_procs, slch_procs)
 	#proc_frame_rate(bjh_procs)
 	proc_frame_rate(slch_procs)
-	
-	
-		
+
+
+
+
