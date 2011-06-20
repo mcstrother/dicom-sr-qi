@@ -93,6 +93,7 @@ class Event(object):
                 that isn't being checked for yet.
                 """
                 out = True
+                out = out and (self.Number_of_Pulses >=0)
                 out = out and (self.Exposure >0)
                 out = out and (self.Pulse_Width >= 0)
                 if not out: #have to check if we can terminate yet, since the next checks require the previous checks to have passed, or else they will throw exceptions
@@ -133,9 +134,7 @@ class Procedure(object):
                         self.add_syngo(syngo)
         
         def valid_events(self):
-                if not hasattr(self, '_valid_events_cache'):
-                        self._valid_events_cache = [e for e in self.events if e.is_valid()]
-                return self._valid_events_cache
+                return [e for e in self.events if e.is_valid()]
                 
         def get_duration(self):
                 """Returns a python datetime.timedelta of
