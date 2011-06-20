@@ -6,6 +6,8 @@ BJH_SYNGO_FILES = ['./Data/BJH/April_Output_Org.xls', './Data/BJH/May_Output_Org
 BJH_XML_FILE = './Data/BJH/all bjh.xml'
 SLCH_SYNGO_FILES = ['./Data/SLCH/April_IR_Output_Org.xls', './Data/SLCH/May_IR_Output_Org.xls']
 SLCH_XML_FILE = './Data/SLCH/all slch.xml'
+TEST_XML_FILE = './Data/sample.xml'
+TEST_SYNGO_FILES = ['./Data/sample_syngo.xls']
 
 def care_datetime_to_python_datetime(care_date):
 	care_date = str(care_date)
@@ -38,6 +40,8 @@ def get_procs(group = 'all'):
         elif group == 'all':
                 procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
                 procs = procs + ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+        elif group == 'test':
+                procs = ReadXML.process_file(TEST_XML_FILE, TEST_SYNGO_FILES)
         return procs
 
 
