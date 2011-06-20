@@ -10,24 +10,24 @@ TEST_XML_FILE = './Data/sample.xml'
 TEST_SYNGO_FILES = ['./Data/sample_syngo.xls']
 
 def care_datetime_to_python_datetime(care_date):
-	care_date = str(care_date)
-	return datetime(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]),int(care_date[8:10]),int(care_date[10:12]), int(care_date[12:14]))
-	
+        care_date = str(care_date)
+        return datetime(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]),int(care_date[8:10]),int(care_date[10:12]), int(care_date[12:14]))
+        
 def care_date_to_python_date(care_date):
-	care_date = str(care_date)
-	return date(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]))
-	
+        care_date = str(care_date)
+        return date(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]))
+        
 def write_csv(table, file_name = 'output.csv'):
-	writer = csv.writer(open(file_name,'wb'))
-	writer.writerows(table)
-	
+        writer = csv.writer(open(file_name,'wb'))
+        writer.writerows(table)
+        
 def total_seconds(time_delta):
-	td = time_delta
-	return (td.microseconds + (td.seconds + td.days * 24 * 3600.0) * 10**6) / 10**6
-	
+        td = time_delta
+        return (td.microseconds + (td.seconds + td.days * 24 * 3600.0) * 10**6) / 10**6
+        
 def multiply_timedelta(td, x):
-	return timedelta(days = td.days *x, seconds = td.seconds*x, microseconds = td.microseconds *int(x))
-	
+        return timedelta(days = td.days *x, seconds = td.seconds*x, microseconds = td.microseconds *int(x))
+        
 def transposed(lists):
    if not lists: return []
    return map(lambda *row: list(row), *lists)
@@ -42,13 +42,15 @@ def get_procs(group = 'all'):
                 procs = procs + ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
         elif group == 'test':
                 procs = ReadXML.process_file(TEST_XML_FILE, TEST_SYNGO_FILES)
+        else:
+                raise ValueError("Invalid group")
         return procs
 
 
 def average_fps(events):
         """Gets the average FPS weighted by event duration"""
         total_fluoro_time = sum([e.get_duration() for e in events],timedelta(0) )
-	return total_seconds(sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0)))/total_seconds(total_fluoro_time)
+        return total_seconds(sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0)))/total_seconds(total_fluoro_time)
 
 
 def is_subset(list1, list2):
