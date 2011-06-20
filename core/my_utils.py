@@ -6,8 +6,8 @@ import os
 _dir = os.path.dirname(os.path.abspath(__file__))
 _dir = os.path.dirname(_dir) #goes up one directory
 
-BJH_SYNGO_FILES = [os.path.join(_dir,'/Data/BJH/April_Output_Org.xls'), os.path.join(_dir,'Data/BJH/May_Output_Org.xls')]
-BJH_XML_FILE = os.path.join(_dir,'/Data/BJH/all bjh.xml')
+BJH_SYNGO_FILES = [os.path.join(_dir,'Data/BJH/April_Output_Org.xls'), os.path.join(_dir,'Data/BJH/May_Output_Org.xls')]
+BJH_XML_FILE = os.path.join(_dir,'Data/BJH/all bjh.xml')
 SLCH_SYNGO_FILES = [os.path.join(_dir,'Data/SLCH/April_IR_Output_Org.xls'), os.path.join(_dir,'Data/SLCH/May_IR_Output_Org.xls')]
 SLCH_XML_FILE = os.path.join(_dir,'Data/SLCH/all slch.xml')
 TEST_XML_FILE = os.path.join(_dir,'Data/sample.xml')
