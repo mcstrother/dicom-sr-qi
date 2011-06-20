@@ -101,3 +101,22 @@ def standard_cpt(cpt):
                 out = out.strip()
                 out = out.upper()
                 return out
+
+def organize(iterable, key):
+        """Put all of the elements in `iterable` into
+        a dictionary which maps possible return values
+        of key onto lists of items of iterable
+
+        iterable - any iterable object (e.g. a list, or tuple)
+        key - a function that takes items in interable as inputs
+
+        Example:
+        organize([1,2,3],lambda x: x==2)
+        {True:[1,3],False:[2]}
+        """
+        out = {}
+        for item in iterable:
+                k = key(item)
+                if not k in out:
+                        out[k] = []
+                out[k].append(item)
