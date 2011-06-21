@@ -120,3 +120,4 @@ def organize(iterable, key):
                 if not k in out:
                         out[k] = []
                 out[k].append(item)
+        return out
