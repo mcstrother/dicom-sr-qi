@@ -220,7 +220,32 @@ class Procedure(object):
 
         def has_events(self):
                 return not len(self.events) == 0
-                
+
+        def get_event_groups(self, separation):
+                """Gets a list of events grouped by their timing.
+
+                Gets a list of events groups. The end of the ith
+                event in each group occurs no more than `separation`
+                seconds before the beginning of the (i+1)th event
+                Args:
+                        separation: maximum number of seconds by which events
+                                in a group may be separated.
+                Returns:
+                        A list of tuples of events.
+                """
+                out = []
+                group = []
+                for e in self.events:
+                        if len(group) == 0:
+                                group.append(e)
+                        elif my_utils.total_seconds(e.DateTime_Started - group[-1].get_end_time())<= separation:
+                                group.append(e)
+                        else:
+                                out.append(tuple(group))
+                                group = [e]
+                out.append(tuple(group))
+                return out
+                                
 
 def add_syngo_to_procedures(procs, syngo_procs):
         """Matches procedure information from DICOM-SR (procs)
