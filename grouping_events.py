@@ -119,7 +119,8 @@ def grouped_event_histogram2(procs):
         frames_of_groups.append(frames)
         exposure_times_of_groups.append(exposure_time)
     print "Total number of groups: " + str(len(frames_of_groups))
-    plot_histo(frames_of_groups, exposure_times_of_groups, durations_of_groups)
+    return(frames_of_groups, exposure_times_of_groups, durations_of_groups)
+    #plot_histo(frames_of_groups, exposure_times_of_groups, durations_of_groups)
     
 
 
@@ -129,4 +130,6 @@ if __name__ == '__main__':
     procs = my_utils.get_procs('all')
     procs = [p for p in procs if p.is_valid()]
     #pause_histogram(procs)
-    grouped_event_histogram2(procs)
+    histo_data = grouped_event_histogram2(procs)
+    plot_histo(*histo_data)
+    
