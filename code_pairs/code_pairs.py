@@ -4,6 +4,7 @@ import xlrd, xlwt
 import datetime
 
 PAIR_FILE_NAME = "code_pairs.xls"
+REASON_FILE_NAME = "reasons_lookup.xls"
 EXCUSIVE_CODE = -99
 
 def get_code_pairs(in_file_name):
@@ -22,44 +23,85 @@ def get_syngo_file_names():
     out = []
     for f in files:
         split = f.split('.')
-        if split[-1] =='xls' and not split[0] == 'code_pairs':
+        if split[-1] =='xls' and not f == PAIR_FILE_NAME and not f == REASON_FILE_NAME:
             out.append(f)
     return out
 
-print "Parsing files..."
+def get_reasons_lookup():
+    reason_wb = xlrd.open_workbook(REASON_FILE_NAME)
+    reasons_lookup = {}
+    for sheet in reason_wb.sheets():
+        for r in range(1,sheet.nrows):
+            if sheet.cell(r,0).value:
+                accession = int(sheet.cell(r,0).value)
+            else:
+                accession = None
+            reason = str(sheet.cell(r,1).value)
+            reasons_lookup[accession] = reason
+    reasons_lookup[None] = ''
+    return reasons_lookup
+
+import xlwt
+def write_out(sdict, reasons_lookup):
+    file_name = "output.xls"
+    wb = xlwt.Workbook()
+    date_xf = xlwt.easyxf(num_format_str='MM/DD/YYYY')
+    time_xf = xlwt.easyxf(num_format_str='HH:MM:SS')
+    datetime_xf = xlwt.easyxf(num_format_str='MM/DD/YYYY HH:MM:SS')
+    for sheet_name, slist in sdict.iteritems():
+            sheet = wb.add_sheet(sheet_name)
+            if len(slist) ==0:
+                    continue
+            for i,heading in enumerate(slist[0].get_heading_list() + ["Removal reason"]):
+                    sheet.write(0,i,heading)
+            for r,syngo in enumerate(slist):
+                    for c,data in enumerate(syngo.get_data_list()):
+                            xf=None
+                            if isinstance(data, datetime.date):
+                                    xf = date_xf
+                            elif isinstance(data, datetime.time):
+                                    xf = time_xf
+                            elif isinstance(data, datetime.datetime):
+                                    xf = datetime_xf
+                            if xf:
+                                    sheet.write(r+1,c,data, xf)
+                            else:
+                                    sheet.write(r+1,c,data)
+                    #tack on the removal reason
+                    if syngo.acc in reasons_lookup:
+                        reason = reasons_lookup[syngo.acc]
+                    else:
+                        reason = ''
+                    sheet.write(r+1,c+1,reason)
+    wb.save(file_name)
+
+
 procs = Parse_Syngo.parse_syngo_files(get_syngo_file_names())
-print "Done"
 procs.sort(key= lambda x:x.dos_start)#sort procs by start time
 cps = get_code_pairs(PAIR_FILE_NAME)
+reasons_lookup = get_reasons_lookup()
 
 out = {}
 for sheet_name, spec in cps.iteritems():
-    print "Working on code pair " + sheet_name
-    print "Finding matches for code combinations..."
-    combo1_matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)]
-    print "Combo 1 matches " + str(len(combo1_matches)) + " codes."
-    combo2_matches = [x for x in procs if my_utils.matches(spec['combo2'],x.cpts)]
-    print "Combo 2 matches " + str(len(combo2_matches)) + " codes."
-    print "Done."
-    print "Sorting by patient identifier..."
-    lookup = {}#comob2_matches sorted by mpi
-    for proc in combo2_matches:
-        if not proc.mpi in lookup:
-            lookup[proc.mpi] =[]
-        lookup[proc.mpi].append(proc)
-    print "Done."
-    print "Finding pairs within time span..."
-    out[sheet_name] = []
-    for proc in combo1_matches:
-        if not proc.mpi in lookup:
-            continue
-        for proc2 in lookup[proc.mpi]:
-            if proc2.dos_start > proc.dos_start and (proc2.dos_start -proc.dos_start) < spec['separation']:
-                out[sheet_name].append(proc)
-                out[sheet_name].append(proc2)
-                break #only find the first removal
-    print "Done."
+    c1 = spec['combo1']#shorthand
+    c2 = spec['combo2']
+    matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)\
+               or my_utils.matches(spec['combo2'],x.cpts)]
+    lookup = my_utils.organize(matches, lambda x:x.mpi)
+    pairs = []
+    for mpi, matches in lookup.iteritems():
+        c1_match = None # a "placement" is a c2 match, just easier to think of as a placement
+        for p in matches:
+            if my_utils.matches(c1, p.cpts):
+                c1_match = p
+            elif my_utils.matches(c2,p.cpts) and c1_match:
+                pairs.append((c1_match, p))
+                c1_match =None
+    out[sheet_name] = pairs
 
+#flatten the pair lists for the purposes of writing
+for key,pairs in out.iteritems():
+    out[key] = sum([list(pair) for pair in pairs],[])
 
-Parse_Syngo.write_syngo_file('output.xls',out )                    
+write_out(out, reasons_lookup)                   
 
