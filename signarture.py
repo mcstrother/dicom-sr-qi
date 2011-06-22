@@ -1,3 +1,8 @@
+"""Make line plots showing the durations of
+event groups for groups with similar, common cpt
+codes. Try to find a "signature" for each procedure
+"""
+
 import my_utils
 import numpy as np
 
