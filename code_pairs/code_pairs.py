@@ -1,3 +1,28 @@
+"""Extracts  pairs of procedures from Syngo files.
+
+The original motivation for this script is searching for
+placments and removals of central lines. In this context,
+a "pair" of procedures is a placement and a removal. 
+
+Takes at least 3 input files:
+ - "code_pairs.xls" - gives cpt codes defining the first and second member
+     of each coe pair
+ - "reasons_lookup.xls" - a table of accession numbers and "reasons" for the
+    second member of each pair (e.g. a central line was removed due to
+    infection or due to the line no longer being needed)
+ - any number of input files from Syngo
+
+When extracting pairs, this script assumes that all "placements" must
+be followed by a removal before another placement can occur and that
+we may be data from procedures that occurred off site. Thus if the
+input file has the following pattern of procedures for a single
+patient over time (p-placement, r-removal): R1 P1 P2 R2 R3 P3, only
+one pair will be extracted, P2-R2. It is assumed that we are missing
+a placement before R1, a removal after P1, a placement before R3, and
+the final removal (or the patient still has a line in).
+
+"""
+
 import my_utils
 import Parse_Syngo
 import xlrd, xlwt
