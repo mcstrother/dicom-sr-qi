@@ -7,7 +7,11 @@ class Syngo(object):
         _INT_ATTRS = ["MPI", "MRN", "ACC","FLUORO"]
         _IGNORED_ATTRS = ["KAR","KAP","Ima","DLP","CTDI","Procedure"]
         _STRING_ATTRS =["RAD1","RAD2","TECH","LOCATION","DEPT"]
-        _DATETIME_PAIR_ATTRS = [("DOS Start", "DOS Time"),("End DATE", "End Time"),("READ DATE", "Read Time"),("SIGN DATE","Sign Time"),("ADD DATE","Add Time")]
+        _DATETIME_PAIR_ATTRS = [("DOS Start", "DOS Time"),
+                                ("End DATE", "End Time"),
+                                ("READ DATE", "Read Time"),
+                                ("SIGN DATE","Sign Time"),
+                                ("ADD DATE","Add Time")]
         _OTHER_ATTRS = ["CPTs"]
         _ALL_ATTRS = _INT_ATTRS + _STRING_ATTRS + _OTHER_ATTRS #note absence of + _IGNORED_ATTRS
         for pair in _DATETIME_PAIR_ATTRS:
@@ -96,7 +100,8 @@ class Syngo(object):
                 d = {}
                 for attr in self._ALL_ATTRS:
                         if attr == 'CPTs' and isinstance(col_nums[attr],list):
-                                value = [str(r[c].value) for c in col_nums[attr]]
+                                value = [str(r[c].value) for
+                                         c in col_nums[attr]]
                         else:
                                 value = r[col_nums[attr]].value
                         if not value == '':
@@ -136,9 +141,12 @@ class Syngo(object):
                 """Return a list of column headings as
                 they appear in processed Syngo output
                 """
-                return  ['MPI', 'MRN', 'RAD1', 'RAD2', 'ACC', 'DOS Start', 'DOS Time', \
-                         'End DATE', 'End Time', 'READ DATE', 'Read Time', 'SIGN DATE',\
-                         'Sign Time', 'ADD DATE','Add Time', 'TECH', 'LOCATION', 'DEPT',\
+                return  ['MPI', 'MRN', 'RAD1', 'RAD2', 'ACC', 'DOS Start',
+                         'DOS Time','End DATE', 'End Time', 'READ DATE',
+                         'Read Time', 'SIGN DATE',
+                         'Sign Time', 'ADD DATE',
+                         'Add Time', 'TECH',
+                         'LOCATION', 'DEPT',
                          'FLUORO', 'CPTs']
         
         
