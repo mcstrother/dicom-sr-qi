@@ -12,8 +12,9 @@ class Syngo(object):
                                 ("READ DATE", "Read Time"),
                                 ("SIGN DATE","Sign Time"),
                                 ("ADD DATE","Add Time")]
+        _DATE_ATTRS = ["DOB"]
         _OTHER_ATTRS = ["CPTs"]
-        _ALL_ATTRS = _INT_ATTRS + _STRING_ATTRS + _OTHER_ATTRS #note absence of + _IGNORED_ATTRS
+        _ALL_ATTRS = _INT_ATTRS + _STRING_ATTRS + _OTHER_ATTRS + _DATE_ATTRS #note absence of + _IGNORED_ATTRS
         for pair in _DATETIME_PAIR_ATTRS:
                 _ALL_ATTRS.append(pair[0])
                 _ALL_ATTRS.append(pair[1])
@@ -70,6 +71,9 @@ class Syngo(object):
                         else:
                                 value = int(d[attr])
                         setattr(self,attr.replace(' ','_').lower(),value)
+                for date_attr in self._DATE_ATTRS:
+                        date = my_utils.coerce_human_date(d[date_attr])
+                        setattr(self, date_attr.replace(' ','_').lower(), date)
                 for date_attr, time_attr in self._DATETIME_PAIR_ATTRS:
                         setattr(self,date_attr.replace(' ','_').lower(),d[date_attr])
                         setattr(self,time_attr.replace(' ','_').lower(),d[time_attr])
@@ -108,14 +112,21 @@ class Syngo(object):
                                 d[attr] = value
                         else:
                                 d[attr] = None
-                for date_attr,time_attr in self._DATETIME_PAIR_ATTRS:
-                        if not d[date_attr] is None and not isinstance(d[date_attr], basestring):#TODO: could probably handle these strings better to actually extrac their data
-                                date_tuple = xlrd.xldate_as_tuple(d[date_attr],datemode)
-                                date = datetime.date(year = date_tuple[0],month=date_tuple[1],day=date_tuple[2])
-                                d[date_attr] = date
-                        else:
+                for date_attr in self._DATE_ATTRS:
+                        try:
+                                d[date_attr] = my_utils.coerce_human_date(d[date_attr],datemode)
+                        except ValueError:
                                 d[date_attr] = None
-                        if not d[time_attr] is None and not isinstance(d[time_attr],basestring):
+                        except NotImplementedError:
+                                d[date_attr] = None
+                for date_attr,time_attr in self._DATETIME_PAIR_ATTRS:
+                        try:
+                                d[date_attr] = my_utils.coerce_human_date(d[date_attr],datemode)
+                        except ValueError:
+                                d[date_attr] = None
+                        except NotImplementedError:
+                                d[date_attr] = None
+                        if not d[time_attr] is None and not isinstance(d[time_attr],basestring):#TODO implement something similar for this as we did with dates
                                 time_tuple = xlrd.xldate_as_tuple(d[time_attr],datemode)
                                 time = datetime.time(hour=time_tuple[-3],minute=time_tuple[-2],second=time_tuple[-1])
                                 d[time_attr] = time
@@ -141,7 +152,7 @@ class Syngo(object):
                 """Return a list of column headings as
                 they appear in processed Syngo output
                 """
-                return  ['MPI', 'MRN', 'RAD1', 'RAD2', 'ACC', 'DOS Start',
+                return  ['MPI', 'MRN', 'RAD1', 'RAD2', 'ACC', 'DOB', 'DOS Start',
                          'DOS Time','End DATE', 'End Time', 'READ DATE',
                          'Read Time', 'SIGN DATE',
                          'Sign Time', 'ADD DATE',

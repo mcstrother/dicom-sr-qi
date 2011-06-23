@@ -121,3 +121,29 @@ def organize(iterable, key):
                         out[k] = []
                 out[k].append(item)
         return out
+
+import xlrd
+
+def coerce_human_date(d, datemode = None):
+        """Attempt to coerce d into a Python datetime.date
+        
+        Generally d will have been retrieved from an excel
+        spreadsheet, so I expect it to be a string or an
+        excel date.
+
+        Args:
+                d - object to be coerced
+                datemode - optional xlrd datemode object
+        """
+        if d is None:
+                raise ValueError("Cannot coerce None into date.")
+        if isinstance(d, date):
+                return d
+        if isinstance(d, basestring):
+                raise NotImplementedError("Can't coerce string into a date... yet")
+        date_tuple = xlrd.xldate_as_tuple(d,datemode)
+        return date(year = date_tuple[0],
+                             month=date_tuple[1],
+                             day=date_tuple[2])
+        
+        
