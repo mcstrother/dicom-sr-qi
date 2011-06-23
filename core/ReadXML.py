@@ -38,8 +38,8 @@ class Event(object):
                 for attr in self.SPLIT_FLOAT_ATTRS:
                         value, unit = ae.attributes[attr].value.split(' ')
                         value = float(value)
-                        setattr(self, attr, value)
-                        setattr(self, attr+"_units", unit)
+                        setattr(self, attr.replace('-','_'), value)
+                        setattr(self, attr.replace('-','_')+"_units", unit)
                 self._parse_comment(ae.attributes["Comment"].value)
                 if self.is_valid(): #if not, self._get_number_of_pulses tends to fail due to bad data
                         old_pulses = self.Number_of_Pulses
