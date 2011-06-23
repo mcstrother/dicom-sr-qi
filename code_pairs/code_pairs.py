@@ -77,7 +77,7 @@ def write_out(sdict, reasons_lookup):
             sheet = wb.add_sheet(sheet_name)
             if len(slist) ==0:
                     continue
-            for i,heading in enumerate(slist[0].get_heading_list() + ["Removal reason"]):
+            for i,heading in enumerate(slist[0].get_heading_list() + ["Line Days","Removal reason"]):
                     sheet.write(0,i,heading)
             for r,syngo in enumerate(slist):
                     for c,data in enumerate(syngo.get_data_list()):
@@ -92,12 +92,18 @@ def write_out(sdict, reasons_lookup):
                                     sheet.write(r+1,c,data, xf)
                             else:
                                     sheet.write(r+1,c,data)
+                    #take on the line days
+                    c = c+1
+                    if r %2 == 1: # row represents the removal part of a pair
+                        line_days = (syngo.dos_start - slist[r-1].dos_start).days
+                        sheet.write(r+1,c,line_days)
                     #tack on the removal reason
+                    c=c+1
                     if syngo.acc in reasons_lookup:
                         reason = reasons_lookup[syngo.acc]
                     else:
                         reason = ''
-                    sheet.write(r+1,c+1,reason)
+                    sheet.write(r+1,c,reason)
     wb.save(file_name)
 
 
@@ -123,6 +129,17 @@ for sheet_name, spec in cps.iteritems():
                 pairs.append((c1_match, p))
                 c1_match =None
     out[sheet_name] = pairs
+
+#order the pairs so the ones without reasons come last
+for sheet_name in out.keys():
+    has_reason = []
+    no_reason = []
+    for pair in out[sheet_name]:
+        if pair[1].acc in reasons_lookup:
+            has_reason.append(pair)
+        else:
+            no_reason.append(pair)
+    out[sheet_name] = has_reason+no_reason
 
 #flatten the pair lists for the purposes of writing
 for key,pairs in out.iteritems():
