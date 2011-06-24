@@ -106,44 +106,72 @@ def write_out(sdict, reasons_lookup):
                     sheet.write(r+1,c,reason)
     wb.save(file_name)
 
+def dos_time_sort_comparator(c1, c2, s, s2):
+    """Used in main() as a key to sort syngo
+    procedures by dos_time, without choking
+    on procedures where dos_time is None and putting
+    c2s before c1s if they ocurred within 2 hours of
+    each other
+    """
+    date_delta = s.dos_start - s2.dos_start
+    if date_delta == datetime.timedelta(0):
+        # if either lacks a time or if the times are close to each other
+        # return so that the c2 match occurs before the c1 match
+        if not s.dos_time or not s2.dos_time or abs(s.dos_time-s2.dos_time) < datetime.timedelta(hours=2):
+            if my_utils.matches(c2,s):
+                return -1
+            elif my_utils.matches(c2, s2):
+                return 1
+            else:
+                return 0
+        else: # there is a genuine time difference
+            return my_utils.total_seconds(s.dos_time-s2.dos_time)
+    else:
+        return date_delta.days
 
-procs = Parse_Syngo.parse_syngo_files(get_syngo_file_names())
-procs.sort(key= lambda x:x.dos_start)#sort procs by start time
-cps = get_code_pairs(PAIR_FILE_NAME)
-reasons_lookup = get_reasons_lookup()
+def main():
+    procs = Parse_Syngo.parse_syngo_files(get_syngo_file_names())
+    procs.sort(key= lambda x:x.dos_start)#sort procs by start time
+    cps = get_code_pairs(PAIR_FILE_NAME)
+    reasons_lookup = get_reasons_lookup()
 
-out = {}
-for sheet_name, spec in cps.iteritems():
-    c1 = spec['combo1']#shorthand
-    c2 = spec['combo2']
-    matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)\
-               or my_utils.matches(spec['combo2'],x.cpts)]
-    lookup = my_utils.organize(matches, lambda x:x.mpi)
-    pairs = []
-    for mpi, matches in lookup.iteritems():
-        c1_match = None # a "placement" is a c2 match, just easier to think of as a placement
-        for p in matches:
-            if my_utils.matches(c1, p.cpts):
-                c1_match = p
-            elif my_utils.matches(c2,p.cpts) and c1_match:
-                pairs.append((c1_match, p))
-                c1_match =None
-    out[sheet_name] = pairs
+    out = {}
+    for sheet_name, spec in cps.iteritems():
+        c1 = spec['combo1']#shorthand
+        c2 = spec['combo2']
+        #keep only procs that match either c2 or c1
+        matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)\
+                   or my_utils.matches(spec['combo2'],x.cpts)]
+        lookup = my_utils.organize(matches, lambda x:x.mpi)
+        pairs = []
+        for mpi, matches in lookup.iteritems():
+            matches.sort(cmp = lambda x,y: dos_time_sort_comparator(spec['combo1'], spec['combo2'],x,y))
+            c1_match = None # a "placement" is a c1 match, just easier to think of as a placement
+            for p in matches:
+                if my_utils.matches(c1, p.cpts):
+                    c1_match = p
+                elif my_utils.matches(c2,p.cpts) and c1_match:
+                    pairs.append((c1_match, p))
+                    c1_match =None
+        out[sheet_name] = pairs
 
-#order the pairs so the ones without reasons come last
-for sheet_name in out.keys():
-    has_reason = []
-    no_reason = []
-    for pair in out[sheet_name]:
-        if pair[1].acc in reasons_lookup:
-            has_reason.append(pair)
-        else:
-            no_reason.append(pair)
-    out[sheet_name] = has_reason+no_reason
+    #order the pairs so the ones without reasons come last
+    for sheet_name in out.keys():
+        has_reason = []
+        no_reason = []
+        for pair in out[sheet_name]:
+            if pair[1].acc in reasons_lookup:
+                has_reason.append(pair)
+            else:
+                no_reason.append(pair)
+        out[sheet_name] = has_reason+no_reason
 
-#flatten the pair lists for the purposes of writing
-for key,pairs in out.iteritems():
-    out[key] = sum([list(pair) for pair in pairs],[])
+    #flatten the pair lists for the purposes of writing
+    for key,pairs in out.iteritems():
+        out[key] = sum([list(pair) for pair in pairs],[])
 
-write_out(out, reasons_lookup)                   
+    write_out(out, reasons_lookup)                   
 
+if __name__ == '__main__':
+    main()
+    
