@@ -225,21 +225,21 @@ def write_combined_output(triple_list):
     #complicated way of merging output from several process_file runs
     wb = xlwt.Workbook()
     tracker = {}
-    col_styles = triple_list[0][1]
-    for group_rows,ignored_col_styles, rs in triple_list:
+    #col_styles = triple_list[0][1]
+    for group_rows,col_styles, rs in triple_list:
         for group_name, row_numbers in group_rows.iteritems():
             if not group_name in tracker:
-                tracker[group_name] = {'sheet':wb.add_sheet(group_name),\
+                tracker[group_name] = {'sheet':wb.add_sheet(group_name),
                                        'first_row':0}
             s = tracker[group_name]['sheet']
             for out_r,in_r in enumerate(row_numbers):
                 for c in range(rs.ncols):
                     if in_r>0:
-                        s.write(out_r+tracker[group_name]['first_row'],\
-                                c,rs.cell(in_r,c).value, col_styles[c])
-                    else:
-                        s.write(out_r+tracker[group_name]['first_row'],\
-                                c,rs.cell(in_r,c).value)
+                        s.write(out_r + tracker[group_name]['first_row'],
+                                c, rs.cell(in_r,c).value, col_styles[c])
+                    else:#don't apply styles to the header row
+                        s.write(out_r+tracker[group_name]['first_row'],
+                                c, rs.cell(in_r,c).value)
             tracker[group_name]['first_row'] = 1+out_r+tracker[group_name]['first_row']
     wb.save('output.xls')
 
