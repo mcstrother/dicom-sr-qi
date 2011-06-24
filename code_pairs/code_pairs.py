@@ -154,9 +154,12 @@ def main():
             for p in matches:
                 if my_utils.matches(c1, p.cpts):
                     c1_match = p
-                elif my_utils.matches(c2,p.cpts) and c1_match:
-                    pairs.append((c1_match, p))
-                    c1_match =None
+                elif c1_match:
+                    if (p.dos_start-c1_match.dos_start) > spec['separation']: # too far
+                        c1_match = None
+                    elif c1_match and my_utils.matches(c2,p.cpts): # found a match
+                        pairs.append((c1_match, p))
+                        c1_match =None
         out[sheet_name] = pairs
 
     #order the pairs so the ones without reasons come last
