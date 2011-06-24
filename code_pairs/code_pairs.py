@@ -117,15 +117,19 @@ def dos_time_sort_comparator(c1, c2, s, s2):
     if date_delta == datetime.timedelta(0):
         # if either lacks a time or if the times are close to each other
         # return so that the c2 match occurs before the c1 match
-        if not s.dos_time or not s2.dos_time or abs(s.dos_time-s2.dos_time) < datetime.timedelta(hours=2):
-            if my_utils.matches(c2,s):
-                return -1
-            elif my_utils.matches(c2, s2):
-                return 1
-            else:
-                return 0
-        else: # there is a genuine time difference
-            return my_utils.total_seconds(s.dos_time-s2.dos_time)
+        if s.dos_time and s2.dos_time:
+            time_diff = my_utils.subtract_times(s.dos_time, s2.dos_time)
+            if abs(time_diff) > datetime.timedelta(hours = 2):
+                return my_utils.total_seconds(time_diff)
+        # if you're here, either one time is missing or the times are within
+        # 2 hours of each other on the same day, so use the cpt codes to
+        # break the tie
+        if my_utils.matches(c2,s.cpts):
+            return -1
+        elif my_utils.matches(c2, s2.cpts):
+            return 1
+        else:
+            return 0
     else:
         return date_delta.days
 
