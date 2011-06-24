@@ -83,7 +83,8 @@ class Syngo(object):
                         combined_attr = time_attr.split(' ')[0].lower()
                         if d[date_attr] and d[time_attr]:
                                 try:
-                                        combined_value = datetime.datetime.combine(getattr(self,date_attr.replace(' ','_').lower()),getattr(self,time_attr.replace(' ','_').lower()))
+                                        combined_value = datetime.datetime.combine(getattr(self,date_attr.replace(' ','_').lower()),
+                                                                                   getattr(self,time_attr.replace(' ','_').lower()))
                                 except TypeError as te:
                                         print time_attr
                                         print d[time_attr]
