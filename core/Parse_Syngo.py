@@ -72,7 +72,10 @@ class Syngo(object):
                                 value = int(d[attr])
                         setattr(self,attr.replace(' ','_').lower(),value)
                 for date_attr in self._DATE_ATTRS:
-                        date = my_utils.coerce_human_date(d[date_attr])
+                        if d[date_attr] is None:
+                                date = None
+                        else:
+                                date = my_utils.coerce_human_date(d[date_attr])
                         setattr(self, date_attr.replace(' ','_').lower(), date)
                 for date_attr, time_attr in self._DATETIME_PAIR_ATTRS:
                         setattr(self,date_attr.replace(' ','_').lower(),d[date_attr])
