@@ -117,6 +117,9 @@ class Event(object):
         
         def get_end_time(self):
                 return self.DateTime_Started + self.get_duration()
+
+        def get_start_time(self):
+                return self.DateTime_Started
                         
 class Procedure(object):
         DATE_ATTRS = ['SeriesDate', 'StudyDate']
@@ -135,7 +138,7 @@ class Procedure(object):
         
         def __init__(self, dose_info_element, syngo =None):
                 die = dose_info_element
-                self.events = [Event(aquisition_element) for aquisition_element in dose_info_element.getElementsByTagName('CT_Acquisition')]
+                self._events = [Event(aquisition_element) for aquisition_element in dose_info_element.getElementsByTagName('CT_Acquisition')]
                 #store PatientID as an int unless it absolutely needs to be a string
                 try:
                         self.PatientID = int(die.attributes['PatientID'].value)
@@ -153,9 +156,22 @@ class Procedure(object):
                 self._syngo = None
                 if syngo:
                         self.add_syngo(syngo)
+
+        def get_events(self, valid = True):
+                """Return the radiation events in the procedure
+
+                By default, only returns valid events.
+                Guaranteed to run in contant time, except for the first
+                run through, which is linear
+                """
+                if not hasattr(self, '_valid_events_cache'):
+                        self._valid_events_cache = [e for e in self._events if e.is_valid()]
+                return self._valid_events_cache
+                
         
         def valid_events(self):
-                return [e for e in self.events if e.is_valid()]
+                """DEPRECATED"""
+                return [e for e in self._events if e.is_valid()]
                 
         def get_duration(self):
                 """Returns a python datetime.timedelta of
@@ -167,18 +183,18 @@ class Procedure(object):
                 """Returns a python datetime of the start
                 of the first event of in the procedure
                 """
-                if len(self.events) == 0:
+                if len(self._events) == 0:
                         raise my_exceptions.DataMissingError("Procedure has no radiation events.")
-                first_event = min(self.events, key = lambda x:x.DateTime_Started)
+                first_event = min(self._events, key = lambda x:x.DateTime_Started)
                 return first_event.DateTime_Started
         
         def get_end_time(self):
                 """Returns a python datetime of the end
                 of the last event in the procedure
                 """
-                if len(self.events) == 0:
+                if len(self._events) == 0:
                         raise my_exceptions.DataMissingError("Procedure has no radiation events.")
-                last_event = max(self.events, key = lambda x:x.DateTime_Started)
+                last_event = max(self._events, key = lambda x:x.DateTime_Started)
                 return last_event.get_end_time()
         
         def get_cpts(self):
@@ -237,10 +253,11 @@ class Procedure(object):
                 return not self._syngo is None
         
         def get_number_of_pulses(self):
-                return sum([e.Number_of_Pulses for e in self.events])
-
-        def has_events(self):
-                return not len(self.events) == 0
+                """Return the total number of pulses (aka frames)
+                of radiation used in the procedure. (Includes
+                non-fluoro events
+                """
+                return sum([e.Number_of_Pulses for e in self.get_events()])
 
         def get_event_groups(self, separation):
                 """Gets a list of events grouped by their timing.
@@ -256,7 +273,7 @@ class Procedure(object):
                 """
                 out = []
                 group = []
-                for e in self.events:
+                for e in self.get_events():
                         if len(group) == 0:
                                 group.append(e)
                         elif my_utils.total_seconds(e.DateTime_Started - group[-1].get_end_time())<= separation:
@@ -266,7 +283,15 @@ class Procedure(object):
                                 group = [e]
                 out.append(tuple(group))
                 return out
-                                
+
+        def is_pure(self):
+                """Test if procedure has all data and seems real
+
+                Use this for when you just want a program to run and you
+                don't much care about catching odd looking procedures
+                """
+                out = self.has_syngo() and self.is_real() and len(self.get_events()) >0
+                return out
 
 def add_syngo_to_procedures(procs, syngo_procs):
         """Matches procedure information from DICOM-SR (procs)
