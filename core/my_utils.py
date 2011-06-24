@@ -145,5 +145,11 @@ def coerce_human_date(d, datemode = None):
         return date(year = date_tuple[0],
                              month=date_tuple[1],
                              day=date_tuple[2])
-        
-        
+
+_ARB_DATE = date(2000,1,1) # an arbitrary date
+def subtract_times(t1, t2):
+        """returns a datetime.timedelta object representing t1-t2
+        """
+        t1 = datetime.combine(_ARB_DATE, t1)
+        t2 = datetime.combine(_ARB_DATE, t2)
+        return t1-t2
