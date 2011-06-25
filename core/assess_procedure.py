@@ -79,10 +79,10 @@ class Physician_FPS(Inquiry):
                     count_table[period][a] = 0
                     average_table[period][a] = ''
         out = [[''] + attending_list + [''] + attending_list] #heading of table
-        print out
         for r in range(len(average_table)):
             row = [r] + average_table[r] + [''] + count_table[r]
             out.append(row)
+        out = my_utils.transposed(out)
         return out
 
     def get_figure(self):
