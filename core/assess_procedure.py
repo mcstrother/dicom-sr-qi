@@ -32,6 +32,11 @@ class Inquiry(object):
         """
         raise NotImplementedError()
 
+    def get_name(self):
+        """ Return a name as a unicode object
+        """
+        raise NotImplementedError()
+
 import numpy as np
 import matplotlib.pyplot as plt
 class Physician_FPS(Inquiry):
@@ -68,14 +73,15 @@ class Physician_FPS(Inquiry):
                     events = self.lookup[attending][period]
                     count = len(events)
                     average = my_utils.average_fps(events)
-                    count_table[period][attending] = count
-                    average_table[period][attending] = average
+                    count_table[period][a] = count
+                    average_table[period][a] = average
                 else:
-                    count_table[period][attending] = 0
-                    average_table[period][attending] = ''
-        out = [''] + attending_list + [''] + attending_list #heading of table
+                    count_table[period][a] = 0
+                    average_table[period][a] = ''
+        out = [[''] + attending_list + [''] + attending_list] #heading of table
+        print out
         for r in range(len(average_table)):
-            row = average_table[r] + [''] + count_table[r]
+            row = [r] + average_table[r] + [''] + count_table[r]
             out.append(row)
         return out
 
@@ -97,14 +103,27 @@ class Physician_FPS(Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
-        plt.show()
+        return fig
 
+    def get_name(self):
+        return u'Physician FPS'
+
+import jinja2
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('bjh')
+    procs = my_utils.get_procs('slch')
     procs = [p for p in procs if p.is_pure()]
     inq = Physician_FPS(procs)
     inq.get_figure()
+    #env = jinja2.Environment(autoescape=lambda x: True,
+    #    loader=jinja2.PackageLoader('core','templates'))
+    #template = env.get_template('report.html')
+    with open('./templates/report.html','r') as f:
+        temp_string = f.read()
+    template = jinja2.Template(temp_string)
+    with open('output.html','w') as out_f:
+        out_f.write(template.render(inquiries = [inq]))
+    
             
         
 
