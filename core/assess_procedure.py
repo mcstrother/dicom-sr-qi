@@ -26,7 +26,7 @@ class Inquiry(object):
         """
         raise NotImplementedError()
 
-    def get_figure(self):
+    def get_figure_location(self):
         """Return a matplotlib figure
 
         """
@@ -39,6 +39,7 @@ class Inquiry(object):
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 class Physician_FPS(Inquiry):
 
     def run(self, procs, context):
@@ -85,7 +86,7 @@ class Physician_FPS(Inquiry):
         out = my_utils.transposed(out)
         return out
 
-    def get_figure(self):
+    def get_figure_location(self):
         num_attendings = len(self.lookup.keys())
         fig = plt.figure(1)
         for a, attending in enumerate(sorted(self.lookup.keys())):
@@ -103,7 +104,9 @@ class Physician_FPS(Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
-        return fig
+        path = os.path.abspath('./physician_fps.png')
+        plt.savefig(path)
+        return path
 
     def get_name(self):
         return u'Physician FPS'
@@ -111,10 +114,10 @@ class Physician_FPS(Inquiry):
 import jinja2
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('slch')
+    procs = my_utils.get_procs('bjh')
     procs = [p for p in procs if p.is_pure()]
     inq = Physician_FPS(procs)
-    inq.get_figure()
+    #inq.get_figure_location()
     #env = jinja2.Environment(autoescape=lambda x: True,
     #    loader=jinja2.PackageLoader('core','templates'))
     #template = env.get_template('report.html')
