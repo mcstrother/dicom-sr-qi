@@ -1,0 +1,15 @@
+{% for inquiry in inquiries %}
+<h1> {{ inquiry.get_name() }}</h1>
+<h2> Figure </h2>
+<img src="{{ inquiry.get_figure_location() }}">
+<h2> Table </h2>
+<table border="2">
+{% for row in inquiry.get_table() %}
+<tr>
+{% for value in row %}
+<td>{{ value }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
