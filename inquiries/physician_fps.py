@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-class Physician_FPS(Inquiry):
+
+import mirqi.core.assess_procedure
+
+class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
 
     DAYS_PER_PERIOD = 14
     #TODO implement parameters for start and end day
@@ -77,21 +80,13 @@ class Physician_FPS(Inquiry):
 
 
 
-import jinja2
+from mirqi.gui import report_writer
+from mirqi.core import my_utils
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('bjh')
-    procs = [p for p in procs if p.is_pure()]
+    procs = [p for p in my_utils.get_procs('slch') if p.is_pure()]
     inq = Physician_FPS(procs)
-    #inq.get_figure_location()
-    #env = jinja2.Environment(autoescape=lambda x: True,
-    #    loader=jinja2.PackageLoader('core','templates'))
-    #template = env.get_template('report.html')
-    with open('./templates/report.html','r') as f:
-        temp_string = f.read()
-    template = jinja2.Template(temp_string)
-    with open('output.html','w') as out_f:
-        out_f.write(template.render(inquiries = [inq]))
-    
-            
-        
+    report_writer.write_report([inq])
+
+
+
