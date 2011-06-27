@@ -38,8 +38,11 @@ class Inquiry(object):
 
     def get_name(self):
         """ Return a name as a unicode object
+
+        Defaults to self.__class__.__name__ if not
+        overridden
         """
-        raise NotImplementedError()
+        return self.__class__.__name__
 
     def get_figure_path(self):
         """Save a figure and return its
