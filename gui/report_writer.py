@@ -2,6 +2,7 @@ import os.path as path
 import jinja2
 import mirqi
 
+
 def _get_report_template():
     TEMPLATE_FOLDER = path.join(mirqi.gui.__path__[0], 'templates')
     TEMPLATE_NAME = 'report.html'
@@ -12,7 +13,7 @@ def _get_report_template():
 
 
 def write_report(inqs):
-    OUTPUT_FOLDER = mirqi.__path__[0]
+    OUTPUT_FOLDER = mirqi.core.my_utils.get_output_directory()
     OUTPUT_NAME = 'output.html'
     output_path = path.join(OUTPUT_FOLDER, OUTPUT_NAME)
     template = _get_report_template()
