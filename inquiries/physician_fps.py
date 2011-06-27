@@ -53,7 +53,7 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
         out = my_utils.transposed(out)
         return out
 
-    def get_figure_location(self):
+    def get_figure(self):
         num_attendings = len(self.lookup.keys())
         fig = plt.figure(1)
         for a, attending in enumerate(sorted(self.lookup.keys())):
@@ -71,9 +71,7 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
-        path = os.path.abspath('./physician_fps.png')
-        plt.savefig(path)
-        return path
+        return fig
 
     def get_name(self):
         return u'Physician FPS'
@@ -84,7 +82,7 @@ from mirqi.gui import report_writer
 from mirqi.core import my_utils
 
 if __name__ == '__main__':
-    procs = [p for p in my_utils.get_procs('slch') if p.is_pure()]
+    procs = [p for p in my_utils.get_procs('test') if p.is_pure()]
     inq = Physician_FPS(procs)
     report_writer.write_report([inq])
 

@@ -1,5 +1,5 @@
-import my_utils
-
+import mirqi.core.my_utils as my_utils
+import os
 
 class Report(object):
     def __init__(self, inquiries):
@@ -29,6 +29,10 @@ class Inquiry(object):
     def get_figure(self):
         """Return a matplotlib figure
 
+        This should only be called by self.get_figure_path, so
+        if you would like to use some plotting library
+        other than matplotlib, do not override this method.
+        Just override get_figure_path
         """
         raise NotImplementedError()
 
@@ -36,6 +40,21 @@ class Inquiry(object):
         """ Return a name as a unicode object
         """
         raise NotImplementedError()
+
+    def get_figure_path(self):
+        """Save a figure and return its
+        location
+
+        Only override this method if you would like
+        to use some plotting library other than matplotlib
+        """
+        fig = self.get_figure()
+        fig_name = unicode(self.__class__.__name__ + '.png')
+        fig_path = os.path.join(my_utils.get_output_directory(), fig_name)
+        fig.savefig(fig_path)
+        return fig_path
+            
+        
 
 
 

@@ -1,10 +1,17 @@
 from datetime import datetime, date, timedelta
 import csv
-import ReadXML
+import mirqi
+import mirqi.core.ReadXML as ReadXML
 import os
 
-_dir = os.path.dirname(os.path.abspath(__file__))
-_dir = os.path.dirname(_dir) #goes up one directory
+
+def get_output_directory():
+        return os.path.join(os.path.abspath(mirqi.__path__[0]), 'output')
+
+def get_data_directory():
+        return os.path.join(os.path.abspath(mirqi.__path__[0]),'Data')
+
+_dir = os.path.abspath(mirqi.__path__[0])
 
 BJH_SYNGO_FILES = [os.path.join(_dir,'Data/BJH/April_Output_Org.xls'), os.path.join(_dir,'Data/BJH/May_Output_Org.xls')]
 BJH_XML_FILE = os.path.join(_dir,'Data/BJH/all bjh.xml')
@@ -153,3 +160,5 @@ def subtract_times(t1, t2):
         t1 = datetime.combine(_ARB_DATE, t1)
         t2 = datetime.combine(_ARB_DATE, t2)
         return t1-t2
+
+
