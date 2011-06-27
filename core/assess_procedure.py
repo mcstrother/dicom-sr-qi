@@ -42,6 +42,9 @@ import matplotlib.pyplot as plt
 import os
 class Physician_FPS(Inquiry):
 
+    DAYS_PER_PERIOD = 14
+    #TODO implement parameters for start and end day
+    
     def run(self, procs, context):
         DAYS_PER_PERIOD = 14
         procs = [p for p in procs if p.is_valid() and p.is_real() and p.has_syngo()]
