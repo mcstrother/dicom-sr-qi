@@ -1,5 +1,6 @@
 {% for inquiry in inquiries %}
 <h1> {{ inquiry.get_name() }}</h1>
+<pre>{{ inquiry.get_text() }} </pre>
 <h2> Figure </h2>
 <img src="{{ inquiry.get_figure_path() }}">
 <h2> Table </h2>
