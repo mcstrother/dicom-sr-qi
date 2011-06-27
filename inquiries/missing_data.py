@@ -1,6 +1,5 @@
-import assess_procedure
+from mirqi.core import assess_procedure, my_utils
 import datetime
-import my_utils
 import matplotlib.pyplot as plt
 
 class Missing_Data(assess_procedure.Inquiry):
@@ -33,15 +32,30 @@ class Missing_Data(assess_procedure.Inquiry):
 
 
     def get_table(self):
-        return [ ["Period Start Date"] + self.starts, ["Procedure Count"] +self.counts]
+        return my_utils.transposed([ ["Period Start Date"] + self.starts, ["Procedure Count"] +self.counts])
 
 
     def get_figure(self):
         fig = plt.figure(1)
-        plt.plot(self.starts, self.counts)
+        colors = []
+        for day in self.starts:
+            if day.weekday() == 5 or day.weekday() == 6:
+                colors.append('r')
+            else:
+                colors.append('b')
+        plt.scatter(self.starts,self.counts,c=colors)
+        fig.autofmt_xdate()
         return fig
     
             
                 
+from mirqi.gui import report_writer
+from mirqi.core import my_utils
+
+if __name__ == '__main__':
+    procs = my_utils.get_procs('bjh')
+    inq = Missing_Data(procs)
+    report_writer.write_report([inq])
+
 
     
