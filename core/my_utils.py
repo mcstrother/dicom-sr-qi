@@ -63,7 +63,9 @@ def average_fps(events):
         if len(events) == 0:
                 raise ValueError("Cannot take average of empyt list")
         total_fluoro_time = sum([e.get_duration() for e in events],timedelta(0) )
-        return total_seconds(sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0)))/total_seconds(total_fluoro_time)
+        total_fluoro_seconds = total_seconds(total_fluoro_time)
+        mean_numerator = sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0))
+        return total_seconds(mean_numerator)/total_fluoro_seconds
 
 
 def is_subset(list1, list2):
