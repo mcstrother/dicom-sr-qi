@@ -10,7 +10,7 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
     DAYS_PER_PERIOD = 7
 
     def run(self, procs, context):
-        events = [p.get_events() for p in procs]
+        events = [p.get_fluoro_events() for p in procs]
         events = sum(events, []) #flatten from list of lists into single list of events
         first_time = min(events, key = lambda e: e.DateTime_Started).DateTime_Started
         last_time = max(events, key = lambda e: e.DateTime_Started).get_end_time()
@@ -26,9 +26,12 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
                 if current in events_by_date:
                     es = es + events_by_date[current]
                 current = current + datetime.timedelta(days=1)
-            counts.append(len(es))
-            averages.append(my_utils.average_fps(es))
             start_dates.append(current)
+            counts.append(len(es))
+            if len(es) > 0:
+                averages.append(my_utils.average_fps(es))
+            else:
+                averages.append(averages[-1])
         start_dates = start_dates[:-1]
         self.start_dates = start_dates
         self.averages = averages

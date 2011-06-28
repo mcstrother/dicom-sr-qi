@@ -1,4 +1,21 @@
 import wx
+from mirqi.core import my_utils
+
+class Inquiry_Panel(wx.CollapsiblePane):
+    def __init__(self, *args, **kwargs):
+        inquiry = kwargs['inquiry']
+        del kwargs['inquiry']
+        wx.CollapsiblePane.__init__(*args, **kwargs)
+        
+
+class Inquiry_Selection_Panel(wx.Panel):
+    def __init__(self, *args, **kwargs):
+        wx.Panel.__init__(self, *args, **kwargs)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        for inq in my_utils.get_inquiries(): # left off programming get_inquiries
+            sizer.Add(Inquiry_Panel(self),1,wx.ALIGN_LEFT)
+        self.SetSizer(sizer)
+        
 
 class Data_Panel(wx.Panel):
 
@@ -19,6 +36,7 @@ class Main_Frame(wx.Frame):
         wx.Frame.__init__(self, *args, **kwargs)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(Data_Panel(self, style=wx.RAISED_BORDER),1,wx.ALIGN_CENTER)
+        sizer.Add(Inquiry_Selection_Panel(self, style=wx.RAISED_BORDER),2,wx.ALIGN_CENTER)
         self.SetSizer(sizer)
 
 
