@@ -11,7 +11,7 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
     #TODO implement parameters for start and end day
     
     def run(self, procs, context):
-        DAYS_PER_PERIOD = 14
+        DAYS_PER_PERIOD = self.DAYS_PER_PERIOD
         procs = [p for p in procs if p.is_pure()]
         procs_by_attending = my_utils.organize(procs, lambda x: x.get_syngo().rad1.replace(',',''))
 
@@ -31,21 +31,6 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
             out[attending] = events_by_period            
 
         self.lookup = out #lookup[attending][period_number] --> [events]
-
-    def _get_combined(self):
-        """Get average and counts for each period
-        combined across physicians
-        """
-        events_by_period = []
-        for period in range(self.num_periods):
-            events = []
-            for attending in self.lookup.keys():
-                if period in self.lookup[attending]:
-                    events = events + self.lookup[attending][period]
-            events_by_period.append(events)
-        counts_by_period = [len(events) for events in events_by_period]
-        averages_by_period = [my_utils.average_fps(events) for events in events_by_period]
-        return counts_by_period, averages_by_period
 
     def _get_individual_table(self):
         attending_list = sorted(self.lookup.keys())
@@ -71,26 +56,8 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
         return out
 
     def get_table(self):
-        #return self._get_individual_table()
-        return self._get_combined_table()
+        return self._get_individual_table()
 
-    def _get_combined_table(self):
-        counts, averages = self._get_combined()
-        heading = [[''] + range(len(counts))]
-        row1 = [['Averages'] + averages]
-        row2 = [['Counts'] + counts]
-        return heading+row1+row2
-
-    def _get_combined_figure(self):
-        counts, averages = self._get_combined()
-        fig = plt.figure(1)
-        plt.scatter(range(len(averages)), averages, s= counts)
-        plt.plot(range(len(averages)), averages, color='red')
-        plt.xlabel('Period Number')
-        plt.ylabel('Average FPS')
-        plt.title("Average FPS Across All Events")
-        plt.axis([0,self.num_periods-1,5,15])
-        return fig
 
     def _get_individual_figure(self):
         num_attendings = len(self.lookup.keys())
@@ -114,8 +81,8 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
         return fig
 
     def get_figure(self):
-        #return self._get_individual_figure()
-        return self._get_combined_figure()
+        return self._get_individual_figure()
+
 
     def get_name(self):
         return u'Physician FPS'
