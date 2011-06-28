@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 import csv
 import mirqi
-import mirqi.core.ReadXML as ReadXML
+import ReadXML
 import os
 
 
@@ -60,6 +60,8 @@ def get_procs(group = 'all'):
 
 def average_fps(events):
         """Gets the average FPS weighted by event duration"""
+        if len(events) == 0:
+                raise ValueError("Cannot take average of empyt list")
         total_fluoro_time = sum([e.get_duration() for e in events],timedelta(0) )
         return total_seconds(sum([multiply_timedelta(e.get_duration(),e.Pulse_Rate) for e in events], timedelta(0)))/total_seconds(total_fluoro_time)
 
@@ -161,4 +163,13 @@ def subtract_times(t1, t2):
         t2 = datetime.combine(_ARB_DATE, t2)
         return t1-t2
 
-
+import pkgutil
+import mirqi.inquiries
+def get_inquiries():
+        """Get a list of inquiry classes
+        """
+        pkgpath = os.path.dirname(mirqi.inquiries.__file__)
+        inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
+        print inq_module_names
+        inquiry_modules = [__import__('mirqi.inquiries.'+n, globals(), locals(), [],-1) for n in inq_module_names]
+        #left off here

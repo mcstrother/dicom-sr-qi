@@ -167,11 +167,14 @@ class Procedure(object):
                 if not hasattr(self, '_valid_events_cache'):
                         self._valid_events_cache = [e for e in self._events if e.is_valid()]
                 return self._valid_events_cache
-                
+
+        def get_fluoro_events(self, valid = True):
+                """Convenience method.
+                """
+                events = self.get_events(valid)
+                return [e for e in events if e.Irradiation_Event_Type =="Fluoroscopy"]
         
-        def valid_events(self):
-                """DEPRECATED"""
-                return [e for e in self._events if e.is_valid()]
+
                 
         def get_duration(self):
                 """Returns a python datetime.timedelta of
