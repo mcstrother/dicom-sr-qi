@@ -167,7 +167,7 @@ def subtract_times(t1, t2):
 
 import pkgutil
 import mirqi.inquiries
-def get_inquiries():
+def get_inquiry_classes():
         """Get a list of inquiry classes
         """
         pkgpath = os.path.dirname(mirqi.inquiries.__file__)

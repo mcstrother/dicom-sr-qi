@@ -6,7 +6,7 @@ from mirqi.core import my_utils
 import datetime
 
 class Average_FPS(mirqi.core.assess_procedure.Inquiry):
-
+    NAME = u'Average FPS'
     DAYS_PER_PERIOD = 7
 
     def run(self, procs, context):
@@ -59,9 +59,6 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
         plt.title("Average FPS Across All Events")
         plt.axis([0,len(self.counts)-1,5,15])
         return fig
-
-    def get_name(self):
-        return u'Average FPS'
 
     def get_text(self):
         out = "First event starts at " + str(self.first_time) + "\n"
