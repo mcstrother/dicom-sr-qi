@@ -1,5 +1,5 @@
 import unittest
-import my_utils
+from mirqi.core import my_utils
 
 class TestReadXML(unittest.TestCase):
 
@@ -7,12 +7,12 @@ class TestReadXML(unittest.TestCase):
         self.procs = my_utils.get_procs('test')
 
     def test_attrs(self):
-        self.assertEqual(self.procs[1].events[0].Number_of_Pulses,31)
+        self.assertEqual(self.procs[1].get_events()[0].Number_of_Pulses,31)
 
     def test_get_event_groups(self):
         proc = self.procs[1]
         event_groups = proc.get_event_groups(5)
-        self.assertEqual(len(proc.events), sum([len(x) for x in event_groups]),\
+        self.assertEqual(len(proc.get_events()), sum([len(x) for x in event_groups]),\
                          "proc.get_event_groups changes total number of events")
         expected_uids = [[u'0050'], [u'0051'], [u'0052', u'0053', u'0054'],\
                          [u'0055'], [u'0057'], [u'0058'], [u'0059', u'0060'],\
