@@ -172,6 +172,8 @@ def get_inquiries():
         """
         pkgpath = os.path.dirname(mirqi.inquiries.__file__)
         inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
-        print inq_module_names
-        inquiry_modules = [__import__('mirqi.inquiries.'+n, globals(), locals(), [],-1) for n in inq_module_names]
-        #left off here
+        temp = __import__('mirqi.inquiries', globals(), locals(), inq_module_names,-1)
+        inq_modules = [getattr(temp, name) for name in inq_module_names]
+        inq_classes = [getattr(module,dir(module)[0]) for module in inq_modules]
+        assert inq_module_names == [inq_class.__name__.lower() for inq_class in inq_classes]
+        return inq_classes
