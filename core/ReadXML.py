@@ -85,9 +85,11 @@ class Event(object):
                 return True
         
         def _get_number_of_pulses(self):
-                """Compute the number of pulses as Exposure_Time/Pulse_Width.
+                """Return our best guess at the number of pulses in the event.
                 Used because the DICOM-SR reports as of time of writing max out
-                the reported number of pulses at 512.
+                the reported number of pulses at 512, so we compute the number of
+                pulses as Exposure_Time/Pulse_Width, compare that against what
+                is in the sheet, and return whichever seems most accurate.
                 
                 Used to correct self.Number_of_Pulses on initialization
                 and usually not afterwards.
@@ -95,7 +97,10 @@ class Event(object):
                 if not self.Exposure_Time_units == self.Pulse_Width_units:
                         raise NotImplementedError("Expected Exposure Time and Pulse Width unites to be the same. Need to implement unit converstion.")
                 num_pulses = self.Exposure_Time / self.Pulse_Width
-                return int(round(num_pulses))
+                if abs(num_pulses - self.Number_of_Pulses) > 1:
+                        return int(round(num_pulses))
+                else:
+                        return self.Number_of_Pulses
         
         def is_valid(self):
                 """Does several sanity checks on the event. Returns
