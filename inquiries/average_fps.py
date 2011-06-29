@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import mirqi.core.assess_procedure
+import mirqi.core.Inquiry
 from mirqi.core import my_utils
 import datetime
 
-class Average_FPS(mirqi.core.assess_procedure.Inquiry):
+class Average_FPS(mirqi.core.Inquiry.Inquiry):
     NAME = u'Average FPS'
     DAYS_PER_PERIOD = 7
 

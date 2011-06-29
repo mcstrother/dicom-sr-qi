@@ -1,8 +1,8 @@
-from mirqi.core import assess_procedure, my_utils
+from mirqi.core import Inquiry, my_utils
 import datetime
 import matplotlib.pyplot as plt
 
-class Missing_Data(assess_procedure.Inquiry):
+class Missing_Data(Inquiry.Inquiry):
     """An inquiry to look for days of missing data
     by simply plotting the number of procedures per day
     over time
