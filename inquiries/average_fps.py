@@ -10,7 +10,7 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
     DAYS_PER_PERIOD = 7
 
     def run(self, procs, context):
-        events = [p.get_fluoro_events() for p in procs]
+        events = [p.get_fluoro_events() for p in procs] 
         events = sum(events, []) #flatten from list of lists into single list of events
         first_time = min(events, key = lambda e: e.DateTime_Started).DateTime_Started
         last_time = max(events, key = lambda e: e.DateTime_Started).get_end_time()
@@ -18,6 +18,7 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
         current = first_time.date()
         averages =[]
         counts = []
+        frame_counts = []
         start_dates = [current]
         while current <= last_time.date():
             es = []
@@ -28,6 +29,7 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
                 current = current + datetime.timedelta(days=1)
             start_dates.append(current)
             counts.append(len(es))
+            frame_counts.append(sum([e.Number_of_Pulses for e in es]))
             if len(es) > 0:
                 averages.append(my_utils.average_fps(es))
             else:
@@ -36,6 +38,7 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
         self.start_dates = start_dates
         self.averages = averages
         self.counts = counts
+        self.frame_counts =frame_counts
         self.first_time = first_time
         self.last_time = last_time
 
@@ -43,8 +46,9 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
         heading = [['Period Number'] + range(len(self.counts))]
         row = [['Period Start Date'] + self.start_dates]
         row1 = [['Averages'] + self.averages]
-        row2 = [['Event Counts'] + self.counts]
-        return my_utils.transposed(heading + row+ row1 + row2)
+        row2 = [['Fluoro Event Counts'] + self.counts]
+        row3 = [['Fluoro Frame Counts'] + self.frame_counts]
+        return my_utils.transposed(heading + row +  row3 +  row2 + row1)
 
     def get_figure(self):
         fig = plt.figure(1)
@@ -68,6 +72,6 @@ class Average_FPS(mirqi.core.assess_procedure.Inquiry):
 from mirqi.gui import report_writer
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('bjh')
+    procs = my_utils.get_procs('slch')
     inq = Average_FPS(procs)
     report_writer.write_report([inq])
