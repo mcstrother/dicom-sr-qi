@@ -6,7 +6,7 @@ import mirqi.core.assess_procedure
 from mirqi.core import my_utils
 
 class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
-
+    NAME = u'Physician FPS'
     DAYS_PER_PERIOD = 7
     #TODO implement parameters for start and end day
     
@@ -83,9 +83,6 @@ class Physician_FPS(mirqi.core.assess_procedure.Inquiry):
     def get_figure(self):
         return self._get_individual_figure()
 
-
-    def get_name(self):
-        return u'Physician FPS'
 
     def get_text(self):
         out = "First event at " + str(self.first_time) + "\n"

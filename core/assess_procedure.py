@@ -5,10 +5,28 @@ class Report(object):
     def __init__(self, inquiries):
         self.inqs = inquiries
 
+class Inquiry_Parameter(object):
+    def __init__(self, default_value, label, description = ''):
+        
 
 class Inquiry(object):
     def __init__(self, procs, context = None):
+        """Initializer
+
+        Should not be overridden in sublcasses
+        """
         self.run(procs, context)
+
+    @classmethod
+    def get_parameters(cls):
+        parameters = []
+        for attr_name in dir(cls):
+            if not attr_name[0] == '_'\
+               and not hasattr(getattr(cls, attr_name), '__call__')\
+               and not attr_name == "NAME":
+                parameters.append(getattr(cls, attr_name))
+        return parameters
+        
 
     def run(self, procs, context):
         """Do all the necessary work with the data
@@ -36,13 +54,17 @@ class Inquiry(object):
         """
         raise NotImplementedError()
 
-    def get_name(self):
-        """ Return a name as a unicode object
-
-        Defaults to self.__class__.__name__ if not
-        overridden
+    @classmethod
+    def get_name(cls):
+        """ Return cls.NAME if set, or a default otherwise.
+        
+        Defaults to cls.__name__ if there is no
+        class attribute NAME specified in the subclass
         """
-        return self.__class__.__name__
+        if hasattr(Inquiry, 'NAME'):
+            return unicode(cls.NAME)
+        else:
+            return unicode(cls.__name__)
 
     def get_figure_path(self):
         """Save a figure and return its
