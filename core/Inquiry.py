@@ -7,7 +7,9 @@ class Report(object):
 
 class Inquiry_Parameter(object):
     def __init__(self, default_value, label, description = ''):
-        
+        self.value = default_value
+        self.label = label
+        self.description = descrption
 
 class Inquiry(object):
     def __init__(self, procs, context = None):
