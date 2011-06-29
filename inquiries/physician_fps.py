@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-import mirqi.core.Inquiry
+from mirqi.core import inquiry
 from mirqi.core import my_utils
 
-class Physician_FPS(mirqi.core.Inquiry.Inquiry):
+class Physician_FPS(inquiry.Inquiry):
     NAME = u'Physician FPS'
     DAYS_PER_PERIOD = 7
     #TODO implement parameters for start and end day
