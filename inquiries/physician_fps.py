@@ -7,7 +7,7 @@ from mirqi.core import my_utils
 
 class Physician_FPS(inquiry.Inquiry):
     NAME = u'Physician FPS'
-    DAYS_PER_PERIOD = 7
+    DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
     #TODO implement parameters for start and end day
     
     def run(self, procs, context):
