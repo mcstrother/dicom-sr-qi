@@ -7,7 +7,7 @@ import datetime
 
 class Average_FPS(inquiry.Inquiry):
     NAME = u'Average FPS'
-    DAYS_PER_PERIOD = 7
+    DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
 
     def run(self, procs, context):
         events = [p.get_fluoro_events() for p in procs] 
@@ -22,7 +22,7 @@ class Average_FPS(inquiry.Inquiry):
         start_dates = [current]
         while current <= last_time.date():
             es = []
-            period_end = current + datetime.timedelta(days=self.DAYS_PER_PERIOD)
+            period_end = current + datetime.timedelta(days=self.DAYS_PER_PERIOD.value)
             while current < period_end:
                 if current in events_by_date:
                     es = es + events_by_date[current]
@@ -69,6 +69,6 @@ class Average_FPS(inquiry.Inquiry):
 from mirqi.gui import report_writer
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('slch')
+    procs = my_utils.get_procs('test')
     inq = Average_FPS(procs)
     report_writer.write_report([inq])

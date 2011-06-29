@@ -9,7 +9,7 @@ class Inquiry_Parameter(object):
     def __init__(self, default_value, label, description = ''):
         self.value = default_value
         self.label = label
-        self.description = descrption
+        self.description = description
 
 class Inquiry(object):
     def __init__(self, procs, context = None):
