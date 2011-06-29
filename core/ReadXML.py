@@ -328,15 +328,23 @@ def add_syngo_to_procedures(procs, syngo_procs):
         
                 
 import Parse_Syngo
+
+def process_files(xml_file_names, cpt_file_names):
+        """Given lists of SR and xpt file names, return procedure objects
+        """
+        procs = []
+        for xfn in xml_file_names:
+                xmldoc = minidom.parse(xfn)
+                procs = procs + [Procedure(dose_info_element) for dose_info_element in xmldoc.getElementsByTagName('DoseInfo')]
+        syngo_procs = Parse_Syngo.parse_syngo_files(cpt_file_names)
+        add_syngo_to_procedures(procs, syngo_procs)
+        return [proc for proc in procs if proc.is_real()] 
                 
 def process_file(xml_file_name, cpt_file_names):
         """Use xml file to generate Procedure and Event objects.
-        
+        DEPRECATED
         """
-        xmldoc = minidom.parse(xml_file_name)
-        procedures = [Procedure(dose_info_element) for dose_info_element in xmldoc.getElementsByTagName('DoseInfo')]
-        syngo_procs = Parse_Syngo.parse_syngo_files(cpt_file_names)
-        add_syngo_to_procedures(procedures, syngo_procs)
-        return [proc for proc in procedures if proc.is_real()] 
+        return process_files([xml_file_name], cpt_file_names) 
                 
-        
+
+
