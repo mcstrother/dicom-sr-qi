@@ -2,7 +2,7 @@ from mirqi.core import inquiry, my_utils
 import datetime
 import matplotlib.pyplot as plt
 
-class Missing_Data(inquiry.Inquiry):
+class Missing_Data_Inquiry(inquiry.Inquiry):
     """An inquiry to look for days of missing data
     by simply plotting the number of procedures per day
     over time
@@ -36,7 +36,7 @@ class Missing_Data(inquiry.Inquiry):
 
 
     def get_figure(self):
-        fig = plt.figure(1)
+        fig = plt.figure()
         colors = []
         for day in self.starts:
             if day.weekday() == 5 or day.weekday() == 6:
@@ -53,8 +53,8 @@ from mirqi.gui import report_writer
 from mirqi.core import my_utils
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('bjh')
-    inq = Missing_Data(procs)
+    procs = my_utils.get_procs('test')
+    inq = Missing_Data_Inquiry(procs)
     report_writer.write_report([inq])
 
 
