@@ -1,8 +1,16 @@
 {% for inquiry in inquiries %}
+{# Cache all the variables to be used so we don't have to 
+make calls more than once to do if statments #}
+{% set text = inquiry.get_text() %}
+{% set figure_path = inquiry.get_figure_path() %}
+{% set table = inquiry.get_table() %}
 <h1> {{ inquiry.get_name() }}</h1>
-<pre>{{ inquiry.get_text() }} </pre>
+<pre>{{ inquiry.get_text()|default('',true) }} </pre>
+{% if not figure_path is none %}
 <h2> Figure </h2>
 <img src="{{ inquiry.get_figure_path() }}">
+{% endif %}
+{% if not table is none %}
 <h2> Table </h2>
 <table border="2">
 {% for row in inquiry.get_table() %}
@@ -13,4 +21,6 @@
 </tr>
 {% endfor %}
 </table>
+{% endif %}
 {% endfor %}
+
