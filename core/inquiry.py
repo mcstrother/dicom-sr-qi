@@ -1,5 +1,6 @@
 import mirqi.core.my_utils as my_utils
 import os
+import matplotlib.pyplot as plt
 
 class Report(object):
     def __init__(self, inquiries):
@@ -50,17 +51,22 @@ class Inquiry(object):
         Ideally, this should be formatted so someone would be able
         to remake the figure almost instantly in excel
         """
-        raise NotImplementedError()
+        raise None
 
     def get_figure(self):
         """Return a matplotlib figure
 
+        Note that many Inquries are expected to use matplotlib.pyplot,
+        so when overriding this method one should be careful to avoid
+        conflicts by doing one's plots in a new figure. In other words,
+        the first line should almost always be fig = plt.figure().
+
         This should only be called by self.get_figure_path, so
         if you would like to use some plotting library
         other than matplotlib, do not override this method.
-        Just override get_figure_path
+        Just override get_figure_path.
         """
-        raise NotImplementedError()
+        raise None
 
     @classmethod
     def get_name(cls):
@@ -88,7 +94,12 @@ class Inquiry(object):
         return fig_path
             
         
+    def get_text(self):
+        """Return a text description of the inquiry results
 
+        Returns None if not overwritten
+        """
+        return None
 
 
 

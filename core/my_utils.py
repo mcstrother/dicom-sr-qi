@@ -187,5 +187,11 @@ def get_inquiry_classes():
         temp = __import__('mirqi.inquiries', globals(), locals(), inq_module_names,-1)
         inq_modules = [getattr(temp, name) for name in inq_module_names]
         inq_classes = [getattr(module,dir(module)[0]) for module in inq_modules]
-        assert inq_module_names == [inq_class.__name__.lower() for inq_class in inq_classes]
+        for module_name, class_name in zip(inq_module_names, [inq_class.__name__.lower() for inq_class in inq_classes]):
+                try:
+                        assert module_name == class_name
+                except AssertionError as ae:
+                        print module_name + " != " + class_name
+                        raise ae
+        #assert inq_module_names == [inq_class.__name__.lower() for inq_class in inq_classes]
         return inq_classes

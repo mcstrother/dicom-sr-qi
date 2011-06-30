@@ -3,6 +3,7 @@ from mirqi.core import my_utils
 from mirqi.gui import report_writer
 import datetime
 import numbers
+import traceback
 
 class Inquiry_Parameter_Panel(wx.Panel):
 
@@ -147,7 +148,11 @@ class Main_Frame(wx.Frame):
                 inq_objects.append(cls(procs))
             except Exception as e:
                 dlg = wx.MessageDialog(self.main_panel,
-                                       message = "An error occured while running " +inq_class.__name__+ "\n Error message is: \n" +str(e) ,
+                                       message = "An error occured while running "\
+                                       + inq_class.__name__\
+                                       + "\n Error message is: \n" \
+                                       + traceback.format_exc() +'\n'\
+                                       + str(e),
                                        style=wx.CANCEL|wx.ICON_EXCLAMATION)
                 dlg.ShowModal()
                 dlg.Destory()
@@ -158,7 +163,9 @@ class Main_Frame(wx.Frame):
             report_writer.write_report(inq_objects)
         except Exception as e:
             dlg = wx.MessageDialog(self.main_panel,
-                                       message = "An error occured while attempting to write the report.\n Error message is: \n" +str(e) ,
+                                       message = "An error occured while attempting to write the report."\
+                                       "\n Error message is: \n" +traceback.format_exc()\
+                                       +'\n'+ str(e),
                                        style=wx.CANCEL|wx.ICON_EXCLAMATION)
             dlg.ShowModal()
         prog_dlg.Update(5+len(inq_classes)+1, "Done")

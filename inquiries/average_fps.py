@@ -51,7 +51,7 @@ class Average_FPS(inquiry.Inquiry):
         return my_utils.transposed(heading + row +  row3 +  row2 + row1)
 
     def get_figure(self):
-        fig = plt.figure(1)
+        fig = plt.figure()
         plt.scatter(range(len(self.averages)), self.averages, s= self.counts)
         plt.plot(range(len(self.averages)), self.averages, color='red')
         plt.xlabel('Period Number')
