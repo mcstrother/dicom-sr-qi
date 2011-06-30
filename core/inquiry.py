@@ -90,7 +90,7 @@ class Inquiry(object):
         fig = self.get_figure()
         fig_name = unicode(self.__class__.__name__ + '.png')
         fig_path = os.path.join(my_utils.get_output_directory(), fig_name)
-        fig.savefig(fig_path)
+        fig.savefig(fig_path, dpi =100)
         return fig_path
             
         

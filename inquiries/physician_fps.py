@@ -32,7 +32,7 @@ class Physician_FPS(inquiry.Inquiry):
 
         self.lookup = out #lookup[attending][period_number] --> [events]
 
-    def _get_individual_table(self):
+    def get_table(self):
         attending_list = sorted(self.lookup.keys())
         dimension = (self.num_periods ,len(attending_list))
         average_table =np.zeros(dimension).tolist()
@@ -55,15 +55,11 @@ class Physician_FPS(inquiry.Inquiry):
         out = my_utils.transposed(out)
         return out
 
-    def get_table(self):
-        return self._get_individual_table()
-
-
-    def _get_individual_figure(self):
+    def get_figure(self):
         num_attendings = len(self.lookup.keys())
-        fig = plt.figure(1)
+        fig = plt.figure()
         for a, attending in enumerate(sorted(self.lookup.keys())):
-            plt.subplot(num_attendings+1, 1,a)
+            plt.subplot(num_attendings, 1,a)
             plt.axis([0,self.num_periods,5,15])
             plt.xlabel('Period Number')
             plt.ylabel('Average FPS')
@@ -77,11 +73,8 @@ class Physician_FPS(inquiry.Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
-        plt.plot(num_attendings+1, 1, num_attendings+1)
         return fig
 
-    def get_figure(self):
-        return self._get_individual_figure()
 
 
     def get_text(self):
@@ -93,7 +86,7 @@ from mirqi.gui import report_writer
 from mirqi.core import my_utils
 
 if __name__ == '__main__':
-    procs = [p for p in my_utils.get_procs('bjh') if p.is_pure()]
+    procs = [p for p in my_utils.get_procs('slch') if p.is_pure()]
     inq = Physician_FPS(procs)
     report_writer.write_report([inq])
 
