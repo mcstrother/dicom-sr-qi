@@ -1,6 +1,8 @@
 import os.path as path
 import jinja2
 import mirqi
+from mirqi.core import my_utils
+from mirqi.core import ReadXML
 
 
 def _get_report_template():
@@ -19,5 +21,61 @@ def write_report(inqs):
     template = _get_report_template()
     with open(output_path, 'w') as f:
         f.write(template.render(inquiries= inqs))
+
+
+class Report_Writer(object):
+    _default_out_dir = mirqi.core.my_utils.get_output_directory()
+    _default_out_path = path.join(_default_out_dir,
+                                 'output.html')
+    _default_template_folder = path.join(mirqi.gui.__path__[0], 'templates')
+    _default_template_path = path.join(_default_template_folder,'report.html')
+
+    def __init__(self, data_paths, inquiry_classes):
+        self.data_paths = data_paths
+        self.procs = my_utils.get_procs_from_files(data_paths)
+        self.inqs = [cls(self.procs) for cls in inquiry_classes]
+
+    def _update_data(self, data_paths):
+        """Make self.procs reflect the data in data_paths
+
+        If data_paths is None or if data_paths is the same as
+        self.data_paths then no update is needed so nothing is done.
+
+        returns True if an update was actually needed
+        """
+        if data_paths and not my_utils.same_contents(self.data_paths, data_paths):
+            self.data_paths = data_paths
+            self.procs = my_utils.get_procs_from_files(data_paths)
+            return True
+        else:
+            return False
+        
+    def _update_inquiry_objects(self, inquiry_classes, data_changed):
+        """Rebuild self.inqs from inquiry_classes
+
+        TODO: if not data_changed, find some way to look for overlap
+        between the inquries that will be generated and the inquiries
+        that we have already generated to avoid repeating analyses
+        """
+        self.inqs = [cls(self.procs) for cls in inquiry_classes]
+
+    def update(self, data_paths = None, inquiry_classes = None):
+        data_changed = self._update_data(data_paths)
+        self._update_inquiry_objects(inquiry_classes, data_changed)
+                 
+
+    def _get_template(self, template_path):
+        with open(template_path, 'r') as f:
+            temp_string = f.read()
+        return jinja2.Template(temp_string)
+
+    def write(self, template_path = _default_template_path,
+              output_path = _default_out_path):
+        template = self._get_template(template_path)
+        with open(output_path, 'w') as f:
+            f.write(template.render(inquiries= self.inqs))
+        
+        
+
 
 
