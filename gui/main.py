@@ -130,47 +130,40 @@ class Main_Frame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.run, run_button)
         sizer.Add(run_button,0,wx.ALIGN_CENTER)
         self.main_panel.SetSizer(sizer)
+        self._report_writer = None
 
-    def run(self, event):
-        inq_classes = self.inq_selection_panel.get_inquiry_classes()
-        prog_dlg = wx.ProgressDialog(title = "Running inquiries",
-                                     message = "Processing data files",
-                                     maximum = 5+len(inq_classes)+1,
-                                     parent = self.main_panel,
-                                     style = wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME)
-        procs = my_utils.get_procs_from_files(self.data_panel.get_file_names())
-        if not prog_dlg.Update(5, "Running inquiry #1")[0]:
-            return
-        inq_objects = []
-        for n,cls in enumerate(inq_classes):
-            try:
-                inq_object = cls(procs)
-                inq_objects.append(cls(procs))
-            except Exception as e:
-                dlg = wx.MessageDialog(self.main_panel,
-                                       message = "An error occured while running "\
-                                       + inq_class.__name__\
-                                       + "\n Error message is: \n" \
-                                       + traceback.format_exc() +'\n'\
-                                       + str(e),
-                                       style=wx.CANCEL|wx.ICON_EXCLAMATION)
-                dlg.ShowModal()
-                dlg.Destory()
-            if not prog_dlg.Update(5+n, "Running inquiry #"+str(2+n)):
-                break
-        prog_dlg.Update(5+len(inq_classes), "Writing report")
-        try:
-            report_writer.write_report(inq_objects)
-        except Exception as e:
-            dlg = wx.MessageDialog(self.main_panel,
+    def show_exception(self, e):
+        dlg = wx.MessageDialog(self.main_panel,
                                        message = "An error occured while attempting to write the report."\
                                        "\n Error message is: \n" +traceback.format_exc()\
                                        +'\n'+ str(e),
                                        style=wx.CANCEL|wx.ICON_EXCLAMATION)
-            dlg.ShowModal()
-        prog_dlg.Update(5+len(inq_classes)+1, "Done")
+        dlg.ShowModal()
         
-            
+
+    def run(self, event):
+        inq_classes = self.inq_selection_panel.get_inquiry_classes()
+        prog_dlg = wx.ProgressDialog(title = "Running inquiries",
+                                     message = "Reading and processing data files",
+                                     maximum = 2,
+                                     parent = self.main_panel,
+                                     style = wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME)
+        data_paths = self.data_panel.get_file_names()
+        try:
+            if not self._report_writer:
+                self._report_writer = report_writer.Report_Writer(data_paths,inq_classes)
+            else:
+                self._report_writer.update(data_paths, inq_classes)
+        except Exception as e:
+            self.show_exception(e)
+            prog_dlg.Update(2, "Done")
+        prog_dlg.Update(1, "Writing report.")
+        try:
+            self._report_writer.write()
+        except Exception as e:
+            self.show_exception(e)
+        prog_dlg.Update(2, "Done")
+
 
 class MirqiApp(wx.App):
     def OnInit(self):
