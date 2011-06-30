@@ -57,6 +57,18 @@ def get_procs(group = 'all'):
                 raise ValueError("Invalid group")
         return procs
 
+def get_procs_from_files(paths):
+        """Return a list of procedures gleaned from a list of data files
+
+        Arguments:
+                - paths - iterable of absolute paths to data files. Files can be
+                        Syngo data (.xls) or DICOM-SR (.xml). Eventually
+                        extend to other.
+        """
+        # this will eventually be more sophisticated
+        syngo_paths = [p for p in paths if os.path.splitext(p)[1] == '.xls']
+        sr_paths = [p for p in paths if os.path.splitext(p)[1] == '.xml']
+        return ReadXML.process_files(sr_paths, syngo_paths)
 
 def average_fps(events):
         """Gets the average FPS weighted by event duration"""
