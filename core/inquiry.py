@@ -11,6 +11,9 @@ class Inquiry_Parameter(object):
         self.label = label
         self.description = description
 
+    def set_value(self, new_value):
+        self.value = new_value
+
 class Inquiry(object):
     def __init__(self, procs, context = None):
         """Initializer
@@ -21,14 +24,17 @@ class Inquiry(object):
 
     @classmethod
     def get_parameters(cls):
-        parameters = []
+        return [getattr(cls, name) for name in cls.get_parameter_names()]
+
+    @classmethod
+    def get_parameter_names(cls):
+        names = []
         for attr_name in dir(cls):
             if not attr_name[0] == '_'\
                and not hasattr(getattr(cls, attr_name), '__call__')\
                and not attr_name == "NAME":
-                parameters.append(getattr(cls, attr_name))
-        return parameters
-        
+                names.append(attr_name)
+        return names
 
     def run(self, procs, context):
         """Do all the necessary work with the data
