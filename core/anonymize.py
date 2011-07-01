@@ -154,8 +154,6 @@ def anonymize_sr(xml_path, out_path):
 import os
 import sys
 if __name__ == "__main__":
-    #in_path = os.path.abspath("C:\Users\mcstrother\Documents\Duncan Research\mirqi\Data\\anonymize\sample.xml")
-    #out_path = os.path.abspath("C:\Users\mcstrother\Documents\Duncan Research\mirqi\Data\\anonymize\sample_anon.xml")
     in_path = os.path.abspath(sys.argv[1])
     out_path = os.path.abspath(sys.argv[2])
     anonymize_sr(in_path, out_path)
