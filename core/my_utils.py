@@ -23,6 +23,9 @@ TEST_SYNGO_FILES = [os.path.join(_dir,'Data/sample_syngo.xls')]
 def care_datetime_to_python_datetime(care_date):
         care_date = str(care_date)
         return datetime(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]),int(care_date[8:10]),int(care_date[10:12]), int(care_date[12:14]))
+
+def python_datetime_to_care_datetime(py_datetime):
+        return py_datetime.strftime("%Y%m%d%H%M%S")
         
 def care_date_to_python_date(care_date):
         care_date = str(care_date)
