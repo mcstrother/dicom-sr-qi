@@ -27,6 +27,9 @@ def care_datetime_to_python_datetime(care_date):
 def care_date_to_python_date(care_date):
         care_date = str(care_date)
         return date(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]))
+
+def python_date_to_care_date(python_date):
+        return python_date.strftime("%Y%m%d")
         
 def write_csv(table, file_name = 'output.csv'):
         writer = csv.writer(open(file_name,'wb'))
@@ -175,6 +178,16 @@ def subtract_times(t1, t2):
         t1 = datetime.combine(_ARB_DATE, t1)
         t2 = datetime.combine(_ARB_DATE, t2)
         return t1-t2
+
+def add_to_time(t1, td):
+        """Add a timedelta to a time.
+
+        Supports negative timedeltas and crossing midnight.
+        For example add_to_time(time(hours=1), timedelta(hours=-3))
+        returns time(hours=22)
+        """
+        t1 = datetime.combine(_ARB_DATE, t1)
+        return (t1 + td).time()
 
 import pkgutil
 import mirqi.inquiries
