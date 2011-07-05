@@ -16,7 +16,7 @@ class Room_Usage(inquiry.Inquiry):
         for block in range(first_block, last_block+1):
             table[weekday][block] = table[weekday][block] +1
         
-    def run(self, procs, context):
+    def run(self, procs, context, extra_procs):
         num_blocks = 24*60*60 / self.resolution.value # if day isn't evenly divisible, last block will be slightly longer
         table = []
         for i in range(7):

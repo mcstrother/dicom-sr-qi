@@ -16,12 +16,12 @@ class Inquiry_Parameter(object):
         self.value = new_value
 
 class Inquiry(object):
-    def __init__(self, procs, context = None):
+    def __init__(self, sr_procs, context = None, extra_procs = None):
         """Initializer
 
         Should not be overridden in sublcasses
         """
-        self.run(procs, context)
+        self.run(sr_procs, context, extra_procs)
 
     @classmethod
     def get_parameters(cls):
@@ -37,11 +37,22 @@ class Inquiry(object):
                 names.append(attr_name)
         return names
 
-    def run(self, procs, context):
+    def run(self, sr_procs, context, extra_procs):
         """Do all the necessary work with the data
         and save the stuff you need for the other methods
+
+        Parameters:
+            sr_procs - a list of ReadXML.Procedure objects representing sr
+                reports for single procedures.
+            context - a Context object. doesn't currently do anything, but
+                is a placeholder for when we will need to pass context
+                information from a broader database without giving it all the
+                data from all the individual procedures in the national database
+            extra_procs - a list of other types of objects (e.g.
+                Syngo_Procedures) representing procedures that could not be
+                associated with any of the sr procedures.
         """
-        raise NotImplementedError()
+        raise NotImplementedError("Inquiry.run must be overridden in implementing class")
 
     def get_table(self):
         """Return a list of lists which, when output as a table would

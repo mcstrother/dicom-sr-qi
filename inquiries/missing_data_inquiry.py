@@ -8,7 +8,7 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
     over time
     """
 
-    def run(self, procs, context):
+    def run(self, procs, context, extra_procs):
         DAYS_PER_PERIOD = 1
         orgd_procs = my_utils.organize(procs, key = lambda x: x.StudyDate)
         delta = datetime.timedelta(days = DAYS_PER_PERIOD)

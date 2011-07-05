@@ -10,7 +10,7 @@ class Physician_FPS(inquiry.Inquiry):
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
     #TODO implement parameters for start and end day
     
-    def run(self, procs, context):
+    def run(self, procs, context, extra_procs):
         DAYS_PER_PERIOD = self.DAYS_PER_PERIOD.value
         procs = [p for p in procs if p.is_pure()]
         procs_by_attending = my_utils.organize(procs, lambda x: x.get_syngo().rad1.replace(',',''))
