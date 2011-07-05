@@ -206,8 +206,7 @@ class Procedure(object):
                 return last_event.get_end_time()
         
         def get_cpts(self):
-                """Returns cpts as a string with codes
-                separated by commas
+                """Returns cpts as a list of strings
                 """
                 if self._syngo == None:
                         raise my_exceptions.DataMissingError("Procedure object has no syngo data")
