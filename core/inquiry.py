@@ -115,7 +115,7 @@ class Inquiry(object):
 
 
 def inquiry_main(inq_cls, proc_set = 'test'):
-    procs, extra_procs = my_utils.get_procs('slch')
+    procs, extra_procs = my_utils.get_procs(proc_set)
     inq = inq_cls(procs, extra_procs = extra_procs)
     report_writer.write_report([inq])
 

@@ -26,7 +26,19 @@ class CPT_Box_Plots(inquiry.Inquiry):
 
     def get_figure(self):
         fig = plt.figure()
-        plt.boxplot(self.lookup.values())
+        plt.title("Fluoro Times for Most Common Procedures at BJH")
+        plt.xlabel("Procedure CPT codes")
+        plt.ylabel("Fluoro time (seconds)")
+        widths = [len(v) for v in self.lookup.values()]
+        average_width = sum(widths)/len(widths)
+        widths = [float(x)/average_width *.5 for x in widths]
+        plt.boxplot(self.lookup.values(),
+                     widths = widths)
+        labels = self.lookup.keys()
+        for cpt in labels:
+            cpt.replace(',','\n')
+        plt.gca().set_xticklabels(self.lookup.keys(), size ='x-small')
+        #plt.setp(plt.gca(), 'xticklabels',self.lookup.keys())
         return fig
 
 
@@ -35,7 +47,9 @@ class CPT_Box_Plots(inquiry.Inquiry):
         for cpt, f_list in self.lookup.iteritems():
             out.append([cpt] + sorted(f_list))
         return out
-        
+
+    def get_text(self):
+        return "Note: widths on the box plots represent the number of procedures with the given CPT code"
                 
         
 if __name__ == '__main__':
