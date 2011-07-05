@@ -4,7 +4,8 @@ import my_utils
 
 class Syngo(object):
         IVRFU_CPT = "-99999"
-        _INT_ATTRS = ["MPI", "MRN", "ACC","FLUORO"]
+        _INT_ATTRS = ["MPI", "MRN", "ACC"]
+        _FLOAT_ATTRS = ["FLUORO"]
         _IGNORED_ATTRS = ["KAR","KAP","Ima","DLP","CTDI","Procedure"]
         _STRING_ATTRS =["RAD1","RAD2","TECH","LOCATION","DEPT"]
         _DATETIME_PAIR_ATTRS = [("DOS Start", "DOS Time"),
@@ -14,7 +15,7 @@ class Syngo(object):
                                 ("ADD DATE","Add Time")]
         _DATE_ATTRS = ["DOB"]
         _OTHER_ATTRS = ["CPTs"]
-        _ALL_ATTRS = _INT_ATTRS + _STRING_ATTRS + _OTHER_ATTRS + _DATE_ATTRS #note absence of + _IGNORED_ATTRS
+        _ALL_ATTRS = _INT_ATTRS + _STRING_ATTRS + _OTHER_ATTRS + _DATE_ATTRS +_FLOAT_ATTRS #note absence of + _IGNORED_ATTRS
         for pair in _DATETIME_PAIR_ATTRS:
                 _ALL_ATTRS.append(pair[0])
                 _ALL_ATTRS.append(pair[1])
@@ -77,6 +78,12 @@ class Syngo(object):
                         else:
                                 date = my_utils.coerce_human_date(d[date_attr])
                         setattr(self, date_attr.replace(' ','_').lower(), date)
+                for attr in self._FLOAT_ATTRS:
+                        if d[attr] == None:
+                                value = None
+                        else:
+                                value = float(d[attr])
+                        setattr(self,attr.replace(' ','_').lower(),value)
                 for date_attr, time_attr in self._DATETIME_PAIR_ATTRS:
                         setattr(self,date_attr.replace(' ','_').lower(),d[date_attr])
                         setattr(self,time_attr.replace(' ','_').lower(),d[time_attr])
