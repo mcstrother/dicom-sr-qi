@@ -66,9 +66,5 @@ class Average_FPS(inquiry.Inquiry):
         return out 
 
 
-from mirqi.gui import report_writer
-
 if __name__ == '__main__':
-    procs = my_utils.get_procs('test')
-    inq = Average_FPS(procs)
-    report_writer.write_report([inq])
+    inquiry.inquiry_main(Average_FPS)

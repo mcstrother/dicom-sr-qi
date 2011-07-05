@@ -3,6 +3,16 @@ import xlrd
 import my_utils
 
 class Syngo(object):
+        """Representation of a record of a procedure retrieved from Syngo.
+
+        Attributes are the same as column headings from a Syngo data file
+        except changed to lower case and replacing ' ' with '_'. Their types
+        should be intuitive except for those expicitly listed below.
+
+        Attributes:
+                cpts - the cpts codes of the procedure given as a list of
+                        strings
+        """
         IVRFU_CPT = "-99999"
         _INT_ATTRS = ["MPI", "MRN", "ACC"]
         _FLOAT_ATTRS = ["FLUORO"]
@@ -40,6 +50,9 @@ class Syngo(object):
                         else:
                                 out.append(cpt)
                 return out
+
+        def get_cpts_as_string(self):
+                return ','.join(self.cpts)
 
         def get_start(self):
                 """Returns a Python datetime

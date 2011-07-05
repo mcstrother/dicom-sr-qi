@@ -51,17 +51,19 @@ def transposed(lists):
 
 def get_procs(group = 'all'):
         if group == 'bjh':
-                procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
+                procs, extra_procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
         elif group == 'slch':
-                procs = ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+                procs, extra_procs = ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
         elif group == 'all':
-                procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
-                procs = procs + ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+                procs, extra_procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
+                procs2, extra_procs2 = ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+                procs = procs + procs2
+                extra_procs = extra_procs + procs2
         elif group == 'test':
-                procs = ReadXML.process_file(TEST_XML_FILE, TEST_SYNGO_FILES)
+                procs, extra_procs = ReadXML.process_file(TEST_XML_FILE, TEST_SYNGO_FILES)
         else:
                 raise ValueError("Invalid group")
-        return procs
+        return procs, extra_procs
 
 def get_procs_from_files(paths):
         """Return a list of procedures gleaned from a list of data files

@@ -1,4 +1,5 @@
-import mirqi.core.my_utils as my_utils
+from mirqi.core import my_utils
+from mirqi.gui import report_writer
 import os
 import matplotlib.pyplot as plt
 
@@ -113,7 +114,10 @@ class Inquiry(object):
         return None
 
 
-
+def inquiry_main(inq_cls, proc_set = 'test'):
+    procs, extra_procs = my_utils.get_procs('slch')
+    inq = inq_cls(procs, extra_procs = extra_procs)
+    report_writer.write_report([inq])
 
 
 
