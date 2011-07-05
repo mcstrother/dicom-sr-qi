@@ -9,7 +9,7 @@ class Average_FPS(inquiry.Inquiry):
     NAME = u'Average FPS'
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
 
-    def run(self, procs, context):
+    def run(self, procs, context, extra_procs):
         events = [p.get_fluoro_events() for p in procs] 
         events = sum(events, []) #flatten from list of lists into single list of events
         first_time = min(events, key = lambda e: e.DateTime_Started).DateTime_Started
