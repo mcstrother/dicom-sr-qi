@@ -306,6 +306,10 @@ def add_syngo_to_procedures(procs, syngo_procs):
         to procedure information from Syngo files (syngo_procs)
         according to the patient ID number and the start date
         of the procedure
+
+        Returns:
+                a list of Syngo_Procedures that haven't been paired to SR
+                        procedures
         """
         lookup = {}
         for sproc in syngo_procs:
@@ -313,6 +317,7 @@ def add_syngo_to_procedures(procs, syngo_procs):
                         lookup[(sproc.mpi, sproc.dos_start)] = []
                 lookup[(sproc.mpi, sproc.dos_start)].append(sproc)
         for proc in procs:
+                found_match = False
                 try:
                         sproc_list = lookup[(proc.PatientID,proc.StudyDate)]
                 except KeyError: #can't find the procedure in the lookup
@@ -321,10 +326,14 @@ def add_syngo_to_procedures(procs, syngo_procs):
                 for sproc in sproc_list:
                         try:
                                 proc.set_syngo(sproc)
+                                found_match = True
                         except my_exceptions.DataMismatchError as dme:
                                 #print "Rejected match for " + str(sproc.MPI) + ', ' + str(sproc.get_end()) +". Doesn't match " + str(proc.get_end_time()) 
                                 continue#TODO: currently justs checks for "good enough" match. can change this to look for "best match" in sproc_list
-                
+                        break
+                if found_match:
+                        sproc_list.remove(sproc)
+        return sum(lookup.values(), [])
         
                 
 import Parse_Syngo
@@ -337,8 +346,8 @@ def process_files(xml_file_names, cpt_file_names):
                 xmldoc = minidom.parse(xfn)
                 procs = procs + [Procedure(dose_info_element) for dose_info_element in xmldoc.getElementsByTagName('DoseInfo')]
         syngo_procs = Parse_Syngo.parse_syngo_files(cpt_file_names)
-        add_syngo_to_procedures(procs, syngo_procs)
-        return [proc for proc in procs if proc.is_real()] 
+        extra_syngo = add_syngo_to_procedures(procs, syngo_procs)
+        return [proc for proc in procs if proc.is_real()],  extra_syngo
                 
 def process_file(xml_file_name, cpt_file_names):
         """Use xml file to generate Procedure and Event objects.

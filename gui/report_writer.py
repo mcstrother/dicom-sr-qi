@@ -32,8 +32,8 @@ class Report_Writer(object):
 
     def __init__(self, data_paths, inquiry_classes):
         self.data_paths = data_paths
-        self.procs = my_utils.get_procs_from_files(data_paths)
-        self.inqs = [cls(self.procs) for cls in inquiry_classes]
+        self.procs, self.extra_procs = my_utils.get_procs_from_files(data_paths)
+        self.inqs = [cls(self.procs, extra_procs = self.extra_procs) for cls in inquiry_classes]
 
     def _update_data(self, data_paths):
         """Make self.procs reflect the data in data_paths
@@ -44,8 +44,9 @@ class Report_Writer(object):
         returns True if an update was actually needed
         """
         if data_paths and not my_utils.same_contents(self.data_paths, data_paths):
+            #new data paths
             self.data_paths = data_paths
-            self.procs = my_utils.get_procs_from_files(data_paths)
+            self.procs, self.extra_procs = my_utils.get_procs_from_files(data_paths)
             return True
         else:
             return False
@@ -57,7 +58,7 @@ class Report_Writer(object):
         between the inquries that will be generated and the inquiries
         that we have already generated to avoid repeating analyses
         """
-        self.inqs = [cls(self.procs) for cls in inquiry_classes]
+        self.inqs = [cls(self.procs, extra_procs = self.extra_procs) for cls in inquiry_classes]
 
     def update(self, data_paths = None, inquiry_classes = None):
         data_changed = self._update_data(data_paths)
