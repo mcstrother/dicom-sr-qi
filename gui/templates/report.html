@@ -4,7 +4,9 @@ make calls more than once to do if statments #}
 {% set text = inquiry.get_text() %}
 {% set figure_paths = inquiry.get_figure_paths() %}
 {% set tables = inquiry.get_tables() %}
+
 <h1> {{ inquiry.get_name() }}</h1>
+
 <pre>{{ inquiry.get_text()|default('',true) }} </pre>
 {% if not figure_paths is none %}
 <h2> Figures </h2>
@@ -12,7 +14,8 @@ make calls more than once to do if statments #}
 <img src="{{ path }}">
 {% endfor %}
 {% endif %}
-{% if not table is none %}
+
+{% if not tables is none %}
 <h2> Tables </h2>
 {% for table in tables %}
 <table border="2">
@@ -26,5 +29,6 @@ make calls more than once to do if statments #}
 </table>
 {% endfor %}
 {% endif %}
+
 {% endfor %}
 
