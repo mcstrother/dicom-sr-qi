@@ -24,7 +24,7 @@ class CPT_Box_Plots(inquiry.Inquiry):
             cpts_to_fluoros[cpt] = [p.fluoro for p in cpts_to_procs[cpt]]
         self.lookup = cpts_to_fluoros
 
-    def get_figure(self):
+    def get_figures(self):
         fig = plt.figure()
         plt.title("Fluoro Times for Most Common Procedures at BJH")
         plt.xlabel("Procedure CPT codes")
@@ -39,14 +39,14 @@ class CPT_Box_Plots(inquiry.Inquiry):
             cpt.replace(',','\n')
         plt.gca().set_xticklabels(self.lookup.keys(), size ='x-small')
         #plt.setp(plt.gca(), 'xticklabels',self.lookup.keys())
-        return fig
+        return [fig]
 
 
-    def get_table(self):
+    def get_tables(self):
         out = []
         for cpt, f_list in self.lookup.iteritems():
             out.append([cpt] + sorted(f_list))
-        return out
+        return [out]
 
     def get_text(self):
         return "Note: widths on the box plots represent the number of procedures with the given CPT code"

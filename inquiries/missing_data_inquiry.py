@@ -31,11 +31,11 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         self.starts = starts
 
 
-    def get_table(self):
-        return my_utils.transposed([ ["Period Start Date"] + self.starts, ["Procedure Count"] +self.counts])
+    def get_tables(self):
+        return [my_utils.transposed([ ["Period Start Date"] + self.starts, ["Procedure Count"] +self.counts])]
 
 
-    def get_figure(self):
+    def get_figures(self):
         fig = plt.figure()
         colors = []
         for day in self.starts:
@@ -45,7 +45,7 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
                 colors.append('b')
         plt.scatter(self.starts,self.counts,c=colors)
         fig.autofmt_xdate()
-        return fig
+        return [fig]
     
             
                 
@@ -53,9 +53,7 @@ from mirqi.gui import report_writer
 from mirqi.core import my_utils
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('test')
-    inq = Missing_Data_Inquiry(procs)
-    report_writer.write_report([inq])
+    inquiry.inquiry_main(Missing_Data_Inquiry)
 
 
     

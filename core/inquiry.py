@@ -55,17 +55,21 @@ class Inquiry(object):
         """
         raise NotImplementedError("Inquiry.run must be overridden in implementing class")
 
-    def get_table(self):
-        """Return a list of lists which, when output as a table would
+    def get_tables(self):
+        """Return an iterable of "tables", when output as a table would
         be sufficient to allow someone to remake the figure returned
         by get_figure
+
+        A "table" is any iterable of iterables. So the return value of this
+        function will most likely be a list of lists of lists of the form
+        tables[table_number][row_number][column_number]
 
         Ideally, this should be formatted so someone would be able
         to remake the figure almost instantly in excel
         """
-        raise None
+        return None
 
-    def get_figure(self):
+    def get_figures(self):
         """Return a matplotlib figure
 
         Note that many Inquries are expected to use matplotlib.pyplot,
@@ -78,7 +82,7 @@ class Inquiry(object):
         other than matplotlib, do not override this method.
         Just override get_figure_path.
         """
-        raise None
+        return None
 
     @classmethod
     def get_name(cls):
@@ -92,18 +96,21 @@ class Inquiry(object):
         else:
             return unicode(cls.__name__)
 
-    def get_figure_path(self):
+    def get_figure_paths(self):
         """Save a figure and return its
         location
 
         Only override this method if you would like
         to use some plotting library other than matplotlib
         """
-        fig = self.get_figure()
-        fig_name = unicode(self.__class__.__name__ + '.png')
-        fig_path = os.path.join(my_utils.get_output_directory(), fig_name)
-        fig.savefig(fig_path, dpi =100)
-        return fig_path
+        figs = self.get_figures()
+        paths = []
+        for i, f in enumerate(figs):
+            fig_name = unicode(self.__class__.__name__ + str(i) +'.png')
+            fig_path = os.path.join(my_utils.get_output_directory(), fig_name)
+            paths.append(fig_path)
+            f.savefig(fig_path, dpi =100)
+        return paths
             
         
     def get_text(self):
