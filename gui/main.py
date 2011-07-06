@@ -10,11 +10,10 @@ class Inquiry_Parameter_Panel(wx.Panel):
     def __init__(self, *args, **kwargs):
         self.param = kwargs['parameter']
         del kwargs['parameter']
-        parent = args[0]
-        wx.Panel.__init__(self,parent, **kwargs)
+        wx.Panel.__init__(self,*args, **kwargs)
         # add stuff
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(wx.StaticText(self, -1, self.param.label))
+        sizer.Add(wx.StaticText(self, 1, self.param.label))
         if isinstance(self.param, datetime.date):
             pass #make a datepickerctrl
         elif isinstance(self.param.value, int) or isinstance(self.param.value, long):
@@ -44,9 +43,9 @@ class Inquiry_Panel(wx.CollapsiblePane):
             param = getattr(self._inquiry_class, param_name)
             param_panel = Inquiry_Parameter_Panel(self.GetPane(), parameter=param)
             self.param_panels[param_name] = param_panel
-            sizer.Add(param_panel,0)
+            sizer.Add(param_panel)
         self.GetPane().SetSizer(sizer) # see http://xoomer.virgilio.it/infinity77/wxPython/Widgets/wx.CollapsiblePane.html for why GetPane is used here
-        
+        self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_change)
 
     def is_enabled(self):
         return self.enabled_box.GetValue()
@@ -56,7 +55,9 @@ class Inquiry_Panel(wx.CollapsiblePane):
             new_value = self.param_panels[param_name].get_value()
             getattr(self._inquiry_class, param_name).value = new_value
         return self._inquiry_class
-        
+
+    def on_change(self, event):
+        self.GetParent().Layout()
 
 class Inquiry_Selection_Panel(wx.Panel):
     def __init__(self, *args, **kwargs):
@@ -66,15 +67,16 @@ class Inquiry_Selection_Panel(wx.Panel):
         for inq in my_utils.get_inquiry_classes():
             inq_panel = Inquiry_Panel(self, inquiry_class=inq)
             self.inq_panels.append(inq_panel)
-            sizer.Add(inq_panel,1,wx.ALIGN_LEFT)
+            sizer.Add(inq_panel,0)
         self.SetSizer(sizer)
-
+        
     def get_inquiry_classes(self):
         out = []
         for p in self.inq_panels:
             if p.is_enabled():
                 out.append(p.get_inquiry_class())
         return out
+        
 
 import os        
 class Data_File_List(wx.CheckListBox):
@@ -98,7 +100,7 @@ class Data_Panel(wx.Panel):
     def __init__(self, *args, **kwargs):
         wx.Panel.__init__(self, *args, **kwargs)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        add_source_button = wx.Button(self,-1, 'Add data source')
+        add_source_button = wx.Button(self,0, 'Add data source')
         self.Bind(wx.EVT_BUTTON, self.select_file,add_source_button)
         sizer.Add(add_source_button,0, flag=wx.ALIGN_BOTTOM)
         self.data_file_list = Data_File_List(self)
@@ -124,8 +126,8 @@ class Main_Frame(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.data_panel = Data_Panel(self.main_panel, style=wx.RAISED_BORDER)
         self.inq_selection_panel = Inquiry_Selection_Panel(self.main_panel, style=wx.RAISED_BORDER)
-        sizer.Add(self.data_panel,1,wx.ALIGN_LEFT|wx.EXPAND)
-        sizer.Add(self.inq_selection_panel,2,wx.ALIGN_LEFT|wx.EXPAND)
+        sizer.Add(self.data_panel,1,wx.EXPAND)
+        sizer.Add(self.inq_selection_panel,2,wx.EXPAND)
         run_button = wx.Button(self.main_panel, label = "Run")
         self.Bind(wx.EVT_BUTTON, self.run, run_button)
         sizer.Add(run_button,0,wx.ALIGN_CENTER)
