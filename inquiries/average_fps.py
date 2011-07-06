@@ -42,15 +42,15 @@ class Average_FPS(inquiry.Inquiry):
         self.first_time = first_time
         self.last_time = last_time
 
-    def get_table(self):
+    def get_tables(self):
         heading = [['Period Number'] + range(len(self.counts))]
         row = [['Period Start Date'] + self.start_dates]
         row1 = [['Averages'] + self.averages]
         row2 = [['Fluoro Event Counts'] + self.counts]
         row3 = [['Fluoro Frame Counts'] + self.frame_counts]
-        return my_utils.transposed(heading + row +  row3 +  row2 + row1)
+        return [my_utils.transposed(heading + row +  row3 +  row2 + row1)]
 
-    def get_figure(self):
+    def get_figures(self):
         fig = plt.figure()
         plt.scatter(range(len(self.averages)), self.averages, s= self.counts)
         plt.plot(range(len(self.averages)), self.averages, color='red')
@@ -58,7 +58,7 @@ class Average_FPS(inquiry.Inquiry):
         plt.ylabel('Average FPS')
         plt.title("Average FPS Across All Events")
         plt.axis([0,len(self.counts)-1,5,15])
-        return fig
+        return [fig]
 
     def get_text(self):
         out = "First event starts at " + str(self.first_time) + "\n"

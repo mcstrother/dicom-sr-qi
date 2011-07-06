@@ -40,10 +40,10 @@ class Room_Usage(inquiry.Inquiry):
         self._table = table
 
 
-    def get_table(self):
-        return my_utils.transposed(self._table)
+    def get_tables(self):
+        return [my_utils.transposed(self._table)]
 
-    def get_figure(self):
+    def get_figures(self):
         a = np.array(self._table)
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -67,12 +67,10 @@ class Room_Usage(inquiry.Inquiry):
         plt.title("Usage of BJH Room 812")
         plt.xlabel("Day of week (Monday - Sunday)")
         plt.ylabel("Time of Day (block number)")
-        return fig
+        return [fig]
 
 
 from mirqi.gui import report_writer
 
 if __name__ == '__main__':
-    procs = my_utils.get_procs('slch')
-    inq = Room_Usage(procs)
-    report_writer.write_report([inq])
+    inquiry.inquiry_main(Room_Usage)

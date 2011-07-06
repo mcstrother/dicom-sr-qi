@@ -32,7 +32,7 @@ class Physician_FPS(inquiry.Inquiry):
 
         self.lookup = out #lookup[attending][period_number] --> [events]
 
-    def get_table(self):
+    def get_tables(self):
         attending_list = sorted(self.lookup.keys())
         dimension = (self.num_periods ,len(attending_list))
         average_table =np.zeros(dimension).tolist()
@@ -53,9 +53,9 @@ class Physician_FPS(inquiry.Inquiry):
             row = [r] + average_table[r] + [''] + count_table[r]
             out.append(row)
         out = my_utils.transposed(out)
-        return out
+        return [out]
 
-    def get_figure(self):
+    def get_figures(self):
         num_attendings = len(self.lookup.keys())
         fig = plt.figure()
         for a, attending in enumerate(sorted(self.lookup.keys())):
@@ -73,7 +73,7 @@ class Physician_FPS(inquiry.Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
-        return fig
+        return [fig]
 
 
 
