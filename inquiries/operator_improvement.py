@@ -28,6 +28,16 @@ def get_procedures_helper(procs, extra_procs, min_reps):
             del cpt_to_procs[k]
     return cpt_to_procs
     
+def sort_by_rads_helper(procs, procs_per_window):
+    rad1_to_procs = my_utils.organize(procs, lambda p:p.rad1)
+    for p_list in rad1_to_procs.values():
+        p_list.sort(key = lambda p:p.dos_start)
+    # remove rads with too few procedures
+    for rad1 in rad1_to_procs.keys():
+        if len(rad1_to_procs[rad1]) < (procs_per_window +2):#have to be able to plot at least 3 points
+            del rad1_to_procs[rad1]
+    return rad1_to_procs
+
 
 
 class Operator_Improvement(inquiry.Inquiry):
@@ -47,13 +57,7 @@ class Operator_Improvement(inquiry.Inquiry):
             std_devs[cpt] = np.std(fluoro_list)
             means[cpt] = np.mean(fluoro_list)
         # organize by rad1 and sort by date
-        rad1_to_procs = my_utils.organize(sum(cpt_to_procs.values(),[]), lambda p:p.rad1)
-        for p_list in rad1_to_procs.values():
-            p_list.sort(key = lambda p:p.dos_start)
-        # remove rads with too few procedures
-        for rad1 in rad1_to_procs.keys():
-            if len(rad1_to_procs[rad1]) < (self.PROCS_PER_WINDOW.value +2):#have to be able to plot at least 3 points
-                del rad1_to_procs[rad1]
+        rad1_to_procs = sort_by_rads_helper( sum(cpt_to_procs.values(),[]), self.PROCS_PER_WINDOW.value )
         self._the_meat(rad1_to_procs, medians)
 
     
