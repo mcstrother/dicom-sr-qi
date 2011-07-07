@@ -70,6 +70,15 @@ class Operator_Improvement(inquiry.Inquiry):
                 Syngo procedures
             medians : dictionary mapping a cpt code set (a string) to a float
         """
+        # calculate raw deviations
+        raw_devs = {}
+        for rad1, p_list in rad1_to_procs.iteritems():
+            devs = []
+            for p in p_list:
+                med = medians[p.get_cpts_as_string()]
+                devs.append(p.fluoro-med)
+            raw_devs[rad1] = devs
+        self.raw_devs = raw_devs
         # calculate metrics
         rad1_to_out = {}
         for rad1, p_list in rad1_to_procs.iteritems():
@@ -89,17 +98,16 @@ class Operator_Improvement(inquiry.Inquiry):
                         out.append((proc.dos_start, cum_metric))
             rad1_to_out[rad1] = out
         self.lookup = rad1_to_out #rad1_to_out[rad1][window_number] = (date, metric value)
-        
-    """
+
+
     def get_tables(self):
+        print "ran get table"
         out = []
-        for proc in self.syngo_procs:
-            if hasattr(proc, 'fluoro'):
-                out.append([proc.fluoro])
-            else:
-                out.append([None])
-        return out
-    """
+        for rad1, dev_list in self.raw_devs.iteritems():
+            row = [rad1] + dev_list
+            out.append(row)
+        return [out]
+   
     def get_figures(self):
         figs = []
         for rad1 in self.lookup.keys():
