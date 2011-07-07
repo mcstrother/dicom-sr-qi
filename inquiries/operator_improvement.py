@@ -3,13 +3,40 @@ import matplotlib.pyplot as plt
 import numpy as np
 import collections
 
+def get_procedures_helper(procs, extra_procs, min_reps):
+    """Extract all the Syngo procedures that we're interested in
+    (i.e. all the ones that have enough repetitions of the same procedure)
+    and return them as a dictionary mapping cpt code combinations to
+    lists of procedures
+
+    Arguments:
+        procs : a list of (SR) Procedure objects
+        extra_procs : a list of non-SR procedure objects that could not
+            be assigned to SR procedures
+    """
+    # extract all the syngo procedures from procs and extra_procs
+    syngo_procs = [p for p in extra_procs if type(p) == Parse_Syngo.Syngo]
+    for proc in procs:
+        if proc.has_syngo():
+            syngo_procs.append(proc.get_syngo())
+    #remove procs without a fluoro number entered
+    syngo_procs = [p for p in syngo_procs if not p.fluoro is None]
+    #remove procedures with less than MIN_REPS.value instances of same cpt code
+    cpt_to_procs = my_utils.organize(syngo_procs, lambda p: p.get_cpts_as_string())
+    for k in cpt_to_procs.keys():
+        if len(cpt_to_procs[k]) < min_reps:
+            del cpt_to_procs[k]
+    return cpt_to_procs
+    
+
+
 class Operator_Improvement(inquiry.Inquiry):
     MIN_REPS = inquiry.Inquiry_Parameter(50, "Minimum procedure count",
                                          "The minimum number of times a procedure with the same CPT codes must occur to be considered to have a reasonable distribution")
     PROCS_PER_WINDOW = inquiry.Inquiry_Parameter(50, "Procedures Per Window",
                                                  "Number of procedures that should be considered in the sliding window calculation of the operators performance metric.")
     def run(self, procs, context, extra_procs):
-        cpt_to_procs = self._get_procedures_helper(procs, extra_procs)
+        cpt_to_procs = get_procedures_helper(procs, extra_procs, self.MIN_REPS.value)
         # calculate statistics for each procedure type
         medians = {}
         std_devs = {}
@@ -29,33 +56,6 @@ class Operator_Improvement(inquiry.Inquiry):
                 del rad1_to_procs[rad1]
         self._the_meat(rad1_to_procs, medians)
 
-
-    def _get_procedures_helper(self, procs, extra_procs):
-        """Extract all the Syngo procedures that we're interested in
-        (i.e. all the ones that have enough repetitions of the same procedure)
-        and return them as a dictionary mapping cpt code combinations to
-        lists of procedures
-
-        Arguments:
-            procs : a list of (SR) Procedure objects
-            extra_procs : a list of non-SR procedure objects that could not
-                be assigned to SR procedures
-        """
-        # extract all the syngo procedures from procs and extra_procs
-        syngo_procs = [p for p in extra_procs if type(p) == Parse_Syngo.Syngo]
-        for proc in procs:
-            if proc.has_syngo():
-                syngo_procs.append(proc.get_syngo())
-        #remove procs without a fluoro number entered
-        syngo_procs = [p for p in syngo_procs if not p.fluoro is None]
-        #remove procedures with less than MIN_REPS.value instances of same cpt code
-        cpt_to_procs = my_utils.organize(syngo_procs, lambda p: p.get_cpts_as_string())
-        for k in cpt_to_procs.keys():
-            if len(cpt_to_procs[k]) < self.MIN_REPS.value:
-                del cpt_to_procs[k]
-        return cpt_to_procs
-        
-        
     
     def _the_meat(self, rad1_to_procs, medians):
         """Set self.lookup, which is the meat of self.run
