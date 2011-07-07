@@ -55,6 +55,9 @@ class Room_Usage(inquiry.Inquiry):
 
         #change the labels
         old_labels = [0,0,20,40,60,80,100,120,140]
+        old_yticklabels = plt.gca().get_yticklabels()
+        print [y.get_text() for y in old_yticklabels]
+        print dir(old_yticklabels[0])
         new_labels = []
         for x in old_labels:
                 seconds = x*self.resolution.value
@@ -63,7 +66,7 @@ class Room_Usage(inquiry.Inquiry):
                 seconds = int(seconds - (hours*60+minutes)*60)
                 new_labels.append(str(datetime.time(hour = hours, minute = minutes, second=seconds)))
         plt.gca().set_yticklabels(new_labels)
-        plt.gca().set_xticklabels(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+        plt.gca().set_xticklabels(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'], size='small')
         plt.title("Usage of BJH Room 812")
         plt.xlabel("Day of week (Monday - Sunday)")
         plt.ylabel("Time of Day (block number)")
@@ -73,4 +76,4 @@ class Room_Usage(inquiry.Inquiry):
 from mirqi.gui import report_writer
 
 if __name__ == '__main__':
-    inquiry.inquiry_main(Room_Usage)
+    inquiry.inquiry_main(Room_Usage, 'slch')
