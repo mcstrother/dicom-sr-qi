@@ -52,7 +52,7 @@ class Syngo(object):
                 return out
 
         def get_cpts_as_string(self):
-                return ','.join(self.cpts)
+                return ','.join(sorted(self.cpts))
 
         def get_start(self):
                 """Returns a Python datetime
