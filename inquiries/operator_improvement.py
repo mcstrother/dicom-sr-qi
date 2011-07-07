@@ -13,10 +13,12 @@ class Operator_Improvement(inquiry.Inquiry):
         # calculate statistics for each procedure type
         medians = {}
         std_devs = {}
+        means = {}
         for cpt, p_list in cpt_to_procs.iteritems():
             fluoro_list = [p.fluoro for p in p_list]
             medians[cpt] = float(np.median(fluoro_list))
             std_devs[cpt] = np.std(fluoro_list)
+            means[cpt] = np.mean(fluoro_list)
         # organize by rad1 and sort by date
         rad1_to_procs = my_utils.organize(sum(cpt_to_procs.values(),[]), lambda p:p.rad1)
         for p_list in rad1_to_procs.values():
@@ -105,6 +107,18 @@ class Operator_Improvement(inquiry.Inquiry):
             plt.ylabel("Metric (positive values --> higher fluoro time)")
             fig.autofmt_xdate()
             figs.append(fig)
+        #all together
+        fig = plt.figure()
+        for rad1 in self.lookup.keys():
+            dates, metrics = zip(*self.lookup[rad1]) #pythonic idiom for "unzip"
+            plt.plot(dates, metrics)
+            plt.title("All combined")
+            plt.xlabel("Window End Date")
+            plt.ylabel("Metric (positive values --> higher fluoro time)")
+            fig.autofmt_xdate()
+        figs.append(fig)
+        #all averaged together
+        
         return figs
 
         
