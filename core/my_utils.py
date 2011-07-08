@@ -199,12 +199,12 @@ def module_to_class_case(m_name):
         return m_name.title()
 
 import pkgutil
-import mirqi.inquiries
+import mirqi.active_inquiries
 from mirqi.core import my_exceptions
 def get_inquiry_classes():
         """Get a list of inquiry classes
         """
-        pkgpath = os.path.dirname(mirqi.inquiries.__file__)
+        pkgpath = os.path.dirname(mirqi.active_inquiries.__file__)
         inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
         temp = __import__('mirqi.inquiries', globals(), locals(), inq_module_names,-1)
         inq_modules = [getattr(temp, name) for name in inq_module_names]
