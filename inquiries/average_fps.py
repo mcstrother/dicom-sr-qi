@@ -5,7 +5,7 @@ from mirqi.core import inquiry
 from mirqi.core import my_utils
 import datetime
 
-class Average_FPS(inquiry.Inquiry):
+class Average_Fps(inquiry.Inquiry):
     NAME = u'Average FPS'
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
 
@@ -67,4 +67,4 @@ class Average_FPS(inquiry.Inquiry):
 
 
 if __name__ == '__main__':
-    inquiry.inquiry_main(Average_FPS)
+    inquiry.inquiry_main(Average_Fps)

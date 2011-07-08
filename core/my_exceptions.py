@@ -15,3 +15,9 @@ class DataMismatchError(Exception):
     pass
 
 
+class BadInquiryError(Exception):
+    """Thrown when someone has made a mistake while
+    writing an inquiry.
+    """
+
+
