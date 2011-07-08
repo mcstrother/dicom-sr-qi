@@ -21,23 +21,39 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
 
     def get_figures(self):
         
-        ys = [1.0/self.PROCS_PER_WINDOW.value*i for i in range(self.PROCS_PER_WINDOW.value)]
-        
+        ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
+        figs= []
         for rad1, procs in self.rad1_to_procs.iteritems():
+            max_x = 0
             verts = [] #need to change things so more than last guy is plotted
             for i in range(0, len(procs), self.STEP_SIZE.value):
                 if i+self.STEP_SIZE.value < len(procs):
-                    xs = sorted([proc.fluoro for proc in procs[i:i+self.STEP_SIZE.value]])
+                    xs = sorted([proc.fluoro for proc in procs[i:i+self.PROCS_PER_WINDOW.value]])
+                    if xs[-1]>max_x:
+                        max_x = xs[-1]
                     verts.append(zip(xs,ys))
-        zs = range(len(verts))
-        fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        poly = PolyCollection(verts,
-                              facecolors = [colorConverter.to_rgba('g', alpha=.6) for _ in range(len(verts))])
-        poly.set_alpha(0.7)
-        ax.add_collection3d(poly, zs=zs, zdir='y')
-        plt.show()
-        return [fig]
+                    verts[-1].append((xs[-1],0))#adds a point to the polygon directly below the last point to draw the baseline correctly
+            zs = range(len(verts))
+            fig = plt.figure()
+            ax = fig.gca(projection='3d')
+            facecolors = [colorConverter.to_rgba('g', alpha=.6) for _ in range(len(verts))]
+            print len(verts)
+            print len(zs)
+            print len(facecolors)
+            poly = PolyCollection(verts,
+                              facecolors = facecolors )
+            poly.set_alpha(0.7)
+            ax.add_collection3d(poly, zs=zs, zdir='y')
+            ax.set_xlabel("Fluoro time")
+            ax.set_xlim3d(0,max_x)
+            ax.set_zlabel("% of Procedures This Fluoro Time or Below")
+            ax.set_ylabel("Time")
+            ax.set_ylim3d(0,len(verts))
+            plt.show()
+            figs.append(fig)
+        
+        
+        return figs
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Operator_Improvement_Surface, 'bjh')
