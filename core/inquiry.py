@@ -3,10 +3,6 @@ from mirqi.gui import report_writer
 import os
 import matplotlib.pyplot as plt
 
-class Report(object):
-    def __init__(self, inquiries):
-        self.inqs = inquiries
-
 class Inquiry_Parameter(object):
     def __init__(self, default_value, label, description = ''):
         self.value = default_value
@@ -32,9 +28,7 @@ class Inquiry(object):
     def get_parameter_names(cls):
         names = []
         for attr_name in dir(cls):
-            if not attr_name[0] == '_'\
-               and not hasattr(getattr(cls, attr_name), '__call__')\
-               and not attr_name == "NAME":
+            if type(getattr(cls, attr_name)) == Inquiry_Parameter:
                 names.append(attr_name)
         return names
 
@@ -117,6 +111,12 @@ class Inquiry(object):
         """Return a text description of the inquiry results
 
         Returns None if not overwritten
+        """
+        return None
+
+    def get_description(self):
+        """Return a text description of the inquiry, the requirements
+        to run it, the output, etc.
         """
         return None
 
