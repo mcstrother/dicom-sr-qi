@@ -5,6 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.collections import PolyCollection
 from matplotlib.colors import colorConverter
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Operator_Improvement_Surface(inquiry.Inquiry):
     MIN_REPS = inquiry.Inquiry_Parameter(50, "Minimum procedure count",
@@ -27,7 +28,7 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             max_x = 0
             verts = [] #need to change things so more than last guy is plotted
             for i in range(0, len(procs), self.STEP_SIZE.value):
-                if i+self.STEP_SIZE.value < len(procs):
+                if i+self.PROCS_PER_WINDOW.value < len(procs):
                     xs = sorted([proc.fluoro for proc in procs[i:i+self.PROCS_PER_WINDOW.value]])
                     if xs[-1]>max_x:
                         max_x = xs[-1]
@@ -36,10 +37,8 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             zs = range(len(verts))
             fig = plt.figure()
             ax = fig.gca(projection='3d')
+            ax.set_title(rad1)
             facecolors = [colorConverter.to_rgba('g', alpha=.6) for _ in range(len(verts))]
-            print len(verts)
-            print len(zs)
-            print len(facecolors)
             poly = PolyCollection(verts,
                               facecolors = facecolors )
             poly.set_alpha(0.7)
@@ -51,9 +50,24 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             ax.set_ylim3d(0,len(verts))
             plt.show()
             figs.append(fig)
-        
-        
         return figs
+
+    def get_figures2(self):
+        all_xs = []
+        all_ys = []
+        all_zs = []
+        ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
+        for rad1, procs in self.rad1_to_procs.iteritems():
+            for i in range(0, len(procs), self.STEP_SIZE.value):
+                if i+self.PROCS_PER_WINDOW.value < len(procs):
+                    xs = sorted([proc.fluoro for proc in procs[i:i+self.PROCS_PER_WINDOW.value]])
+                    all_xs += xs
+                    all_ys += ys
+                    all_zs += [i]*len(xs)
+            fig = plt.figure()
+            ax = plt.gca(projection='3d')
+            surf = ax.plot_surface(np.array(all_xs), np.array(all_ys), np.array(all_zs))
+            plt.show()
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Operator_Improvement_Surface, 'bjh')
