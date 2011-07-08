@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import heapq
 
 
-class CPT_Box_Plots(inquiry.Inquiry):
+class Cpt_Box_Plots(inquiry.Inquiry):
     NUM_PROCEDURE_TYPES = inquiry.Inquiry_Parameter(5, "Number of Procedure Types",
                                                     "The Maximum number of procedure types (as defined by CPT code combinations) to be plotted")
 

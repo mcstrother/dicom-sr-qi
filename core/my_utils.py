@@ -194,8 +194,13 @@ def add_to_time(t1, td):
         t1 = datetime.combine(_ARB_DATE, t1)
         return (t1 + td).time()
 
+def module_to_class_case(m_name):
+        m_name = m_name.split('.')[-1]
+        return m_name.title()
+
 import pkgutil
 import mirqi.inquiries
+from mirqi.core import my_exceptions
 def get_inquiry_classes():
         """Get a list of inquiry classes
         """
@@ -203,7 +208,14 @@ def get_inquiry_classes():
         inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
         temp = __import__('mirqi.inquiries', globals(), locals(), inq_module_names,-1)
         inq_modules = [getattr(temp, name) for name in inq_module_names]
-        inq_classes = [getattr(module,dir(module)[0]) for module in inq_modules]
+        inq_classes = []
+        for module in inq_modules:
+                try:
+                        class_name = module_to_class_case(module.__name__)
+                        inq_classes.append(getattr(module, class_name))
+                except AttributeError as ae:
+                        raise my_exceptions.BadInquiryError("No class named " + str(class_name) + " found in " + module.__name__ + ". Please ensure you have named your inquiry class correctly.")
+        #inq_classes = [getattr(module,dir(module)[0]) for module in inq_modules]
         for module_name, class_name in zip(inq_module_names, [inq_class.__name__.lower() for inq_class in inq_classes]):
                 try:
                         assert module_name == class_name

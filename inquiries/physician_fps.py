@@ -5,7 +5,7 @@ import os
 from mirqi.core import inquiry
 from mirqi.core import my_utils
 
-class Physician_FPS(inquiry.Inquiry):
+class Physician_Fps(inquiry.Inquiry):
     NAME = u'Physician FPS'
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
     #TODO implement parameters for start and end day
@@ -87,7 +87,7 @@ from mirqi.core import my_utils
 
 if __name__ == '__main__':
     procs = [p for p in my_utils.get_procs('slch') if p.is_pure()]
-    inq = Physician_FPS(procs)
+    inq = Physician_Fps(procs)
     report_writer.write_report([inq])
 
 
