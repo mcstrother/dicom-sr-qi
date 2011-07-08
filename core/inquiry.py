@@ -13,6 +13,8 @@ class Inquiry_Parameter(object):
         self.value = new_value
 
 class Inquiry(object):
+    description = "No description entered."
+    
     def __init__(self, sr_procs, context = None, extra_procs = None):
         """Initializer
 
@@ -114,11 +116,12 @@ class Inquiry(object):
         """
         return None
 
-    def get_description(self):
+    @classmethod
+    def get_description(cls):
         """Return a text description of the inquiry, the requirements
         to run it, the output, etc.
         """
-        return None
+        return cls.description
 
 
 def inquiry_main(inq_cls, proc_set = 'test'):

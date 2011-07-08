@@ -2,10 +2,23 @@ from mirqi.core import inquiry, my_utils
 import datetime
 import matplotlib.pyplot as plt
 
+
+
 class Missing_Data_Inquiry(inquiry.Inquiry):
-    """An inquiry to look for days of missing data
-    by simply plotting the number of procedures per day
-    over time
+
+    description = """Plot to look for days from which you might be missing data
+
+    Shows the number of DICOM-SR procedures reported for each day from the
+    beginning to the end of your data set. Weekends are highlighted in red.
+    A sudden decline in the number of procedures over a period of a few days
+    may suggest that you are missing SR data for those days.
+
+    Data Required:
+        DICOM-SR xml
+
+    Parameters:
+        None
+
     """
 
     def run(self, procs, context, extra_procs):
@@ -46,6 +59,7 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         plt.scatter(self.starts,self.counts,c=colors)
         fig.autofmt_xdate()
         return [fig]
+
     
             
                 
