@@ -56,10 +56,9 @@ class Physician_Fps(inquiry.Inquiry):
         return [out]
 
     def get_figures(self):
-        num_attendings = len(self.lookup.keys())
-        fig = plt.figure()
+        figs = []
         for a, attending in enumerate(sorted(self.lookup.keys())):
-            plt.subplot(num_attendings, 1,a)
+            fig = plt.figure()
             plt.axis([0,self.num_periods,5,15])
             plt.xlabel('Period Number')
             plt.ylabel('Average FPS')
@@ -73,7 +72,8 @@ class Physician_Fps(inquiry.Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
-        return [fig]
+            figs.append(fig)
+        return figs
 
 
 
@@ -86,9 +86,7 @@ from mirqi.gui import report_writer
 from mirqi.core import my_utils
 
 if __name__ == '__main__':
-    procs = [p for p in my_utils.get_procs('slch') if p.is_pure()]
-    inq = Physician_Fps(procs)
-    report_writer.write_report([inq])
+    inquiry.inquiry_main(Physician_Fps)
 
 
 
