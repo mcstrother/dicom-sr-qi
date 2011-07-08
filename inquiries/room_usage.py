@@ -10,10 +10,12 @@ class Room_Usage(inquiry.Inquiry):
     resolution = inquiry.Inquiry_Parameter(600, "Seconds Per Period")
     description = """Visualizes distribution of fluoro machine usage in a week
 
-    For each procedure, define the fluoro machine as "in use" between the first
-    and last irradiation event of the procedure. Then divide the days of the week
-    into periods and count how many times that fluoro machine is in use on that
-    period of that day of the week.
+    For each procedure, define the fluoro machine as "in use"
+    between the first and last irradiation event of the
+    procedure. Then divide the days of the week
+    into periods and count how many times that
+    fluoro machine is in use on that period of that
+    day of the week.
 
 
     Data Required:

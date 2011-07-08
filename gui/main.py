@@ -35,8 +35,11 @@ class Inquiry_Panel(wx.CollapsiblePane):
         # add stuff
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.enabled_box = wx.CheckBox(self.GetPane(),label = "Enabled")
+        self.description_link = wx.HyperlinkCtrl(self.GetPane(),wx.ID_ANY,
+                                                 "Description", 'inquiry.get_description')
         sizer.Add(self.enabled_box)
-        # self.enabled_box.SetValue(True)
+        sizer.Add(self.description_link)
+        self.Bind(wx.EVT_HYPERLINK, self.show_description, self.description_link)
         param_names = self._inquiry_class.get_parameter_names()
         self.param_panels = {}
         for param_name in param_names:
@@ -50,6 +53,12 @@ class Inquiry_Panel(wx.CollapsiblePane):
     def is_enabled(self):
         return self.enabled_box.GetValue()
 
+    def show_description(self, event):
+        dlg = wx.MessageDialog(self.GetPane(),
+                                       message = self._inquiry_class.get_description(),
+                                       style=wx.OK)
+        dlg.ShowModal()
+    
     def get_inquiry_class(self):
         for param_name in self._inquiry_class.get_parameter_names():
             new_value = self.param_panels[param_name].get_value()
