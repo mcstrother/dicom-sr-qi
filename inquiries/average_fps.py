@@ -5,9 +5,27 @@ from mirqi.core import inquiry
 from mirqi.core import my_utils
 import datetime
 
+
 class Average_Fps(inquiry.Inquiry):
     NAME = u'Average FPS'
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
+
+    description = """Plots the average frames per second used in all procedures over time
+    Plot also shows the number of irradiation events in each period.
+
+    To compute the average, the Pulse_Rate of each fluoro event (non-fluor events
+    are ignored) is multiplied by that event's duration. All of these are summed
+    and the sum is divided by the total pedal time in the period.
+
+    Data Required:
+        DICOM-SR
+
+    Parameters:
+        Days per period - the number of days to average over when reporting the average FPS.
+            For example, setting the Days per period = 7 will show weekly averages.
+            Periods are started counting from whenever the first irradiation event was recorded.
+
+    """
 
     def run(self, procs, context, extra_procs):
         events = [p.get_fluoro_events() for p in procs] 
@@ -63,7 +81,11 @@ class Average_Fps(inquiry.Inquiry):
     def get_text(self):
         out = "First event starts at " + str(self.first_time) + "\n"
         out += "Last event ends at " + str(self.last_time) + "\n"
-        return out 
+        return out
+
+    @classmethod
+    def get_description(cls):
+        return description
 
 
 if __name__ == '__main__':
