@@ -9,6 +9,23 @@ class Physician_Fps(inquiry.Inquiry):
     NAME = u'Physician FPS'
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
     #TODO implement parameters for start and end day
+
+    description = """Average FPS over time, broken down by physician
+
+    Shows separate plots of the Average FPS for each physician over time,
+    as well as a group average.
+
+    This is kept separate from the Average_FPS inquiry because it requires
+    a Syngo data to mach which procedures in the DICOM-SR dataset were done
+    by which physicians.
+
+    Data required:
+        DICOM-SR xml - procedures which cannot be matched with operators
+            via the Syngo data are ignored. 
+        Syngo - matched to the DICOM-SR data based on patient identifier
+            numbers.
+
+    """
     
     def run(self, procs, context, extra_procs):
         DAYS_PER_PERIOD = self.DAYS_PER_PERIOD.value
