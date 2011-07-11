@@ -22,6 +22,7 @@ def write_report(inqs):
     with open(output_path, 'w') as f:
         f.write(template.render(inquiries= inqs))
 
+import os
 
 class Report_Writer(object):
     _default_out_dir = mirqi.core.my_utils.get_output_directory()
@@ -73,6 +74,8 @@ class Report_Writer(object):
     def write(self, template_path = _default_template_path,
               output_path = _default_out_path):
         template = self._get_template(template_path)
+        if not os.path.exists(output_path):
+            os.mkdir(os.path.dirname(output_path))
         with open(output_path, 'w') as f:
             f.write(template.render(inquiries= self.inqs))
         
