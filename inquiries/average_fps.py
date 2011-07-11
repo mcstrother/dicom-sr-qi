@@ -75,7 +75,7 @@ class Average_Fps(inquiry.Inquiry):
         plt.xlabel('Period Number')
         plt.ylabel('Average FPS')
         plt.title("Average FPS Across All Events")
-        plt.axis([0,len(self.counts)-1,5,15])
+        plt.axis([0,len(self.counts)-1,5,16])
         return [fig]
 
     def get_text(self):
