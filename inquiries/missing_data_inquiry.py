@@ -20,6 +20,9 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         None
 
     """
+    NAME = u'Missing Data Inquiry'
+    START_DATE = inquiry.Inquiry_Parameter(datetime.date.today()-datetime.timedelta(days=365), "Start Date")
+    
 
     def run(self, procs, context, extra_procs):
         DAYS_PER_PERIOD = 1

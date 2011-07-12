@@ -14,8 +14,11 @@ class Inquiry_Parameter_Panel(wx.Panel):
         # add stuff
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(wx.StaticText(self, 1, self.param.label))
-        if isinstance(self.param, datetime.date):
-            pass #make a datepickerctrl
+        if isinstance(self.param.value, datetime.date):
+            self.ctrl = wx.DatePickerCtrl(self, style=wx.DP_DROPDOWN)
+            wx_date = my_utils.python_date_to_wx_date(self.param.value)
+            self.ctrl.SetValue(wx_date)
+            sizer.Add(self.ctrl)
         elif isinstance(self.param.value, int) or isinstance(self.param.value, long):
             self.ctrl = wx.SpinCtrl(self)
             self.ctrl.SetValue(self.param.value)
@@ -23,6 +26,9 @@ class Inquiry_Parameter_Panel(wx.Panel):
         self.SetSizer(sizer)
             
     def get_value(self):
+        value = self.ctrl.GetValue()
+        if isinstance(value, wx.DateTime):
+            value = my_utils.wx_date_to_python_date(value)
         return self.ctrl.GetValue()
         
 
