@@ -20,6 +20,24 @@ SLCH_XML_FILE = os.path.join(_dir,'Data/SLCH/all slch.xml')
 TEST_XML_FILE = os.path.join(_dir,'Data/sample.xml')
 TEST_SYNGO_FILES = [os.path.join(_dir,'Data/sample_syngo.xls')]
 
+
+
+def wx_date_to_python_date(wx_date):
+        import wx
+        assert isinstance(wx_date, wx.DateTime) 
+        if wx_date.IsValid(): 
+                ymd = map(int, wx_date.FormatISODate().split('-'))
+                return date(*ymd) 
+        else: 
+                return None
+        
+def python_date_to_wx_date(py_date):
+        import wx
+        assert isinstance(py_date, (datetime, date)) 
+        tt = py_date.timetuple() 
+        dmy = (tt[2], tt[1]-1, tt[0]) 
+        return wx.DateTimeFromDMY(*dmy) 
+
 def care_datetime_to_python_datetime(care_date):
         care_date = str(care_date)
         return datetime(int(care_date[:4]),int(care_date[4:6]),int(care_date[6:8]),int(care_date[8:10]),int(care_date[10:12]), int(care_date[12:14]))
