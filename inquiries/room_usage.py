@@ -86,7 +86,7 @@ class Room_Usage(inquiry.Inquiry):
                 new_labels.append(str(datetime.time(hour = hours, minute = minutes, second=seconds)))
         plt.gca().set_yticklabels(new_labels)
         plt.gca().set_xticklabels(['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'], size='small')
-        plt.title("Usage of BJH Room 812")
+        plt.title("Usage of Fluoro Machine")
         plt.xlabel("Day of week (Monday - Sunday)")
         plt.ylabel("Time of Day (block number)")
         return [fig]
