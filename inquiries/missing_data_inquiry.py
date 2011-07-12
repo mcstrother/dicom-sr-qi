@@ -57,6 +57,9 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
             else:
                 colors.append('b')
         plt.scatter(self.starts,self.counts,c=colors)
+        plt.title("Number of Procedure Records Per Day")
+        plt.xlabel("Days (red = weekends)")
+        plt.ylabel("Number of Procedures Records")
         fig.autofmt_xdate()
         return [fig]
 
