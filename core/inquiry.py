@@ -12,6 +12,16 @@ class Inquiry_Parameter(object):
     def set_value(self, new_value):
         self.value = new_value
 
+import datetime
+def get_standard_parameter(param_name):
+    if param_name == "DATE_RANGE_START":
+        return Inquiry_Parameter(datetime.date.today()-datetime.timedelta(days=365),
+                                     "Date Range Start")
+    elif param_name == "DATE_RANGE_END":
+        return Inquiry_Parameter(datetime.date.today(), "Date Range End")
+    else:
+        raise ValueError("No such standard parameter " + param_name)
+
 class Inquiry(object):
     description = "No description entered."
     
@@ -20,6 +30,12 @@ class Inquiry(object):
 
         Should not be overridden in sublcasses
         """
+        if hasattr(self, 'DATE_RANGE_START'):
+            sr_procs = [p for p in sr_procs if p.StudyDate >= self.DATE_RANGE_START.value]
+            extra_procs = [p for p in extra_procs if p.get_start_date() >= self.DATE_RANGE_START.value]
+        if hasattr(self, 'DATE_RANGE_END'):
+            sr_procs = [p for p in sr_procs if p.StudyDate < self.DATE_RANGE_END.value]
+            extra_procs = [p for p in extra_procs if p.get_start_date() < self.DATE_RANGE_END.value]
         self.run(sr_procs, context, extra_procs)
 
     @classmethod
@@ -130,8 +146,6 @@ def inquiry_main(inq_cls, proc_set = 'test'):
     procs, extra_procs = my_utils.get_procs(proc_set)
     inq = inq_cls(procs, extra_procs = extra_procs)
     report_writer.write_report([inq])
-
-
 
 
     
