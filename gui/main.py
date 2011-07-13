@@ -29,7 +29,7 @@ class Inquiry_Parameter_Panel(wx.Panel):
         value = self.ctrl.GetValue()
         if isinstance(value, wx.DateTime):
             value = my_utils.wx_date_to_python_date(value)
-        return self.ctrl.GetValue()
+        return value
         
 
 class Inquiry_Panel(wx.CollapsiblePane):

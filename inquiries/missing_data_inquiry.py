@@ -22,7 +22,6 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
     """
     NAME = u'Missing Data Inquiry'
     START_DATE = inquiry.Inquiry_Parameter(datetime.date.today()-datetime.timedelta(days=365), "Start Date")
-    
 
     def run(self, procs, context, extra_procs):
         DAYS_PER_PERIOD = 1
@@ -46,10 +45,8 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         self.counts = counts
         self.starts = starts
 
-
     def get_tables(self):
         return [my_utils.transposed([ ["Period Start Date"] + self.starts, ["Procedure Count"] +self.counts])]
-
 
     def get_figures(self):
         fig = plt.figure()
@@ -66,8 +63,8 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         fig.autofmt_xdate()
         return [fig]
 
-    
-            
+    def get_text(self):
+        return "Found a total of " + str(sum(self.counts)) + " procedures over " + str(len(self.starts)) +" days."
                 
 from mirqi.gui import report_writer
 from mirqi.core import my_utils

@@ -100,6 +100,8 @@ class Inquiry(object):
         to use some plotting library other than matplotlib
         """
         figs = self.get_figures()
+        if figs is None:
+            return []
         paths = []
         for i, f in enumerate(figs):
             fig_name = unicode(self.__class__.__name__ + str(i) +'.png')
