@@ -223,7 +223,8 @@ def get_inquiry_classes():
         """Get a list of inquiry classes
         """
         pkgpath = os.path.dirname(mirqi.active_inquiries.__file__)
-        inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
+        inq_module_names = [os.path.splitext(name)[0] for name in os.listdir(pkgpath) if os.path.splitext(name)[1] =='.py' and not name[0] =='_']
+        #inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
         temp = __import__('mirqi.active_inquiries', globals(), locals(), inq_module_names,-1)
         inq_modules = [getattr(temp, name) for name in inq_module_names]
         inq_classes = []
