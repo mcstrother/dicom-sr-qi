@@ -53,13 +53,16 @@ class Syngo(object):
 
         def get_cpts_as_string(self):
                 return ','.join(sorted(self.cpts))
-
+        def get_start_date(self):
+                return self.dos_start
+        def get_end_date(self):
+                return self.end_date
         def get_start(self):
                 """Returns a Python datetime
                 object representing the start
                 of the procedure
                 """
-                return datetime.datetime.combine(self.DOS_Start, self.DOS_Time)
+                return datetime.datetime.combine(self.dos_start, self.dos_time)
         def get_end(self):
                 """Returns a Python datetime
                 object representing the end
