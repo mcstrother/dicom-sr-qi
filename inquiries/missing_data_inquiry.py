@@ -17,14 +17,19 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         DICOM-SR xml
 
     Parameters:
-        None
+        Start Date - exclude any procedures that occured before this date
 
     """
     NAME = u'Missing Data Inquiry'
-    START_DATE = inquiry.Inquiry_Parameter(datetime.date.today()-datetime.timedelta(days=365), "Start Date")
+    START_DATE = inquiry.Inquiry_Parameter(datetime.date.today()-datetime.timedelta(days=365*2), "Start Date")
 
     def run(self, procs, context, extra_procs):
         DAYS_PER_PERIOD = 1
+        procs = [p for p in procs if p.StudyDate >= self.START_DATE.value]
+        if len(procs) ==0:
+            self.counts = []
+            self.starts = []
+            return
         orgd_procs = my_utils.organize(procs, key = lambda x: x.StudyDate)
         delta = datetime.timedelta(days = DAYS_PER_PERIOD)
         start = min(procs, key = lambda p:p.StudyDate).StudyDate
@@ -49,6 +54,8 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
         return [my_utils.transposed([ ["Period Start Date"] + self.starts, ["Procedure Count"] +self.counts])]
 
     def get_figures(self):
+        if len(self.counts) <= 0 :
+            return []
         fig = plt.figure()
         colors = []
         for day in self.starts:
