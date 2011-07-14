@@ -6,7 +6,7 @@ make calls more than once to do if statments #}
 {% set tables = inquiry.get_tables() %}
 
 <h1> {{ inquiry.get_name() }}</h1>
-
+<pre> {{inquiry.get_parameter_text()|default('',true) }}</pre>
 <pre>{{ inquiry.get_text()|default('',true) }} </pre>
 {% if not figure_paths is none %}
 <h2> Figures </h2>
