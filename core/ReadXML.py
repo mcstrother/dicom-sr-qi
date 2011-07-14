@@ -70,6 +70,11 @@ class Event(object):
                 
         
         def get_duration(self):
+                """Returns the duration of the Irradiation Event calculated
+                from the `self.Number_of_Pulses` and `self.Pulse_Rate`
+
+                TODO: Doesn't currently take into account the pulse width
+                """
                 if self.Number_of_Pulses == 1:
                         return datetime.timedelta(0)
                 else:
@@ -77,6 +82,11 @@ class Event(object):
                         return datetime.timedelta(seconds= seconds)
         
         def _check_number_of_pulses(self):
+                """Checks if it is likely that the .xml file has reported the
+                correct number of pulses. As of writing (July 2011), the
+                xml files we have seen max out at 512 pulses per irradiation
+                event.
+                """
                 if not self.Number_of_Pulses == 512:
                         if not int(self.Number_of_Pulses) == self._get_number_of_pulses():
                                 print 'Problem:' + str(self.Number_of_Pulses) +',' +str(self._get_number_of_pulses())
@@ -122,11 +132,24 @@ class Event(object):
         
         def get_end_time(self):
                 return self.DateTime_Started + self.get_duration()
-
         def get_start_time(self):
                 return self.DateTime_Started
                         
 class Procedure(object):
+        """Representation of Procedure data reported by DICOM-SR
+
+        Attributes:
+                `Gender` : 'M', 'F', or sometimes other things (usually 'O')
+                `PatientID` : a string
+                `Performing_Physician` : a string. usually initials. rarely filled in
+                `Scope_of_Accumulation` : a string. rarely useful.
+                SeriesDate : a datetime.date object
+                SeriesDescription : a string. human-entered. not standardized
+                SeriesInstanceUID : a string.
+                StudyDate : a datetime.date object. usually the same as SeriesDate
+                StudyDescription : a string.
+                StudyInstanceUID : a string.
+        """
         DATE_ATTRS = ['SeriesDate', 'StudyDate']
         OTHER_ATTRS = ['SeriesTime','StudyTime', 'PatientID']
         FLOAT_ATTRS = []
@@ -167,14 +190,19 @@ class Procedure(object):
 
                 By default, only returns valid events.
                 Guaranteed to run in contant time, except for the first
-                run through, which is linear
+                run through, which is linear with respect to the number of
+                events.
+
+                Arguments:
+                        `valid` : whether to return only events for which
+                                event.is_valid() is True. Defaults to True
                 """
                 if not hasattr(self, '_valid_events_cache'):
                         self._valid_events_cache = [e for e in self._events if e.is_valid()]
                 return self._valid_events_cache
 
         def get_fluoro_events(self, valid = True):
-                """Convenience method.
+                """Same as get events, but only returns "Fluoroscopy" type events
                 """
                 events = self.get_events(valid)
                 return [e for e in events if e.Irradiation_Event_Type =="Fluoroscopy"]
