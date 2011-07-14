@@ -12,9 +12,11 @@ class Test_Operator_Improvement(unittest.TestCase):
         data_dir = os.path.join(os.path.dirname(test.__file__),'data')
         data_file = os.path.join(data_dir, 'test_operator_improvement.xls')
         syngo_procs = Parse_Syngo.parse_syngo_file(data_file)
+        cls.syngo_procs = syngo_procs
         inq_cls = operator_improvement.Operator_Improvement
         inq_cls.PROCS_PER_WINDOW.value = 3
         inq_cls.MIN_REPS.value = 4
+        cls.inq_cls = inq_cls
         cls.inq = operator_improvement.Operator_Improvement([],
                                                              extra_procs = syngo_procs)
 
@@ -36,6 +38,26 @@ class Test_Operator_Improvement(unittest.TestCase):
         equal = self._lists_equal(self.inq.lookup['Rayner, K.'], expected)
         self.assertTrue(equal, "Incorect metrics for Rayner. Expected :\n " + str(expected) + "\n Got \n" + str(self.inq.lookup['Rayner, K.']))
 
+    def test_get_procedures_helper(self):
+        cpt_to_procs = operator_improvement.get_procedures_helper([], self.syngo_procs,
+                                                         self.inq_cls.MIN_REPS.value)
+        expected_cpt_list = ['1','2']
+        self.assertEqual(set(expected_cpt_list),set(cpt_to_procs.keys()),
+                        """get_procedures_helper returned an incorrect list of included cpt codes.
+                        Expected: """ + str(expected_cpt_list) +"\n Got: " + str(cpt_to_procs.keys()))
+        self.assertEqual(13, sum(map(len,cpt_to_procs.values())),
+                         "Total number of procedures returned by get_procedures helper is incorrect.")
+        
+    def test_sort_by_rads_helper(self):
+        cpt_to_procs = operator_improvement.get_procedures_helper([],
+                                                                  self.syngo_procs,
+                                                                  self.inq_cls.MIN_REPS.value)
+        syngo_procs = sum(cpt_to_procs.values(),[])
+        rad1_to_procs = operator_improvement.sort_by_rads_helper(syngo_procs,
+                                                                 self.inq_cls.PROCS_PER_WINDOW.value)
+        self.assertEqual(len(sum(rad1_to_procs.values(),[])),12,
+                         "Incorrect total number of procedures found by sort_by_rads_helper")
+                
 
     def _lists_equal(self, out, expected):
         failed = False
