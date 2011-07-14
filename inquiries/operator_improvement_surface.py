@@ -17,6 +17,7 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
     
     def run(self, procs, context, extra_procs):
         cpt_to_procs = get_procedures_helper(procs, extra_procs, self.MIN_REPS.value)
+        self.included_cpts = cpt_to_procs.keys() # just used to print
         self.rad1_to_procs = sort_by_rads_helper(sum(cpt_to_procs.values(),[]), self.PROCS_PER_WINDOW.value)
 
     def get_figures(self):
@@ -36,7 +37,9 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             line_segments.set_array(range(len(all_xs)))
             ax.add_collection(line_segments)
             plt.show()
-        
+
+    def get_text(self):
+        return "This analysis includes procedures with the following cpt codes " + '\n'.join(self.included_cpts)
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Operator_Improvement_Surface, 'bjh')
