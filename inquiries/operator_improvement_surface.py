@@ -1,5 +1,5 @@
 from mirqi.core import inquiry
-from mirqi.inquiries.operator_improvement import get_procedures_helper, sort_by_rads_helper
+from mirqi.inquiries.operator_improvement import get_procedures_helper, sort_by_rads_helper, get_procedure_windows
 import collections
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.collections import PolyCollection
@@ -29,7 +29,7 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
         ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
         all_xs = []
         for rad1, procs in self.rad1_to_procs.iteritems():
-            windows = operator_improvement.get_procedure_windows(procs, self.PROCS_PER_WINDOW.value,
+            windows = get_procedure_windows(procs, self.PROCS_PER_WINDOW.value,
                                    self.STEP_SIZE.value)
             all_xs = []
             for window in windows:
