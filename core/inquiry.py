@@ -44,6 +44,8 @@ class Inquiry(object):
 
     @classmethod
     def get_parameter_names(cls):
+        """Get the names of all of the class attributes of type Inquiry_Parameter
+        """
         names = []
         for attr_name in dir(cls):
             if type(getattr(cls, attr_name)) == Inquiry_Parameter:
@@ -141,6 +143,18 @@ class Inquiry(object):
         """
         return cls.description
 
+    @classmethod
+    def get_parameter_text(cls):
+        """Return a text description of the values of the parameters of the run
+        """
+        out = ''
+        param_names = cls.get_parameter_names()
+        for name in param_names:
+            param = getattr(cls, name)
+            out += param.label + ': ' + str(param.value) +'\n'
+        return out
+            
+        
 
 def inquiry_main(inq_cls, proc_set = 'test'):
     procs, extra_procs = my_utils.get_procs(proc_set)
