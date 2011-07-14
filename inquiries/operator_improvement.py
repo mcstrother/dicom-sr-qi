@@ -64,7 +64,7 @@ def get_procedure_windows(procs, procs_per_window, step_size ):
     """
     windows = []
     for i in range(0, len(procs), step_size):
-        if i+procs_per_window < len(procs):
+        if i+procs_per_window <= len(procs):
             window = sorted(procs[i:i+procs_per_window],
                             key = lambda x:x.fluoro)
             windows.append(window)

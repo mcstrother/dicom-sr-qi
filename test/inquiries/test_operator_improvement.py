@@ -60,7 +60,7 @@ class Test_Operator_Improvement(unittest.TestCase):
                 
 
     def test_get_procedure_windows(self):
-        STEP_SIZE = 4
+        STEP_SIZE = 2
         cpt_to_procs = operator_improvement.get_procedures_helper([],
                                                                   self.syngo_procs,
                                                                   self.inq_cls.MIN_REPS.value)
@@ -75,7 +75,14 @@ class Test_Operator_Improvement(unittest.TestCase):
                 for window in windows:
                     self.assertEqual(len(window), self.inq_cls.PROCS_PER_WINDOW.value,
                                      "get_procedure_windows returns windows of incorrect length")
-        #TODO: need to add more
+        stew_windows = operator_improvement.get_procedure_windows(rad1_to_procs['Stewart, J.'],
+                                                                     self.inq_cls.PROCS_PER_WINDOW.value,
+                                                                     STEP_SIZE)
+        self.assertEqual(sorted([4,5,1]), [p.fluoro for p in stew_windows[0]])
+        self.assertEqual(sorted([1,1,4]), [p.fluoro for p in stew_windows[1]])
+        self.assertEqual(sorted([4,1,2]), [p.fluoro for p in stew_windows[2]])
+        self.assertEqual(len(stew_windows),3)
+        
         
 
     def _lists_equal(self, out, expected):
