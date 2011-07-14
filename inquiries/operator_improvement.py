@@ -19,7 +19,7 @@ def get_procedures_helper(procs, extra_procs, min_reps):
     for proc in procs:
         if proc.has_syngo():
             syngo_procs.append(proc.get_syngo())
-    #remove procs without a fluoro number entered
+    #remove procs without a fluoro time entered
     syngo_procs = [p for p in syngo_procs if not p.fluoro is None]
     #remove procedures with less than MIN_REPS.value instances of same cpt code
     cpt_to_procs = my_utils.organize(syngo_procs, lambda p: p.get_cpts_as_string())
@@ -29,7 +29,16 @@ def get_procedures_helper(procs, extra_procs, min_reps):
     return cpt_to_procs
     
 def sort_by_rads_helper(procs, procs_per_window):
+    """
+    Arguments:
+        procs : iterable of Syngo objects
+        procs_per_window :
+
+    Returns:
+        a dict, rad1_to_procs[rad1]-->list of procedures sorted by dos_start
+    """
     rad1_to_procs = my_utils.organize(procs, lambda p:p.rad1)
+    # sort each radiologist's list of procedures by their start date
     for p_list in rad1_to_procs.values():
         p_list.sort(key = lambda p:p.dos_start)
     # remove rads with too few procedures
