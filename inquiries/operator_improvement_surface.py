@@ -7,6 +7,9 @@ from matplotlib.colors import colorConverter
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+
+
 class Operator_Improvement_Surface(inquiry.Inquiry):
     MIN_REPS = inquiry.Inquiry_Parameter(500, "Minimum procedure count",
                                          "The minimum number of times a procedure with the same CPT codes must occur to be considered to have a reasonable distribution")
@@ -25,10 +28,12 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
         ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
         all_xs = []
         for rad1, procs in self.rad1_to_procs.iteritems():
-            for i in range(0, len(procs), self.STEP_SIZE.value):
-                if i+self.PROCS_PER_WINDOW.value < len(procs):
-                    xs = sorted([proc.fluoro for proc in procs[i:i+self.PROCS_PER_WINDOW.value]])
-                    all_xs.append(xs)
+            windows = operator_improvement.get_procedure_windows(procs, self.PROCS_PER_WINDOW.value,
+                                   self.STEP_SIZE.value)
+            all_xs = []
+            for window in windows:
+                all_xs.append([p.fluoro for p in window])
+            # the matplolib part
             fig = plt.figure()
             ax = plt.gca()
             ax.set_xlim(0,10)
@@ -37,6 +42,8 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             line_segments.set_array(range(len(all_xs)))
             ax.add_collection(line_segments)
             plt.show()
+
+
 
     def get_text(self):
         return "This analysis includes procedures with the following cpt codes " + '\n'.join(self.included_cpts)
