@@ -4,7 +4,7 @@ from mirqi.core import my_utils
 class TestReadXML(unittest.TestCase):
 
     def setUp(self):
-        self.procs = my_utils.get_procs('test')
+        self.procs, self.extra_procs = my_utils.get_procs('test')
 
     def test_attrs(self):
         self.assertEqual(self.procs[1].get_events()[0].Number_of_Pulses,31)
@@ -59,5 +59,3 @@ class TestReadXML(unittest.TestCase):
                     print "End: " +str(e.get_end_time())"""
 
 
-if __name__ == '__main__':
-    unittest.main()
