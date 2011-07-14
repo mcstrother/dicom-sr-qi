@@ -13,6 +13,10 @@ def get_procedures_helper(procs, extra_procs, min_reps):
         procs : a list of (SR) Procedure objects
         extra_procs : a list of non-SR procedure objects that could not
             be assigned to SR procedures
+
+    Returns:
+        a dictionary mapping cpt codes (represented as strings) to lists of
+            Syngo objects
     """
     # extract all the syngo procedures from procs and extra_procs
     syngo_procs = [p for p in extra_procs if type(p) == Parse_Syngo.Syngo]
