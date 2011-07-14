@@ -59,6 +59,25 @@ class Test_Operator_Improvement(unittest.TestCase):
                          "Incorrect total number of procedures found by sort_by_rads_helper")
                 
 
+    def test_get_procedure_windows(self):
+        STEP_SIZE = 4
+        cpt_to_procs = operator_improvement.get_procedures_helper([],
+                                                                  self.syngo_procs,
+                                                                  self.inq_cls.MIN_REPS.value)
+        syngo_procs = sum(cpt_to_procs.values(),[])
+        rad1_to_procs = operator_improvement.sort_by_rads_helper(syngo_procs,
+                                                                 self.inq_cls.PROCS_PER_WINDOW.value)
+        for i,proc_list in enumerate(rad1_to_procs.values()):
+            if not i==len(proc_list)-1:
+                windows = operator_improvement.get_procedure_windows(proc_list,
+                                                                     self.inq_cls.PROCS_PER_WINDOW.value,
+                                                                     STEP_SIZE)
+                for window in windows:
+                    self.assertEqual(len(window), self.inq_cls.PROCS_PER_WINDOW.value,
+                                     "get_procedure_windows returns windows of incorrect length")
+        #TODO: need to add more
+        
+
     def _lists_equal(self, out, expected):
         failed = False
         for out, expected in zip(out,expected):

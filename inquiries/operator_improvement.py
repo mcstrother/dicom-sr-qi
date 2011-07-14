@@ -52,6 +52,24 @@ def sort_by_rads_helper(procs, procs_per_window):
     return rad1_to_procs
 
 
+def get_procedure_windows(procs, procs_per_window, step_size ):
+    """
+    Parameters:
+        procedures : an iterable of Syngo objects
+        procs_per_window : an int
+    Returns:
+        a list of lists of Syngo objects, each representing a window and
+            having len of procs_per_window. each list is sorted by the
+            procedure fluoro time
+    """
+    windows = []
+    for i in range(0, len(procs), step_size):
+        if i+procs_per_window < len(procs):
+            window = sorted(procs[i:i+procs_per_window],
+                            key = lambda x:x.fluoro)
+            windows.append(window)
+    return windows
+
 
 class Operator_Improvement(inquiry.Inquiry):
     MIN_REPS = inquiry.Inquiry_Parameter(50, "Minimum procedure count",
