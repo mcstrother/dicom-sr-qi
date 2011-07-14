@@ -21,6 +21,7 @@ class Inquiry_Parameter_Panel(wx.Panel):
             sizer.Add(self.ctrl)
         elif isinstance(self.param.value, int) or isinstance(self.param.value, long):
             self.ctrl = wx.SpinCtrl(self)
+            self.ctrl.SetRange(0,1000000)
             self.ctrl.SetValue(self.param.value)
             sizer.Add(self.ctrl)
         self.SetSizer(sizer)
