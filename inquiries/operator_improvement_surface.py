@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class Operator_Improvement_Surface(inquiry.Inquiry):
-    MIN_REPS = inquiry.Inquiry_Parameter(50, "Minimum procedure count",
+    MIN_REPS = inquiry.Inquiry_Parameter(500, "Minimum procedure count",
                                          "The minimum number of times a procedure with the same CPT codes must occur to be considered to have a reasonable distribution")
-    PROCS_PER_WINDOW = inquiry.Inquiry_Parameter(100, "Procedures Per Window",
+    PROCS_PER_WINDOW = inquiry.Inquiry_Parameter(400, "Procedures Per Window",
                                                  "Number of procedures that should be considered in the sliding window calculation of the operators performance metric.")
-    STEP_SIZE = inquiry.Inquiry_Parameter(50, "Step size",
+    STEP_SIZE = inquiry.Inquiry_Parameter(400, "Step size",
                                           "Number of procedures between the beginnings of each window. ")
     
     def run(self, procs, context, extra_procs):
