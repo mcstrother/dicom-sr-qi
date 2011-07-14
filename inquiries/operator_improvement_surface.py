@@ -25,6 +25,7 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
 
     def get_figures(self):
         from matplotlib.collections import LineCollection
+        figs = []
         ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
         all_xs = []
         for rad1, procs in self.rad1_to_procs.iteritems():
@@ -33,15 +34,19 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             all_xs = []
             for window in windows:
                 all_xs.append([p.fluoro for p in window])
-            # the matplolib part
+            #the matplotlib part
             fig = plt.figure()
             ax = plt.gca()
             ax.set_xlim(0,10)
             ax.set_ylim(0,1)
             line_segments= LineCollection([zip(xs,ys) for xs in all_xs])
-            line_segments.set_array(range(len(all_xs)))
+            line_segments.set_array(np.array(range(len(all_xs))))
             ax.add_collection(line_segments)
-            plt.show()
+            plt.title(rad1)
+            plt.xlabel("Fluoro Time")
+            plt.ylabel("Fraction of Procedures Below Fluoro Time")
+            figs.append(fig)
+        return figs
 
 
 
