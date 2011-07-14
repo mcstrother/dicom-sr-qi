@@ -20,13 +20,13 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
         self.rad1_to_procs = sort_by_rads_helper(sum(cpt_to_procs.values(),[]), self.PROCS_PER_WINDOW.value)
                                           
 
-    def get_figures(self):
+    def get_figures2(self):
         
         ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
         figs= []
         for rad1, procs in self.rad1_to_procs.iteritems():
             max_x = 0
-            verts = [] #need to change things so more than last guy is plotted
+            verts = []
             for i in range(0, len(procs), self.STEP_SIZE.value):
                 if i+self.PROCS_PER_WINDOW.value < len(procs):
                     xs = sorted([proc.fluoro for proc in procs[i:i+self.PROCS_PER_WINDOW.value]])
@@ -44,7 +44,7 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             poly.set_alpha(0.7)
             ax.add_collection3d(poly, zs=zs, zdir='y')
             ax.set_xlabel("Fluoro time")
-            ax.set_xlim3d(0,max_x)
+            ax.set_xlim3d(0,10)
             ax.set_zlabel("% of Procedures This Fluoro Time or Below")
             ax.set_ylabel("Time")
             ax.set_ylim3d(0,len(verts))
@@ -68,6 +68,25 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             ax = plt.gca(projection='3d')
             surf = ax.plot_surface(np.array(all_xs), np.array(all_ys), np.array(all_zs))
             plt.show()
+
+    def get_figures(self):
+        from matplotlib.collections import LineCollection
+        ys = [(1.0/self.PROCS_PER_WINDOW.value)*(i+1) for i in range(self.PROCS_PER_WINDOW.value)]
+        all_xs = []
+        for rad1, procs in self.rad1_to_procs.iteritems():
+            for i in range(0, len(procs), self.STEP_SIZE.value):
+                if i+self.PROCS_PER_WINDOW.value < len(procs):
+                    xs = sorted([proc.fluoro for proc in procs[i:i+self.PROCS_PER_WINDOW.value]])
+                    all_xs.append(xs)
+            fig = plt.figure()
+            ax = plt.gca()
+            ax.set_xlim(0,10)
+            ax.set_ylim(0,1)
+            line_segments= LineCollection([zip(xs,ys) for xs in all_xs])
+            line_segments.set_array(range(len(all_xs)))
+            ax.add_collection(line_segments)
+            plt.show()
+        
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Operator_Improvement_Surface, 'bjh')
