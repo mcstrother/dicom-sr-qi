@@ -6,9 +6,9 @@ from mirqi.core import my_utils
 class Test_Report_Writer(unittest.TestCase):
     
     def setUp(self):
-        self.procs = my_utils.get_procs('test')
+        self.procs, _ = my_utils.get_procs('test')
         self.inq1 = missing_data_inquiry.Missing_Data_Inquiry(self.procs)
-        self.inq2 = average_fps.Average_FPS(self.procs)
+        self.inq2 = average_fps.Average_Fps(self.procs)
     
     def test_write_single(self):
         report_writer.write_report([self.inq1])
@@ -34,5 +34,4 @@ class Test_Report_Writer(unittest.TestCase):
         # just testing for exceptions here        
         report_writer.write_report([self.inq2, self.inq1])
 
-if __name__ == '__main__':
-    unittest.main()
+
