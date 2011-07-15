@@ -1,5 +1,5 @@
-from mirqi.core import my_utils
-from mirqi.gui import report_writer
+from srqi.core import my_utils
+from srqi.gui import report_writer
 import os
 import matplotlib.pyplot as plt
 

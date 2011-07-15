@@ -1,4 +1,4 @@
-from mirqi.core import inquiry, my_utils
+from srqi.core import inquiry, my_utils
 import datetime
 import matplotlib.pyplot as plt
 
@@ -73,8 +73,8 @@ class Missing_Data_Inquiry(inquiry.Inquiry):
     def get_text(self):
         return "Found a total of " + str(sum(self.counts)) + " procedures over " + str(len(self.starts)) +" days."
                 
-from mirqi.gui import report_writer
-from mirqi.core import my_utils
+from srqi.gui import report_writer
+from srqi.core import my_utils
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Missing_Data_Inquiry)

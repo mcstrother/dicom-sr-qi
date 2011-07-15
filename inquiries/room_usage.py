@@ -1,4 +1,4 @@
-from mirqi.core import inquiry, my_utils, my_exceptions
+from srqi.core import inquiry, my_utils, my_exceptions
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
@@ -92,7 +92,7 @@ class Room_Usage(inquiry.Inquiry):
         return [fig]
 
 
-from mirqi.gui import report_writer
+from srqi.gui import report_writer
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Room_Usage, 'slch')

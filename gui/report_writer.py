@@ -1,12 +1,12 @@
 import os.path as path
 import jinja2
-import mirqi
-from mirqi.core import my_utils
-from mirqi.core import ReadXML
+import srqi
+from srqi.core import my_utils
+from srqi.core import ReadXML
 
 
 def _get_report_template():
-    TEMPLATE_FOLDER = path.join(mirqi.gui.__path__[0], 'templates')
+    TEMPLATE_FOLDER = path.join(srqi.gui.__path__[0], 'templates')
     TEMPLATE_NAME = 'report.html'
     template_path = path.join(TEMPLATE_FOLDER,TEMPLATE_NAME)
     with open(template_path, 'r') as f:
@@ -15,7 +15,7 @@ def _get_report_template():
 
 
 def write_report(inqs):
-    OUTPUT_FOLDER = mirqi.core.my_utils.get_output_directory()
+    OUTPUT_FOLDER = srqi.core.my_utils.get_output_directory()
     OUTPUT_NAME = 'output.html'
     output_path = path.join(OUTPUT_FOLDER, OUTPUT_NAME)
     template = _get_report_template()
@@ -25,10 +25,10 @@ def write_report(inqs):
 import os
 
 class Report_Writer(object):
-    _default_out_dir = mirqi.core.my_utils.get_output_directory()
+    _default_out_dir = srqi.core.my_utils.get_output_directory()
     _default_out_path = path.join(_default_out_dir,
                                  'output.html')
-    _default_template_folder = path.join(mirqi.gui.__path__[0], 'templates')
+    _default_template_folder = path.join(srqi.gui.__path__[0], 'templates')
     _default_template_path = path.join(_default_template_folder,'report.html')
 
     def __init__(self, data_paths, inquiry_classes):

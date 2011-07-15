@@ -1,5 +1,5 @@
 import unittest
-from mirqi.core import my_utils
+from srqi.core import my_utils
 
 class TestReadXML(unittest.TestCase):
 

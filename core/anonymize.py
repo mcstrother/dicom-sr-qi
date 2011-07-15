@@ -49,7 +49,7 @@ def _anonymize_observer_context(element, new_serial_number,
                                 new_Device_Observer_UID):
     element.setAttribute("Serial_Number", new_serial_number)
     element.setAttribute("Device_Observer_UID", new_Device_Observer_UID)
-    element.setAttribute("Device_Observer_Name", "mirqi_anon")
+    element.setAttribute("Device_Observer_Name", "srqi_anon")
 
 def _get_new_Irradiation_Event_UID(acquisition_number, new_SeriesInstanceUID):
     c = int(new_SeriesInstanceUID[-5:])

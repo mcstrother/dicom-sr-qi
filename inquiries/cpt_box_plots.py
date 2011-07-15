@@ -1,4 +1,4 @@
-from mirqi.core import inquiry, Parse_Syngo, my_utils
+from srqi.core import inquiry, Parse_Syngo, my_utils
 import matplotlib.pyplot as plt
 import heapq
 
