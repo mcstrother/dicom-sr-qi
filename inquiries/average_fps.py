@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from mirqi.core import inquiry
-from mirqi.core import my_utils
+from srqi.core import inquiry
+from srqi.core import my_utils
 import datetime
 
 

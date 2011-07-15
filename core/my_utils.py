@@ -1,17 +1,17 @@
 from datetime import datetime, date, timedelta
 import csv
-import mirqi
+import srqi
 import ReadXML
 import os
 
 
 def get_output_directory():
-        return os.path.join(os.path.abspath(mirqi.__path__[0]), 'output')
+        return os.path.join(os.path.abspath(srqi.__path__[0]), 'output')
 
 def get_data_directory():
-        return os.path.join(os.path.abspath(mirqi.__path__[0]),'Data')
+        return os.path.join(os.path.abspath(srqi.__path__[0]),'Data')
 
-_dir = os.path.abspath(mirqi.__path__[0])
+_dir = os.path.abspath(srqi.__path__[0])
 
 BJH_SYNGO_FILES = [os.path.join(_dir,'Data/BJH/April_Output_Org.xls'), os.path.join(_dir,'Data/BJH/May_Output_Org.xls')]
 BJH_XML_FILE = os.path.join(_dir,'Data/BJH/all bjh.xml')
@@ -217,15 +217,15 @@ def module_to_class_case(m_name):
         return m_name.title()
 
 import pkgutil
-import mirqi.active_inquiries
-from mirqi.core import my_exceptions
+import srqi.active_inquiries
+from srqi.core import my_exceptions
 def get_inquiry_classes():
         """Get a list of inquiry classes
         """
-        pkgpath = os.path.dirname(mirqi.active_inquiries.__file__)
+        pkgpath = os.path.dirname(srqi.active_inquiries.__file__)
         inq_module_names = [os.path.splitext(name)[0] for name in os.listdir(pkgpath) if os.path.splitext(name)[1] =='.py' and not name[0] =='_']
         #inq_module_names = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
-        temp = __import__('mirqi.active_inquiries', globals(), locals(), inq_module_names,-1)
+        temp = __import__('srqi.active_inquiries', globals(), locals(), inq_module_names,-1)
         inq_modules = [getattr(temp, name) for name in inq_module_names]
         inq_classes = []
         for module in inq_modules:

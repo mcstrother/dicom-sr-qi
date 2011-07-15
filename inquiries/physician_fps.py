@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-from mirqi.core import inquiry
-from mirqi.core import my_utils
+from srqi.core import inquiry
+from srqi.core import my_utils
 
 class Physician_Fps(inquiry.Inquiry):
     NAME = u'Physician FPS'
@@ -101,8 +101,8 @@ class Physician_Fps(inquiry.Inquiry):
         out += "Last event at " + str(self.last_start_time) + "\n"
         return out 
 
-from mirqi.gui import report_writer
-from mirqi.core import my_utils
+from srqi.gui import report_writer
+from srqi.core import my_utils
 
 if __name__ == '__main__':
     inquiry.inquiry_main(Physician_Fps)

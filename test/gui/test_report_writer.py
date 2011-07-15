@@ -1,7 +1,7 @@
 import unittest
-from mirqi.gui import report_writer
-from mirqi.inquiries import missing_data_inquiry, average_fps
-from mirqi.core import my_utils
+from srqi.gui import report_writer
+from srqi.inquiries import missing_data_inquiry, average_fps
+from srqi.core import my_utils
 
 class Test_Report_Writer(unittest.TestCase):
     

@@ -1,5 +1,5 @@
-from mirqi.core import inquiry
-from mirqi.inquiries.operator_improvement import get_procedures_helper, sort_by_rads_helper, get_procedure_windows
+from srqi.core import inquiry
+from srqi.inquiries.operator_improvement import get_procedures_helper, sort_by_rads_helper, get_procedure_windows
 import collections
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.collections import PolyCollection

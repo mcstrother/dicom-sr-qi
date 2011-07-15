@@ -1,4 +1,4 @@
-from mirqi.core import inquiry
+from srqi.core import inquiry
 import datetime
 
 #The name of the class must be the same as the file name, except

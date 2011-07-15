@@ -1,7 +1,7 @@
 import unittest
-from mirqi.core import my_utils, Parse_Syngo
-from mirqi.inquiries import operator_improvement
-from mirqi import test
+from srqi.core import my_utils, Parse_Syngo
+from srqi.inquiries import operator_improvement
+from srqi import test
 import os
 from datetime import date
 
