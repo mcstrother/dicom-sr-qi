@@ -119,7 +119,13 @@ class Operator_Improvement(inquiry.Inquiry):
             for i, proc in enumerate(p_list):
                 fluoro = float(proc.fluoro)
                 med = medians[proc.get_cpts_as_string()]
-                metric =(fluoro-med)#/std_dev
+                metric =(fluoro-med)
+                """
+                if med >0:
+                    metric = metric/float(med)
+                if metric > 2*med:
+                    metric = med
+                """
                 cum_metric += metric
                 metric_queue.append(metric)
                 if len(metric_queue)>=self.PROCS_PER_WINDOW.value:
