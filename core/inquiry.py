@@ -57,7 +57,7 @@ class Inquiry(object):
         and save the stuff you need for the other methods
 
         Parameters:
-            sr_procs - a list of ReadXML.Procedure objects representing sr
+            sr_procs - a list of srdata.Procedure objects representing sr
                 reports for single procedures.
             context - a Context object. doesn't currently do anything, but
                 is a placeholder for when we will need to pass context

@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 import csv
 import srqi
-import ReadXML
+import srdata
 import os
 
 
@@ -69,16 +69,16 @@ def transposed(lists):
 
 def get_procs(group = 'all'):
         if group == 'bjh':
-                procs, extra_procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
+                procs, extra_procs = srdata.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
         elif group == 'slch':
-                procs, extra_procs = ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+                procs, extra_procs = srdata.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
         elif group == 'all':
-                procs, extra_procs = ReadXML.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
-                procs2, extra_procs2 = ReadXML.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
+                procs, extra_procs = srdata.process_file(BJH_XML_FILE, BJH_SYNGO_FILES)
+                procs2, extra_procs2 = srdata.process_file(SLCH_XML_FILE, SLCH_SYNGO_FILES)
                 procs = procs + procs2
                 extra_procs = extra_procs + procs2
         elif group == 'test':
-                procs, extra_procs = ReadXML.process_file(TEST_XML_FILE, TEST_SYNGO_FILES)
+                procs, extra_procs = srdata.process_file(TEST_XML_FILE, TEST_SYNGO_FILES)
         else:
                 raise ValueError("Invalid group")
         return procs, extra_procs
@@ -94,7 +94,7 @@ def get_procs_from_files(paths):
         # this will eventually be more sophisticated
         syngo_paths = [p for p in paths if os.path.splitext(p)[1] == '.xls']
         sr_paths = [p for p in paths if os.path.splitext(p)[1] == '.xml']
-        return ReadXML.process_files(sr_paths, syngo_paths)
+        return srdata.process_files(sr_paths, syngo_paths)
 
 def average_fps(events):
         """Gets the average FPS weighted by event duration"""

@@ -8,7 +8,6 @@ from srqi.core import my_utils
 class Physician_Fps(inquiry.Inquiry):
     NAME = u'Physician FPS'
     DAYS_PER_PERIOD = inquiry.Inquiry_Parameter(7,"Days per period")
-    #TODO implement parameters for start and end day
     DATE_RANGE_START = inquiry.get_standard_parameter("DATE_RANGE_START")
     DATE_RANGE_END = inquiry.get_standard_parameter("DATE_RANGE_END")
 

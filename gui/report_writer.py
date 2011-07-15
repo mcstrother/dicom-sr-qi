@@ -2,7 +2,7 @@ import os.path as path
 import jinja2
 import srqi
 from srqi.core import my_utils
-from srqi.core import ReadXML
+from srqi.core import srdata
 
 
 def _get_report_template():

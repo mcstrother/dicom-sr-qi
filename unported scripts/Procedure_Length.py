@@ -4,7 +4,7 @@ the "Patients" sheet. The output is printed so it can be
 directly copied into a new column in the workbook.
 
 This is only useful to set up analysis for non-programmers.
-Programmers should use ReadXML instead.
+Programmers should use srdata instead.
 
 """
 import xlrd

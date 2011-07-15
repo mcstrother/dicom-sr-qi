@@ -1,4 +1,4 @@
-import ReadXML
+import srdata
 import my_utils
 import csv
 
@@ -48,8 +48,8 @@ def proc_frame_rate(bjh_procs):
 	
 	
 if __name__ == '__main__':
-	bjh_procs = ReadXML.process_file(my_utils.BJH_XML_FILE, my_utils.BJH_SYNGO_FILES)
-	slch_procs = ReadXML.process_file(my_utils.SLCH_XML_FILE, my_utils.SLCH_SYNGO_FILES)
+	bjh_procs = srdata.process_file(my_utils.BJH_XML_FILE, my_utils.BJH_SYNGO_FILES)
+	slch_procs = srdata.process_file(my_utils.SLCH_XML_FILE, my_utils.SLCH_SYNGO_FILES)
 	bjh_events, slch_events = main(bjh_procs, slch_procs)
 	#proc_frame_rate(bjh_procs)
 	proc_frame_rate(slch_procs)

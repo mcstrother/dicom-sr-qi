@@ -1,7 +1,7 @@
 """Write a .csv file that allows us to easily make a box plot
 of the duration of the most common CPT code combinations.
 """
-import ReadXML
+import srdata
 import csv
 
 XML_FILE_NAME = 'all bjh.xml'
@@ -9,7 +9,7 @@ CPT_FILE_NAMES = CPT_FILE_NAMES = ['./GetCPT Data/April_Output_Org.xls', './GetC
 
 
 def main():
-	procs = ReadXML.process_file(XML_FILE_NAME, CPT_FILE_NAMES)
+	procs = srdata.process_file(XML_FILE_NAME, CPT_FILE_NAMES)
 	#sort the procedures by their CPT code combinations
 	procs_by_cpt = {}
 	for proc in procs:

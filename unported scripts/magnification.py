@@ -5,14 +5,14 @@ and to decide between graphing DAP and Exposure
 """
 
 import my_utils
-import ReadXML
+import srdata
 import csv
 import matplotlib
 
 def build_table():
-        procs = ReadXML.process_file(my_utils.BJH_XML_FILE, my_utils.BJH_SYNGO_FILES)
-        procs = procs + ReadXML.process_file(my_utils.SLCH_XML_FILE, my_utils.SLCH_SYNGO_FILES)
-        #procs = ReadXML.process_file(my_utils.SLCH_XML_FILE, my_utils.SLCH_SYNGO_FILES)
+        procs = srdata.process_file(my_utils.BJH_XML_FILE, my_utils.BJH_SYNGO_FILES)
+        procs = procs + srdata.process_file(my_utils.SLCH_XML_FILE, my_utils.SLCH_SYNGO_FILES)
+        #procs = srdata.process_file(my_utils.SLCH_XML_FILE, my_utils.SLCH_SYNGO_FILES)
 
         dose_lookup = {}
         exposure_lookup = {}
