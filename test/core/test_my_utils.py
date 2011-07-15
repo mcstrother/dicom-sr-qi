@@ -1,7 +1,7 @@
 import unittest
 from srqi.core import my_utils
 
-class TestReadXML(unittest.TestCase):
+class Testsrdata(unittest.TestCase):
 
     def setUp(self):
         self.procs, _ = my_utils.get_procs('test')
