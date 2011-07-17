@@ -47,8 +47,17 @@ class Physician_Fps(inquiry.Inquiry):
             events_by_period = my_utils.organize(events,
                                                  lambda e: int((e.get_start_time() - first_time).days/DAYS_PER_PERIOD))
             out[attending] = events_by_period            
-
+        import datetime
+        start = self.first_time.date()
+        self.period_starts = [start + datetime.timedelta(days=i*DAYS_PER_PERIOD) for i in range(self.num_periods)]
+        """
+        while start <= self.last_start_time:
+            period_starts.append(start)
+            start = start + datetime.timedelta(days = self.DAYS_PER_PERIOD.value)
+        """
         self.lookup = out #lookup[attending][period_number] --> [events]
+
+        
 
     def get_tables(self):
         attending_list = sorted(self.lookup.keys())
@@ -77,7 +86,7 @@ class Physician_Fps(inquiry.Inquiry):
         figs = []
         for a, attending in enumerate(sorted(self.lookup.keys())):
             fig = plt.figure()
-            plt.axis([0,self.num_periods,5,15])
+            plt.axis([0,self.num_periods,5,16])
             plt.xlabel('Period Number')
             plt.ylabel('Average FPS')
             plt.title(attending)
@@ -90,6 +99,8 @@ class Physician_Fps(inquiry.Inquiry):
                 s.append(len(events))
             plt.scatter(x,y,s=s,label=attending)
             plt.plot(x,y,color='red')
+            plt.gca().set_xticklabels(self.period_starts)
+            fig.autofmt_xdate()
             figs.append(fig)
         return figs
 
