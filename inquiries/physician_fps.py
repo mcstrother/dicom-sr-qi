@@ -50,11 +50,6 @@ class Physician_Fps(inquiry.Inquiry):
         import datetime
         start = self.first_time.date()
         self.period_starts = [start + datetime.timedelta(days=i*DAYS_PER_PERIOD) for i in range(self.num_periods)]
-        """
-        while start <= self.last_start_time:
-            period_starts.append(start)
-            start = start + datetime.timedelta(days = self.DAYS_PER_PERIOD.value)
-        """
         self.lookup = out #lookup[attending][period_number] --> [events]
 
         
