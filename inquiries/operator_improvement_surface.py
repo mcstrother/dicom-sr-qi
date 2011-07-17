@@ -45,8 +45,9 @@ class Operator_Improvement_Surface(inquiry.Inquiry):
             plt.title(rad1)
             plt.xlabel("Fluoro Time")
             plt.ylabel("Fraction of Procedures Below Fluoro Time")
-            colorbar_ax = fig.colorbar(line_segments)#ticks = ?
-            colorbar_ax.set_label("Window Number")
+            colorbar = fig.colorbar(line_segments, ticks = range(len(windows)))#ticks = ?
+            colorbar.set_ticklabels([str(window[0].dos_start) for window in windows])
+            colorbar.set_label("Window Start Date")
             figs.append(fig)
         return figs
 
