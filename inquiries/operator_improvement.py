@@ -145,15 +145,6 @@ class Operator_Improvement(inquiry.Inquiry):
    
     def get_figures(self):
         figs = []
-        for rad1 in self.lookup.keys():
-            dates, metrics = zip(*self.lookup[rad1]) #pythonic idiom for "unzip"
-            fig = plt.figure()
-            plt.plot(dates, metrics)
-            plt.title(rad1)
-            plt.xlabel("Window End Date")
-            plt.ylabel("Metric (positive values --> higher fluoro time)")
-            fig.autofmt_xdate()
-            figs.append(fig)
         #all together
         fig = plt.figure()
         for rad1 in self.lookup.keys():
@@ -164,7 +155,20 @@ class Operator_Improvement(inquiry.Inquiry):
             plt.ylabel("Metric (positive values --> higher fluoro time)")
             fig.autofmt_xdate()
         figs.append(fig)
-        #all averaged together
+        axis_ranges = plt.axis()
+        #individual operators
+        for rad1 in self.lookup.keys():
+            dates, metrics = zip(*self.lookup[rad1]) #pythonic idiom for "unzip"
+            fig = plt.figure()
+            plt.plot(dates, metrics)
+            plt.axis(axis_ranges)
+            plt.title(rad1)
+            plt.xlabel("Window End Date")
+            plt.ylabel("Metric (positive values --> higher fluoro time)")
+            fig.autofmt_xdate()
+            figs.append(fig)
+        
+        #TODO: all averaged together
         
         return figs
 
