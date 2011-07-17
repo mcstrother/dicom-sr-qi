@@ -72,9 +72,9 @@ def get_procedure_windows(procs, procs_per_window, step_size ):
 
 
 class Operator_Improvement(inquiry.Inquiry):
-    MIN_REPS = inquiry.Inquiry_Parameter(50, "Minimum procedure count",
+    MIN_REPS = inquiry.Inquiry_Parameter(500, "Minimum procedure count",
                                          "The minimum number of times a procedure with the same CPT codes must occur to be considered to have a reasonable distribution")
-    PROCS_PER_WINDOW = inquiry.Inquiry_Parameter(50, "Procedures Per Window",
+    PROCS_PER_WINDOW = inquiry.Inquiry_Parameter(400, "Procedures Per Window",
                                                  "Number of procedures that should be considered in the sliding window calculation of the operators performance metric.")
     def run(self, procs, context, extra_procs):
         cpt_to_procs = get_procedures_helper(procs, extra_procs, self.MIN_REPS.value)
@@ -142,19 +142,29 @@ class Operator_Improvement(inquiry.Inquiry):
             row = [rad1] + dev_list
             out.append(row)
         return [out]
+
+    def _get_all_together_figure(self, legend = False):
+        fig = plt.figure()
+        from matplotlib import cm
+        colormap = cm.get_cmap(name='hsv')
+        colors = [colormap(i) for i in np.linspace(0,0.9, len(self.lookup.keys()))]
+        for i,rad1 in enumerate(self.lookup.keys()):
+            dates, metrics = zip(*self.lookup[rad1]) #pythonic idiom for "unzip"
+            plt.plot(dates, metrics, color = colors[i], label =rad1)
+        plt.title("All combined")
+        plt.xlabel("Window End Date")
+        plt.ylabel("Metric (positive values --> higher fluoro time)")
+        fig.autofmt_xdate()
+        if legend:
+            plt.legend()
+        return fig
+        
    
     def get_figures(self):
         figs = []
         #all together
-        fig = plt.figure()
-        for rad1 in self.lookup.keys():
-            dates, metrics = zip(*self.lookup[rad1]) #pythonic idiom for "unzip"
-            plt.plot(dates, metrics)
-            plt.title("All combined")
-            plt.xlabel("Window End Date")
-            plt.ylabel("Metric (positive values --> higher fluoro time)")
-            fig.autofmt_xdate()
-        figs.append(fig)
+        figs.append(self._get_all_together_figure(False))
+        figs.append(self._get_all_together_figure(True))
         axis_ranges = plt.axis()
         #individual operators
         for rad1 in self.lookup.keys():
