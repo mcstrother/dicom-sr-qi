@@ -71,11 +71,19 @@ class Average_Fps(inquiry.Inquiry):
     def get_figures(self):
         fig = plt.figure()
         plt.scatter(range(len(self.averages)), self.averages, s= self.counts)
+        plt.axis([0,len(self.counts)-1,5,16])
+        axes = plt.gca()
+        xtick_labels = []
+        for i in axes.get_xticks():
+            if i < len(self.start_dates):
+                xtick_labels.append( self.start_dates[int(i)])
+        axes.set_xticklabels(xtick_labels)
+        #axes.set_xticklabels([self.start_dates[int(i)] for i in axes.get_xticks()])
         plt.plot(range(len(self.averages)), self.averages, color='red')
         plt.xlabel('Period Number')
         plt.ylabel('Average FPS')
         plt.title("Average FPS Across All Events")
-        plt.axis([0,len(self.counts)-1,5,16])
+        fig.autofmt_xdate()
         return [fig]
 
     def get_text(self):
