@@ -20,11 +20,17 @@ class Inquiry_Parameter_Panel(wx.Panel):
             wx_date = my_utils.python_date_to_wx_date(self.param.value)
             self.ctrl.SetValue(wx_date)
             sizer.Add(self.ctrl)
+        elif isinstance(self.param.value, bool):
+            #important that we do this check first, since apparently True can be seen as an int
+            self.ctrl = wx.CheckBox(self)
+            sizer.Add(self.ctrl)
         elif isinstance(self.param.value, int) or isinstance(self.param.value, long):
             self.ctrl = wx.SpinCtrl(self)
             self.ctrl.SetRange(0,1000000)
             self.ctrl.SetValue(self.param.value)
             sizer.Add(self.ctrl)
+        else:
+            raise NotImplementedError("Inquiry has parameter that cannot be displayed in the gui.")
         self.SetSizer(sizer)
             
     def get_value(self):
