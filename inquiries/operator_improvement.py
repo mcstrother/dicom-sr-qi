@@ -76,6 +76,11 @@ class Operator_Improvement(inquiry.Inquiry):
                                          "The minimum number of times a procedure with the same CPT codes must occur to be considered to have a reasonable distribution")
     PROCS_PER_WINDOW = inquiry.Inquiry_Parameter(400, "Procedures Per Window",
                                                  "Number of procedures that should be considered in the sliding window calculation of the operators performance metric.")
+    CLAMP = inquiry.Inquiry_Parameter(True, "Limit penalty to 2x median",
+                                      "If an operator exceeds the median fluoro time on a given procedure by more than 2x the median, only penalize him by 1x the median.")
+    NORMALIZE_PENALTY = inquiry.Inquiry_Parameter(True, "Normalize penalties",
+                                                  "Divide penalties by the median to account for greater variation in longer procedures.")
+
     def run(self, procs, context, extra_procs):
         cpt_to_procs = get_procedures_helper(procs, extra_procs, self.MIN_REPS.value)
         # calculate statistics for each procedure type
@@ -120,9 +125,9 @@ class Operator_Improvement(inquiry.Inquiry):
                 fluoro = float(proc.fluoro)
                 med = medians[proc.get_cpts_as_string()]
                 metric =(fluoro-med)
-                if med >0:
+                if med >0 and self.NORMALIZE_PENALTY.value:
                     metric = metric/float(med)
-                if metric > 2*med:
+                if metric > 2*med and self.CLAMP.value:
                     metric = med
                 cum_metric += metric
                 metric_queue.append(metric)

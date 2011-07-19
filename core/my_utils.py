@@ -17,8 +17,8 @@ BJH_SYNGO_FILES = [os.path.join(_dir,'Data/BJH/April_Output_Org.xls'), os.path.j
 BJH_XML_FILE = os.path.join(_dir,'Data/BJH/all bjh.xml')
 SLCH_SYNGO_FILES = [os.path.join(_dir,'Data/SLCH/April_IR_Output_Org.xls'), os.path.join(_dir,'Data/SLCH/May_IR_Output_Org.xls')]
 SLCH_XML_FILE = os.path.join(_dir,'Data/SLCH/all slch.xml')
-TEST_XML_FILE = os.path.join(_dir,'Data/sample.xml')
-TEST_SYNGO_FILES = [os.path.join(_dir,'Data/sample_syngo.xls')]
+TEST_XML_FILE = os.path.join(_dir,'Data','sample.xml')
+TEST_SYNGO_FILES = [os.path.join(_dir,'Data','sample_syngo.xls')]
 
 
 
