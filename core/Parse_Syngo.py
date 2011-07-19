@@ -32,9 +32,21 @@ class Syngo(object):
         
         
         def __init__(self, *args):
+                """Initalize a Syngo object
+
+                Parameters can take 2 forms:
+                1) a single parameter, a dictionary of data values where the keys
+                are strings in `self._ALL_ATTRS`
+                2) 3 parameters, `row`, `column_numbers`, and `date_mode`, where `row` is a
+                xlrd.Row object; `column_numbers` is a dictionary mapping
+                the strings in `self._ALL_ATTRS` to integers; and `date_mode
+                is a xlrd date mode object for the workbook that row came from
+                """
                 if isinstance(args[0],dict) and len(args) ==1:
                         self._init_from_dict(args[0])
-                elif isinstance(args[0],list) and isinstance(args[1],dict) and len(args) ==3:#list of xlrd.sheet.Cell objects with a dict identifying the column numbers
+                elif isinstance(args[0],list) and \
+                     isinstance(args[1],dict) and \
+                     len(args) == 3:#list of xlrd.sheet.Cell objects with a dict identifying the column numbers
                         self._init_from_row(args[0], args[1], args[2])
                 else:
                         raise ValueError("Invalid inputs to Syngo.__init__")
@@ -236,7 +248,13 @@ def parse_syngo_file(file_name, run_no_dupes = True):
                                 
         procedures = []
         for r in xrange(1,s.nrows):
-                procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
+                try:
+                        procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
+                except ValueError as ve:
+                        raise ValueError("Problem parsing Syngo file on row " + str(r)\
+                                         + ". Found a value of '" + \
+                                         ve.message.split(':')[1:] +\
+                                         "' in a column of a different type.")
         if run_no_dupes:
                 return no_dupes(procedures)
         else:
