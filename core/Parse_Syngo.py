@@ -205,14 +205,23 @@ def no_dupes(procs):
         return table.values() + no_acc_table.values()
                 
 def parse_syngo_file(file_name, run_no_dupes = True):
+        import os
+        file_extension = os.path.splitext(file_name)[1]
+        if not file_extension == '.xls':
+                raise ValueError("File extension must be '.xls', not " + str(file_extension))
         wb = xlrd.open_workbook(file_name)
+        if not wb.nsheets >2:
+                raise ValueError("Syngo data must be found on second sheet of workbook")
         s = wb.sheet_by_index(1)
         headings = [c.value for c in s.row(0)]
         column_numbers = {}
         for col_name in _COLUMNS:
                 if col_name == 'CPTs' and not col_name in headings:
                         cpt_cols = []
-                        col = headings.index('CPT1')
+                        try:
+                                col = headings.index('CPT1')
+                        except ValueError:
+                                raise ValueError("Could not find either 'CPT1' or 'CPTs' as column headings in second sheet of " + file_name)
                         cpt_cols.append(col)
                         col = col+1
                         while col < s.ncols and s.cell(0,col).value[:3] =="CPT":
@@ -220,7 +229,11 @@ def parse_syngo_file(file_name, run_no_dupes = True):
                                 col = col +1
                         column_numbers['CPTs'] = cpt_cols
                 else:
-                        column_numbers[col_name] = headings.index(col_name)
+                        try:
+                                column_numbers[col_name] = headings.index(col_name)
+                        except ValueError as ve:
+                                raise ValueError("Could not find column heading '" + str(col_name) + "' in second sheet of " + file_name)
+                                
         procedures = []
         for r in xrange(1,s.nrows):
                 procedures.append(Syngo(s.row(r),column_numbers,wb.datemode))
