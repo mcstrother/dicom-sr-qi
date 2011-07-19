@@ -12,6 +12,17 @@ class Inquiry_Parameter(object):
     def set_value(self, new_value):
         self.value = new_value
 
+    def __nonzero__(self):
+        """Define boolean behavior of Inquiry_Parameter objects
+
+        Helps avoid the extremely confusing bug that could be caused
+        by someone using `if inq_param` rather than `if inq_param.value`
+        """
+        if isinstance(self.value, bool):
+            return self.value
+        else:
+            return True
+
 import datetime
 def get_standard_parameter(param_name):
     if param_name == "DATE_RANGE_START":
