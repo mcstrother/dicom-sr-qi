@@ -136,14 +136,12 @@ class Main_Frame(wx.Frame):
                 self._report_writer = report_writer.Report_Writer(data_paths,inq_classes)
             else:
                 self._report_writer.update(data_paths, inq_classes)
+            cont, _ = prog_dlg.Update(1, "Writing report.")
+            if cont:
+                self._report_writer.write()
         except Exception as e:
             self.show_exception(e)
             prog_dlg.Update(2, "Done")
-        prog_dlg.Update(1, "Writing report.")
-        try:
-            self._report_writer.write()
-        except Exception as e:
-            self.show_exception(e)
         prog_dlg.Update(2, "Done")
 
 
