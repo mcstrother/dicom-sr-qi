@@ -222,7 +222,7 @@ def parse_syngo_file(file_name, run_no_dupes = True):
         if not file_extension == '.xls':
                 raise ValueError("File extension must be '.xls', not " + str(file_extension))
         wb = xlrd.open_workbook(file_name)
-        if not wb.nsheets >2:
+        if not wb.nsheets >=2:
                 raise ValueError("Syngo data must be found on second sheet of workbook")
         s = wb.sheet_by_index(1)
         headings = [c.value for c in s.row(0)]
