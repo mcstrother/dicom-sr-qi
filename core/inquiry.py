@@ -4,10 +4,19 @@ import os
 import matplotlib.pyplot as plt
 
 class Inquiry_Parameter(object):
-    def __init__(self, default_value, label, description = ''):
+    def __init__(self, default_value, label, description = '', weight = 0):
+        """
+        Parameters:
+            deafult_value :
+            label : a string. a human readable name for the parameter
+            description : a human-readable description for the parameter
+            weight : a number. a hint at where the parameter should appear in
+                the UI. (more negative values float to the top)
+        """
         self.value = default_value
         self.label = label
         self.description = description
+        self.weight = weight
 
     def set_value(self, new_value):
         self.value = new_value
@@ -27,9 +36,11 @@ import datetime
 def get_standard_parameter(param_name):
     if param_name == "DATE_RANGE_START":
         return Inquiry_Parameter(datetime.date.today()-datetime.timedelta(days=365),
-                                     "Date Range Start")
+                                     "Date Range Start",
+                                 weight = -20)
     elif param_name == "DATE_RANGE_END":
-        return Inquiry_Parameter(datetime.date.today(), "Date Range End")
+        return Inquiry_Parameter(datetime.date.today(), "Date Range End",
+                                 weight = -19)
     else:
         raise ValueError("No such standard parameter " + param_name)
 

@@ -56,8 +56,9 @@ class Inquiry_Panel(wx.CollapsiblePane):
         self.Bind(wx.EVT_HYPERLINK, self.show_description, self.description_link)
         param_names = self._inquiry_class.get_parameter_names()
         self.param_panels = {}
-        for param_name in param_names:
-            param = getattr(self._inquiry_class, param_name)
+        params = [getattr(self._inquiry_class, param_name) for param_name in param_names]
+        params.sort(key = lambda p:p.weight)
+        for param in params:
             param_panel = Inquiry_Parameter_Panel(self.GetPane(), parameter=param)
             self.param_panels[param_name] = param_panel
             sizer.Add(param_panel)
