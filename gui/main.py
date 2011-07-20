@@ -58,7 +58,7 @@ class Inquiry_Panel(wx.CollapsiblePane):
         self.param_panels = {}
         params = [getattr(self._inquiry_class, param_name) for param_name in param_names]
         params.sort(key = lambda p:p.weight)
-        for param in params:
+        for param_name, param in zip(param_names,params):
             param_panel = Inquiry_Parameter_Panel(self.GetPane(), parameter=param)
             self.param_panels[param_name] = param_panel
             sizer.Add(param_panel)
