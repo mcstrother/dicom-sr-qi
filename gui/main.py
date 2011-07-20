@@ -57,11 +57,12 @@ class Inquiry_Panel(wx.CollapsiblePane):
         param_names = self._inquiry_class.get_parameter_names()
         self.param_panels = {}
         params = [getattr(self._inquiry_class, param_name) for param_name in param_names]
-        params.sort(key = lambda p:p.weight)
         for param_name, param in zip(param_names,params):
             param_panel = Inquiry_Parameter_Panel(self.GetPane(), parameter=param)
             self.param_panels[param_name] = param_panel
-            sizer.Add(param_panel)
+        #add the panels in the right order
+        for panel in sorted(self.param_panels.values(), key= lambda x:x.param.weight):
+            sizer.Add(panel)
         self.GetPane().SetSizer(sizer) # see http://xoomer.virgilio.it/infinity77/wxPython/Widgets/wx.CollapsiblePane.html for why GetPane is used here
         self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_change)
 
