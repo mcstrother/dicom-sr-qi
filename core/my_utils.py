@@ -170,6 +170,38 @@ def organize(iterable, key):
                 out[k].append(item)
         return out
 
+def periodize_by_date(iterable, period_len, date_key):
+        """Break up all the obects in iterable into time periods
+
+        Runs in linear time with respect to the # of days between the first
+        and the last object in `iterable`. (Would also be easy to implement
+        as n*log(n) with respect to the number of objects in iterable, but
+        for the data we're working on, that would generally be slower. TODO:
+        implement this so that it checks which would be faster and runs that
+        way)
+        Parameters:
+                iterable :
+                period_len : the length of the period in days
+                date_key : a function that takes an object in `iterable` and
+                        returns a datetime.date object
+        """
+        orgd_iter = organize(iterable, date_key)
+        first_date = min(orgd_iter.keys(), key = date_key)
+        last_date = max(orgd_iter.keys(), key = date_key)
+        current = first_date
+        periods = []
+        while current <= last_date:
+                period_end = current + timedelta(days=period_len)
+                period = []
+                while current < period_end:
+                        if current in orgd_iter:
+                                period = period + orgd_iter[current]
+                        current = current + timedelta(days =1)
+                periods.append(period)
+        return periods
+                                
+                
+
 import xlrd
 
 def coerce_human_date(d, datemode = None):
