@@ -186,11 +186,13 @@ def periodize_by_date(iterable, period_len, date_key):
                         returns a datetime.date object
         """
         orgd_iter = organize(iterable, date_key)
-        first_date = min(orgd_iter.keys(), key = date_key)
-        last_date = max(orgd_iter.keys(), key = date_key)
+        first_date = min(orgd_iter.keys())
+        last_date = max(orgd_iter.keys())
         current = first_date
         periods = []
+        period_starts = []
         while current <= last_date:
+                period_starts.append(current)
                 period_end = current + timedelta(days=period_len)
                 period = []
                 while current < period_end:
@@ -198,9 +200,9 @@ def periodize_by_date(iterable, period_len, date_key):
                                 period = period + orgd_iter[current]
                         current = current + timedelta(days =1)
                 periods.append(period)
-        return periods
-                                
-                
+        assert(len(periods) == len(period_starts))
+        return periods, period_starts
+        
 
 import xlrd
 

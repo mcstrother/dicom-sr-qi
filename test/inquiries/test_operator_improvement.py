@@ -14,10 +14,10 @@ class Test_Operator_Improvement(unittest.TestCase):
         syngo_procs = Parse_Syngo.parse_syngo_file(data_file)
         cls.syngo_procs = syngo_procs
         inq_cls = operator_improvement.Operator_Improvement
-        inq_cls.PROCS_PER_WINDOW.value = 3
-        inq_cls.MIN_REPS.value = 4
-        inq_cls.CLAMP.value = False
-        inq_cls.NORMALIZE_PENALTY.value = False
+        inq_cls.PROCS_PER_WINDOW.set_value(3)
+        inq_cls.MIN_REPS.set_value(4)
+        inq_cls.CLAMP.set_value(False)
+        inq_cls.NORMALIZE_PENALTY.set_value(False)
         cls.inq_cls = inq_cls
         cls.inq = operator_improvement.Operator_Improvement([],
                                                              extra_procs = syngo_procs)

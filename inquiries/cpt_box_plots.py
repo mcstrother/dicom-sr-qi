@@ -6,7 +6,11 @@ import heapq
 class Cpt_Box_Plots(inquiry.Inquiry):
     NUM_PROCEDURE_TYPES = inquiry.Inquiry_Parameter(5, "Number of Procedure Types",
                                                     "The Maximum number of procedure types (as defined by CPT code combinations) to be plotted")
+    description = """Creates box plots for fluoro times of the most common CPT code combinations
 
+    Data requires:
+        Syngo
+    """
     def run(self, procs, context, extra_procs):
         #extract all syngo procs with fluoro values recorded
         syngo_procs = [p for p in extra_procs if type(p) == Parse_Syngo.Syngo]
