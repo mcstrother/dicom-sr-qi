@@ -78,7 +78,7 @@ class Inquiry_Panel(wx.CollapsiblePane):
     def get_inquiry_class(self):
         for param_name in self._inquiry_class.get_parameter_names():
             new_value = self.param_panels[param_name].get_value()
-            getattr(self._inquiry_class, param_name).value = new_value
+            getattr(self._inquiry_class, param_name).set_value(new_value)
         return self._inquiry_class
 
     def on_change(self, event):

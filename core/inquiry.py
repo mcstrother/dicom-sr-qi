@@ -2,6 +2,7 @@ from srqi.core import my_utils
 from srqi.gui import report_writer
 import os
 import matplotlib.pyplot as plt
+import datetime
 
 class Inquiry_Parameter(object):
     def __init__(self, default_value, label, description = '', weight = 0):
@@ -13,13 +14,13 @@ class Inquiry_Parameter(object):
             weight : a number. a hint at where the parameter should appear in
                 the UI. (more negative values float to the top)
         """
-        self.value = default_value
+        self._value = default_value
         self.label = label
         self.description = description
         self.weight = weight
 
     def set_value(self, new_value):
-        self.value = new_value
+        self._value = new_value
 
     def __nonzero__(self):
         """Define boolean behavior of Inquiry_Parameter objects
@@ -28,9 +29,29 @@ class Inquiry_Parameter(object):
         by someone using `if inq_param` rather than `if inq_param.value`
         """
         if isinstance(self.value, bool):
-            return self.value
+            return self._value
         else:
             return True
+
+    @property
+    def value(self):
+        return self._value
+    
+
+class Options_Parameter(Inquiry_Parameter):
+    def __init__(self, options_list, label, description = '', weight = 0):
+        Inquiry_Parameter.__init__(self, options_list[0], label, description, weight)
+        self._options_list = options_list
+
+    def get_options(self):
+        return self._options_list
+
+    def set_value(self, new_value):
+        if not new_value in self.get_options():
+            raise ValueError("new_value must be one of the available options")
+        else:
+            self._value = new_value
+
 
 import datetime
 def get_standard_parameter(param_name):
@@ -41,6 +62,8 @@ def get_standard_parameter(param_name):
     elif param_name == "DATE_RANGE_END":
         return Inquiry_Parameter(datetime.date.today(), "Date Range End",
                                  weight = -19)
+    elif param_name == "PERIOD_LEN":
+        return Inquiry_Parameter(7, "Days per Period")
     else:
         raise ValueError("No such standard parameter " + param_name)
 
