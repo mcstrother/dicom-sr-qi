@@ -20,4 +20,17 @@ class BadInquiryError(Exception):
     writing an inquiry.
     """
 
+class UnmetRequirementError(Exception):
+    """Raised when attempting to run an inquiry with insufficient data
+    """
+
+class AbsentDataTypeError(UnmetRequirementError):
+    """Raised when atempting to run an inquiry without inputting any of a required data type (e.g. sr Procedures, Syngo data, etc)
+    """
+
+    def __init__(self, data_class, *args):
+        self.data_class = data_class
+        message = "Inquiry requires " + str(data_class) + "procedure data in order to run."
+        UnmetRequirementError.__init__(self, message) 
+
 

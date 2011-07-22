@@ -7,11 +7,23 @@ class Angle_Space_Dose(inquiry.Inquiry):
 
     def run(self, sr_procs, context, extra_procs):
         out = [] #out[proc #][event #][0 or 1, primary or secondary angle]
+        print self.DATE_RANGE_START.value
+        print self.DATE_RANGE_END.value
+        print sr_procs
+        prim_angles = []
+        second_angles = []
         for p in sr_procs:
             if len(p.get_events())>0:
                 p_events = [(e.Positioner_Primary_Angle,
                              e.Positioner_Secondary_Angle, e.Dose_RP) for e in p.get_events()]
                 out.append(p_events)
+                print "yay!"
+                prim_angles = prim_angles + [t[0] for t in p_events]
+                second_angles = second_angles + [t[1] for t in p_events]
+        print "Max prim " + str(max(prim_angles))
+        print "Min prim " + str(min(prim_angles))
+        print "Max second " + str(max(second_angles))
+        print "Min second " + str(min(second_angles))
         self.data = out
 
     def get_figures(self):
