@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-from srqi.core import inquiry
-from srqi.core import my_utils
+from srqi.core import inquiry, my_utils, my_exceptions
 
 class Physician_Fps(inquiry.Inquiry):
     NAME = u'Physician FPS'
@@ -29,8 +28,12 @@ class Physician_Fps(inquiry.Inquiry):
     """
     
     def run(self, procs, context, extra_procs):
+        if not len(procs) >0:
+            raise my_exceptions.UnmetRequirementError("No SR Data received.")
         DAYS_PER_PERIOD = self.DAYS_PER_PERIOD.value
         procs = [p for p in procs if p.is_pure()]
+        if not len(procs) > 0:
+            raise my_exceptions.UnmetRequirementError("Unable to pair any SR Data with Syngo data")
         procs_by_attending = my_utils.organize(procs, lambda x: x.get_syngo().rad1.replace(',',''))
 
         first_time = min(procs, key = lambda x: x.get_start_time()).get_start_time()
