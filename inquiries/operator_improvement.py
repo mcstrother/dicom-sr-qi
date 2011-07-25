@@ -127,7 +127,7 @@ class Operator_Improvement(inquiry.Inquiry):
                 metric =(fluoro-med)
                 if med >0 and self.NORMALIZE_PENALTY.value:
                     metric = metric/float(med)
-                if metric > 2*med and self.CLAMP.value:
+                if metric > med and self.CLAMP.value:
                     metric = med
                 cum_metric += metric
                 metric_queue.append(metric)
