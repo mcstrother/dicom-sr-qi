@@ -141,7 +141,6 @@ class Operator_Improvement(inquiry.Inquiry):
 
 
     def get_tables(self):
-        print "ran get table"
         out = []
         for rad1, dev_list in self.raw_devs.iteritems():
             row = [rad1] + dev_list
