@@ -25,6 +25,8 @@ class Modality_Usage(inquiry.Inquiry):
     name = "Modality Usage"
     description = """Describe amount of usage of different modalities across data set
 
+    Includes plots of number of events, number of frames, and dose as well
+    as tabular output.
     It should be noted that this metric will be sensitive to case mix.
 
     Data required:
@@ -88,7 +90,16 @@ class Modality_Usage(inquiry.Inquiry):
         plt.xlabel("Period Start")
         plt.plot(self.period_starts,self.fluoro_events, label = "Fluoro")
         plt.plot(self.period_starts,self.acquisition_events, label = "Acquisition")
-        plt.plot(self.period_starts,self.total_events, label = "Total")
+        plt.plot(self.period_starts,self.total_events, label = "Total Events")
+        fig.autofmt_xdate()
+        plt.legend()
+        figs.append(fig)
+        # plot acquisition event numbers on separate graph for readability
+        fig = plt.figure()
+        plt.title("Acquisition Event Counts")
+        plt.ylabel("Number of Events")
+        plt.xlabel("Period Start")
+        plt.plot(self.period_starts,self.acquisition_events, label = "Acquisition")
         fig.autofmt_xdate()
         plt.legend()
         figs.append(fig)
@@ -103,6 +114,15 @@ class Modality_Usage(inquiry.Inquiry):
         fig.autofmt_xdate()
         plt.legend()
         figs.append(fig)
+        # acquisition frame counts
+        fig = plt.figure()
+        plt.title("Acquisition Frame Counts")
+        plt.ylabel("Number of Frames")
+        plt.xlabel("Period Start")
+        plt.plot(self.period_starts,self.acquisition_frames, label = "Acquisition")
+        fig.autofmt_xdate()
+        plt.legend()
+        figs.append(fig)
         return figs
 
 
@@ -110,6 +130,13 @@ class Modality_Usage(inquiry.Inquiry):
         heading =["Period Start", "Fluoro Dose RP (GY)", "Acquisition Dose", "Total Dose",
                   "Fluoro Frames", "Acquisition Frames", "Total Frames",
                   "Fluoro Events", "Acquisition Events", "Total Events"]
+        import numpy as np
+        values = np.vstack((self.period_starts, self.fluoro_doses, self.acquisition_doses,
+                   self.total_doses,
+                   self.fluoro_frames, self.acquisition_frames, self.total_frames,
+                   self.fluoro_events, self.acquisition_events, self.total_events))
+        out = [heading] + values.transpose().tolist()
+        return [out]
         
 
 
