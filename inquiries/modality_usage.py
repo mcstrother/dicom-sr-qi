@@ -1,5 +1,26 @@
 from srqi.core import inquiry, my_utils
 
+def get_period_sum(period, val_func, event_types = ()):
+    """
+    Parameters:
+        period : a list of Events
+        val_func : a function that takes an Event and returns the value of
+            the event to be summed. For example `lambda x:x.Dose_RP` would be
+            a valid and logical input for this parameter
+        event_type : an iterable of strings. sums over only Events of these
+            Irradiation_Event_Types. If bool(event_type) == False then sums
+            over all events. If you pass a basestring, it wil automatically
+            be converted to an iterable for you.
+    """
+    if isinstance(event_types, basestring):
+        event_types = (event_types)
+    total = 0
+    for event in period:
+        if not event_types or event.Irradiation_Event_Type in event_types:
+            total = total + val_func(event)
+    return total
+
+
 class Modality_Usage(inquiry.Inquiry):
     name = "Modality Usage"
     description = """Describe amount of usage of different modalities across data set
@@ -23,35 +44,73 @@ class Modality_Usage(inquiry.Inquiry):
             events_by_period.append(period_events)
         self.events_by_period = events_by_period
         self.period_starts = period_starts
+        get_dose = lambda e:e.Dose_RP
+        self.fluoro_doses = [get_period_sum(period,get_dose,"Fluoroscopy") for period in self.events_by_period]
+        self.acquisition_doses = [get_period_sum(period,
+                                            get_dose,"Stationary Acquisition") for period in self.events_by_period]
+        self.total_doses = [get_period_sum(period,get_dose) for period in self.events_by_period]
+        get_frames = lambda e:e.Number_of_Pulses
+        self.fluoro_frames = [get_period_sum(period,get_frames, "Fluoroscopy") for period in self.events_by_period]
+        self.acquisition_frames = [get_period_sum(period, get_frames, "Stationary Acquisition") for period in self.events_by_period]
+        self.total_frames = [get_period_sum(period, get_frames) for period in self.events_by_period]
+        count = lambda e:1
+        self.fluoro_events = [get_period_sum(period, count, "Fluoroscopy") for period in self.events_by_period]
+        self.acquisition_events = [get_period_sum(period, count, "Stationary Acquisition") for period in self.events_by_period]
+        self.total_events = [get_period_sum(period,count) for period in self.events_by_period]
 
     def get_figures(self):
         import matplotlib.pyplot as plt
+        figs = []
         fig = plt.figure()
         plt.title("Dose By Modality")
         plt.ylabel("Dose")
         plt.xlabel("Period Start")
-        fluoro_doses = []
-        acquisition_doses = []
-        total_doses = []
-        for period in self.events_by_period:
-            fluoro_dose = 0
-            acquisition_dose = 0
-            total_dose = 0
-            for e in period:
-                total_dose = total_dose+e.Dose_RP
-                if e.Irradiation_Event_Type == "Fluoroscopy":
-                    fluoro_dose = fluoro_dose+e.Dose_RP
-                elif e.Irradiation_Event_Type =='Stationary Acquisition':
-                    acquisition_dose = acquisition_dose+e.Dose_RP
-            fluoro_doses.append(fluoro_dose)
-            acquisition_doses.append(acquisition_dose)
-            total_doses.append(total_dose)
-        plt.plot(self.period_starts,fluoro_doses, label = "Fluoro")
-        plt.plot(self.period_starts,acquisition_doses, label = "Acquisition")
-        plt.plot(self.period_starts,total_doses, label = "Total Dose")
+        plt.plot(self.period_starts,self.fluoro_doses, label = "Fluoro")
+        plt.plot(self.period_starts,self.acquisition_doses, label = "Acquisition")
+        plt.plot(self.period_starts,self.total_doses, label = "Total Dose")
         fig.autofmt_xdate()
         plt.legend()
-        return [fig]
+        figs.append(fig)
+        #bar chart of procedure numbers
+        fig = plt.figure()
+        plt.title("Number of Events Per Period")
+        plt.bar(self.period_starts,
+                [len(period) for period in self.events_by_period],
+                align = 'center')
+        plt.xlabel("Period Start")
+        plt.ylabel("Number of Events")
+        fig.autofmt_xdate()
+        figs.append(fig)
+        # event numbers
+        fig = plt.figure()
+        plt.title("Event Counts")
+        plt.ylabel("Number of Events")
+        plt.xlabel("Period Start")
+        plt.plot(self.period_starts,self.fluoro_events, label = "Fluoro")
+        plt.plot(self.period_starts,self.acquisition_events, label = "Acquisition")
+        plt.plot(self.period_starts,self.total_events, label = "Total")
+        fig.autofmt_xdate()
+        plt.legend()
+        figs.append(fig)
+        # frame counts
+        fig = plt.figure()
+        plt.title("Frame Counts")
+        plt.ylabel("Number of Frames")
+        plt.xlabel("Period Start")
+        plt.plot(self.period_starts,self.fluoro_frames, label = "Fluoro")
+        plt.plot(self.period_starts,self.acquisition_frames, label = "Acquisition")
+        plt.plot(self.period_starts,self.total_frames, label = "Total")
+        fig.autofmt_xdate()
+        plt.legend()
+        figs.append(fig)
+        return figs
+
+
+    def get_tables(self):
+        heading =["Period Start", "Fluoro Dose RP (GY)", "Acquisition Dose", "Total Dose",
+                  "Fluoro Frames", "Acquisition Frames", "Total Frames",
+                  "Fluoro Events", "Acquisition Events", "Total Events"]
+        
 
 
 
