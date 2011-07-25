@@ -1,7 +1,7 @@
 from srqi.core import inquiry, Parse_Syngo, my_utils
 import matplotlib.pyplot as plt
 import heapq
-
+import math
 
 class Cpt_Box_Plots(inquiry.Inquiry):
     NUM_PROCEDURE_TYPES = inquiry.Inquiry_Parameter(5, "Number of Procedure Types",
@@ -11,6 +11,8 @@ class Cpt_Box_Plots(inquiry.Inquiry):
     Data requires:
         Syngo
     """
+    USE_LOG = inquiry.Inquiry_Parameter(True, "Plot log of fluoro times?",
+                                        "Fluoro times tend to be lognormally distributed. Procedures with 0 fluoro time will be ignored.")
     def run(self, procs, context, extra_procs):
         #extract all syngo procs with fluoro values recorded
         syngo_procs = [p for p in extra_procs if type(p) == Parse_Syngo.Syngo]
@@ -25,7 +27,16 @@ class Cpt_Box_Plots(inquiry.Inquiry):
                        key = lambda k: len(cpts_to_procs[k]))
         cpts_to_fluoros = {}
         for cpt in common_cpts:
-            cpts_to_fluoros[cpt] = [p.fluoro for p in cpts_to_procs[cpt]]
+            if not self.USE_LOG.value:
+                cpts_to_fluoros[cpt] = [p.fluoro for p in cpts_to_procs[cpt]]
+            else:
+                log_fluoros = []
+                for p in cpts_to_procs[cpt]:
+                    try:
+                        log_fluoros.append(math.log(p.fluoro))
+                    except ValueError:
+                        pass #ignore procedures with 0 fluoro time
+                cpts_to_fluoros[cpt] = log_fluoros
         self.lookup = cpts_to_fluoros
 
     def get_figures(self):
