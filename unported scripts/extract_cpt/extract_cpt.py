@@ -51,7 +51,7 @@ def find_input_files():
     out = []
     for f in files:
         split = f.split('.')
-        if split[-1] =='xls' and not split[0] == 'code_groups':
+        if split[-1] =='xls' and not split[0] == 'code_groups' and not split[0] =='output':
             out.append(f)
     return out
 
