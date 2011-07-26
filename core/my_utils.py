@@ -128,7 +128,7 @@ def matches(list1,list2):
     depending on whether or not the last
     item in list1 is -99
     """
-    if list1[-1] == -99:
+    if int(list1[-1]) == -99:
         return same_contents(list1[:-1],list2)
     else:
         return is_subset(list1,list2)

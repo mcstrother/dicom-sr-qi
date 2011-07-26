@@ -6,15 +6,16 @@ a "pair" of procedures is a placement and a removal.
 
 Takes at least 3 input files:
  - "code_pairs.xls" - gives cpt codes defining the first and second member
-     of each coe pair
+     of each code pair
  - "reasons_lookup.xls" - a table of accession numbers and "reasons" for the
     second member of each pair (e.g. a central line was removed due to
     infection or due to the line no longer being needed)
  - any number of input files from Syngo
 
 When extracting pairs, this script assumes that all "placements" must
-be followed by a removal before another placement can occur and that
-we may be data from procedures that occurred off site. Thus if the
+be followed by a removal before another placement can occur (i.e. a patient
+can only have one of a single line type in at a time) and that
+we may be missing data from procedures that occurred off site. Thus if the
 input file has the following pattern of procedures for a single
 patient over time (p-placement, r-removal): R1 P1 P2 R2 R3 P3, only
 one pair will be extracted, P2-R2. It is assumed that we are missing
@@ -22,9 +23,11 @@ a placement before R1, a removal after P1, a placement before R3, and
 the final removal (or the patient still has a line in).
 
 """
-
-import my_utils
-import Parse_Syngo
+#allow imports of standard srqi modules
+import os, sys
+srqi_containing_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))
+sys.path.append(srqi_containing_dir)
+from srqi.core import my_utils, Parse_Syngo
 import xlrd, xlwt
 import datetime
 
@@ -38,8 +41,8 @@ def get_code_pairs(in_file_name):
     for sheet in code_pairs_wb.sheets():
         code_pairs[sheet.name] = {}
         code_pairs[sheet.name]['separation'] = datetime.timedelta(days = float(sheet.cell(0,1).value))
-        code_pairs[sheet.name]['combo1'] = [my_utils.standard_cpt(x.value) for x in sheet.row(1)[1:]]
-        code_pairs[sheet.name]['combo2'] = [my_utils.standard_cpt(x.value) for x in sheet.row(2)[1:]]
+        code_pairs[sheet.name]['combo1'] = [my_utils.standard_cpt(x.value) for x in sheet.row(1)[1:] if x.value ==0 or x.value]
+        code_pairs[sheet.name]['combo2'] = [my_utils.standard_cpt(x.value) for x in sheet.row(2)[1:] if x.value==0 or x.value]
     return code_pairs
 
 import os
@@ -48,7 +51,7 @@ def get_syngo_file_names():
     out = []
     for f in files:
         split = f.split('.')
-        if split[-1] =='xls' and not f == PAIR_FILE_NAME and not f == REASON_FILE_NAME:
+        if split[-1] =='xls' and not f == PAIR_FILE_NAME and not f == REASON_FILE_NAME and not f =='output.xls':
             out.append(f)
     return out
 
@@ -138,7 +141,6 @@ def main():
     procs.sort(key= lambda x:x.dos_start)#sort procs by start time
     cps = get_code_pairs(PAIR_FILE_NAME)
     reasons_lookup = get_reasons_lookup()
-
     out = {}
     for sheet_name, spec in cps.iteritems():
         c1 = spec['combo1']#shorthand
@@ -146,6 +148,9 @@ def main():
         #keep only procs that match either c2 or c1
         matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)\
                    or my_utils.matches(spec['combo2'],x.cpts)]
+        print spec['combo1']
+        print spec['combo2']
+        print [p.cpts for p in matches]
         lookup = my_utils.organize(matches, lambda x:x.mpi)
         pairs = []
         for mpi, matches in lookup.iteritems():
