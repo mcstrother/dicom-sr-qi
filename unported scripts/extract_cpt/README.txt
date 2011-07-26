@@ -13,7 +13,7 @@ This program does not depend on the rest of the srqi module, but it does require
 == Set Up == 
 extract_cpt.py must be alone in a folder with:
 1) an excel file called "code_groups.xls" (create this file now)
-2) at least one other .xls file (not .xlsx), formatted as described below, which will be the input file (you will copy this from wherever you keep your data)
+2) at least one other .xls file (not .xlsx), formatted as described below, which will be the input file. (You will copy this from wherever you keep your data.) (All the input files are treated equally, as if they all were part of one big input file.)
 3) optionally, this README file
 
 == Demo ==
