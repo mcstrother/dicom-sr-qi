@@ -5,6 +5,7 @@ from srqi import test
 import os
 from datetime import date
 
+wind_size =3.0
 class Test_Operator_Improvement(unittest.TestCase):
 
     @classmethod
@@ -14,7 +15,7 @@ class Test_Operator_Improvement(unittest.TestCase):
         syngo_procs = Parse_Syngo.parse_syngo_file(data_file)
         cls.syngo_procs = syngo_procs
         inq_cls = operator_improvement.Operator_Improvement
-        inq_cls.PROCS_PER_WINDOW.set_value(3)
+        inq_cls.PROCS_PER_WINDOW.set_value(int(window_size))
         inq_cls.MIN_REPS.set_value(4)
         inq_cls.CLAMP.set_value(False)
         inq_cls.NORMALIZE_PENALTY.set_value(False)
@@ -26,17 +27,17 @@ class Test_Operator_Improvement(unittest.TestCase):
         self.assertEquals(len(self.inq.lookup),2)
 
     def test_stewart(self):
-        expected = [(date(2011,5,15),4.5),
-                    (date(2011,5,22),4),
-                    (date(2011,5,24),.5),
-                    (date(2011,5,28),-2),
-                    (date(2011,5,29),-1)]
+        expected = [(date(2011,5,15),4.5/wind_size),
+                    (date(2011,5,22),4/wind_size),
+                    (date(2011,5,24),.5/wind_size),
+                    (date(2011,5,28),-2/wind_size),
+                    (date(2011,5,29),-1/wind_size)]
         equal = self._lists_equal(self.inq.lookup['Stewart, J.'], expected)
         self.assertTrue(equal, "Incorect metrics for Stewart. Expected :\n " + str(expected) + "\n Got \n" + str(self.inq.lookup['Stewart, J.']))
 
     def test_rayner(self):
-        expected = [(date(2011,6,5), 1.5),
-                    (date(2011,6,8), 1.5)]
+        expected = [(date(2011,6,5), 1.5/wind_size),
+                    (date(2011,6,8), 1.5/wind_size)]
         equal = self._lists_equal(self.inq.lookup['Rayner, K.'], expected)
         self.assertTrue(equal, "Incorect metrics for Rayner. Expected :\n " + str(expected) + "\n Got \n" + str(self.inq.lookup['Rayner, K.']))
 
