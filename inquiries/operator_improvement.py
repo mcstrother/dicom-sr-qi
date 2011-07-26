@@ -135,7 +135,7 @@ class Operator_Improvement(inquiry.Inquiry):
                     if len(metric_queue) > self.PROCS_PER_WINDOW.value:
                         cum_metric -= metric_queue.popleft()
                     if i == len(p_list)-1 or not (proc.dos_start == p_list[i+1].dos_start):
-                        out.append((proc.dos_start, cum_metric))
+                        out.append((proc.dos_start, cum_metric/self.PROCS_PER_WINDOW.value))
             rad1_to_out[rad1] = out
         self.lookup = rad1_to_out #rad1_to_out[rad1][window_number] = (date, metric value)
 

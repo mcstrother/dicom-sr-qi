@@ -27,31 +27,32 @@ def get_improvement_pattern(most_rad1, least_rad1, common_cpts, simulate_procs):
         None. Just modifies the procedures in simulate_procs
     """
     total_procs = len(simulate_procs)
+    simulate_procs.sort(key = lambda p: p.get_start_date())
     for i,proc in enumerate(simulate_procs):
         proc.rad1 = "Simulant"
         cpt = proc.get_cpts_as_string()
-        prob = i/total_procs
+        prob = float(i)/total_procs
         rand = random.random()
-        if cpt in common_cpts:
-            # choose which pool of procedures to draw from according to the
-            # random number. over time the chances of drawing from the pool that
-            # uses less fluoro increases
-            if rand < prob:
-                proc.fluoro = random.choice(common_cpts[cpt][least_rad1]).fluoro
-            else:
-                proc.fluoro = random.choice(common_cpts[cpt][most_rad1]).fluoro
+        # choose which pool of procedures to draw from according to the
+        # random number. over time the chances of drawing from the pool that
+        # uses less fluoro increases
+        if rand > prob:
+            if i % 100 ==0:
+                print ("Most", rand, prob)
+            proc.fluoro = random.choice(common_cpts[cpt][most_rad1]).fluoro
+        else:
+            if i % 100 == 0:
+                print ("Least", rand, prob)
+            proc.fluoro = random.choice(common_cpts[cpt][least_rad1]).fluoro
     
-def simulate_from_real_data(simulate_procs, syngo_procs, procs_by_rad1):
+def simulate_from_real_data(simulate_procs, syngo_procs):
     # get the most common cpt codes as common_cpts[cpt_string] -> list of Syngo objects
     sprocs_by_cpt = my_utils.organize(syngo_procs, lambda p:p.get_cpts_as_string())
     common_cpts = heapq.nlargest(NUM_CPTS,
                                  sprocs_by_cpt.iteritems(),
                                  key =lambda x:len(x[1]))
-    most_common_cpt = common_cpts[0][0]
+    #most_common_cpt = common_cpts[0][0]
     common_cpts = dict(common_cpts)
-    common_cpt_medians = {}
-    for cpt in common_cpts.keys():
-        common_cpt_medians[cpt] = np.median([p.fluoro for p in common_cpts[cpt]])
     # now make common_cpts[cpt_string][rad1] -> list of Syngo objects
     for k in common_cpts.keys():
         common_cpts[k] = my_utils.organize(common_cpts[k], lambda p:p.rad1)
@@ -66,8 +67,8 @@ def simulate_from_real_data(simulate_procs, syngo_procs, procs_by_rad1):
     most_rad1 = "SAAD, N."
     simulate_procs = [p for p in simulate_procs if p.get_cpts_as_string() in common_cpts]
     get_improvement_pattern(most_rad1, least_rad1, common_cpts, simulate_procs)
-    most_rad1_procs = [p for p in procs_by_rad1[most_rad1] if p.get_cpts_as_string() in common_cpts]
-    least_rad1_procs = [p for p in procs_by_rad1[least_rad1] if p.get_cpts_as_string() in common_cpts]
+    most_rad1_procs = [p for p in syngo_procs if p.get_cpts_as_string() in common_cpts and p.rad1 == most_rad1]
+    least_rad1_procs = [p for p in syngo_procs if p.get_cpts_as_string() in common_cpts and p.rad1 == least_rad1]
     return simulate_procs, most_rad1_procs, least_rad1_procs
 
 def main():
@@ -77,14 +78,10 @@ def main():
         if p.has_syngo():
             extra_procs.append(p.get_syngo())
     syngo_procs = [p for p in extra_procs if not p.fluoro is None]
-    # find the physician with the most procedures. we will manipulate
-    # these procedures to show the patterns we want.
-    procs_by_rad1 = my_utils.organize(syngo_procs, lambda x:x.rad1)
-    most_active_rad1 = max(procs_by_rad1.keys(),
-                           key = lambda rad1: len(procs_by_rad1[rad1]))
-    simulate_procs = procs_by_rad1[most_active_rad1]
+    simulate_procs = [p for p in syngo_procs if p.rad1 == 'KIM, S.']
     # manipulate the procedures
-    simulate_procs, most_rad1_procs, least_rad1_procs = simulate_from_real_data(simulate_procs, syngo_procs, procs_by_rad1)
+    simulate_procs, most_rad1_procs, least_rad1_procs = simulate_from_real_data(simulate_procs,
+                                                                                syngo_procs)
     # plot results
     from srqi.inquiries.operator_improvement import Operator_Improvement
     import matplotlib.pyplot as plt
