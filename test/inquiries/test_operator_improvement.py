@@ -15,7 +15,7 @@ class Test_Operator_Improvement(unittest.TestCase):
         syngo_procs = Parse_Syngo.parse_syngo_file(data_file)
         cls.syngo_procs = syngo_procs
         inq_cls = operator_improvement.Operator_Improvement
-        inq_cls.PROCS_PER_WINDOW.set_value(int(window_size))
+        inq_cls.PROCS_PER_WINDOW.set_value(int(wind_size))
         inq_cls.MIN_REPS.set_value(4)
         inq_cls.CLAMP.set_value(False)
         inq_cls.NORMALIZE_PENALTY.set_value(False)
