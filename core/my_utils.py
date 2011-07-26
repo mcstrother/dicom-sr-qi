@@ -112,7 +112,7 @@ def is_subset(list1, list2):
     """
     set1 = frozenset(list1)
     set2 = frozenset(list2)
-    return set1 < set2
+    return set1 <= set2
 
 def same_contents(list1,list2):
     """Returns true if list 1 has the exact same
