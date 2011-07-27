@@ -328,6 +328,16 @@ class Procedure(object):
                 out = self.has_syngo() and self.is_real() and len(self.get_events()) >0
                 return out
 
+        def get_pedal_time(self):
+                """Get the total time duration in which the irradiation pedal was depressed
+                Equal to the sum of all the durations of all the events in the procedure.
+
+                Returns:
+                        a python timedelta object
+
+                """
+                return sum([e.get_duration() for e in self.get_events()], datetime.timedelta(0))
+
 def add_syngo_to_procedures(procs, syngo_procs):
         """Matches procedure information from DICOM-SR (procs)
         to procedure information from Syngo files (syngo_procs)
