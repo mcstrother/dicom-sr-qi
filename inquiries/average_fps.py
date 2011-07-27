@@ -79,9 +79,9 @@ recorded.")
         axes.set_xticklabels(xtick_labels)
         #axes.set_xticklabels([self.start_dates[int(i)] for i in axes.get_xticks()])
         plt.plot(range(len(self.averages)), self.averages, color='red')
-        plt.xlabel('Period Number')
+        plt.xlabel('Period Start Date')
         plt.ylabel('Average FPS')
-        plt.title("Average FPS Across All Events")
+        plt.title("Average FPS Across All Fluoro Events")
         fig.autofmt_xdate()
         return [fig]
 
