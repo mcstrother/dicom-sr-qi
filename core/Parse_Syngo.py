@@ -13,7 +13,6 @@ class Syngo(object):
                 cpts - the cpts codes of the procedure given as a list of
                         strings
         """
-        IVRFU_CPT = "-99999"
         _INT_ATTRS = ["MPI", "MRN", "ACC"]
         _FLOAT_ATTRS = ["FLUORO"]
         _IGNORED_ATTRS = ["KAR","KAP","Ima","DLP","CTDI","Procedure"]
@@ -55,9 +54,7 @@ class Syngo(object):
                 cpts = cpts_string.split(',')
                 out = []
                 for cpt in cpts:
-                        if cpt == "IVRFU":
-                                out.append(self.IVRFU_CPT)
-                        elif cpt == '':
+                        if cpt == '':
                                 continue
                         else:
                                 out.append(cpt)
@@ -93,9 +90,7 @@ class Syngo(object):
                 for attr in self._STRING_ATTRS:
                         setattr(self,attr.replace(' ','_').lower(),d[attr])
                 for attr in self._INT_ATTRS:
-                        if d[attr] == "IVRFU":
-                                value = self.IVRFU_CPT
-                        elif d[attr] is None:
+                        if d[attr] is None:
                                 value = None
                         else:
                                 value = int(d[attr])
@@ -199,8 +194,6 @@ class Syngo(object):
                          'LOCATION', 'DEPT',
                          'FLUORO', 'CPTs']
         
-        
-_COLUMNS = Syngo._ALL_ATTRS
 
 def no_dupes(procs):
         """Given a list of syngo procedures,
@@ -227,7 +220,7 @@ def parse_syngo_file(file_name, run_no_dupes = True):
         s = wb.sheet_by_index(1)
         headings = [c.value for c in s.row(0)]
         column_numbers = {}
-        for col_name in _COLUMNS:
+        for col_name in Syngo._ALL_ATTRS:
                 if col_name == 'CPTs' and not col_name in headings:
                         cpt_cols = []
                         try:
