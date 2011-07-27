@@ -22,6 +22,7 @@ def get_procedures_helper(procs, extra_procs, min_reps):
     syngo_procs = [p for p in extra_procs if type(p) == Parse_Syngo.Syngo]
     for proc in procs:
         if proc.has_syngo():
+            proc.get_syngo().fluoro = my_utils.total_seconds(proc.get_pedal_time())/60.0
             syngo_procs.append(proc.get_syngo())
     #remove procs without a fluoro time entered
     syngo_procs = [p for p in syngo_procs if not p.fluoro is None]
