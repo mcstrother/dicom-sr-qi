@@ -148,9 +148,6 @@ def main():
         #keep only procs that match either c2 or c1
         matches = [x for x in procs if my_utils.matches(spec['combo1'],x.cpts)\
                    or my_utils.matches(spec['combo2'],x.cpts)]
-        print spec['combo1']
-        print spec['combo2']
-        print [p.cpts for p in matches]
         lookup = my_utils.organize(matches, lambda x:x.mpi)
         pairs = []
         for mpi, matches in lookup.iteritems():
