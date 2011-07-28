@@ -1,5 +1,24 @@
 from srqi.core import inquiry
+import matplotlib.pyplot as plt
+import numpy as np
 
+def get_accumulation_fig(proc):
+    fig = plt.figure()
+    plt.title("Accumulation During Procedure for Patient " + str(proc.PatientID) + " on " + str(proc.StudyDate))
+    # plot doses
+    dose_ax = plt.subplot(211)
+    dose_ax.plot([e.DateTime_Started for e in proc.get_events()],
+                 np.cumsum([e.Dose_RP for e in proc.get_events()])
+                 )
+    plt.ylabel('Dose (Gy)')
+    # plot frames
+    frames_ax = plt.subplot(212, sharex = dose_ax)
+    frames_ax.plot([e.DateTime_Started for e in proc.get_events()],
+                   np.cumsum([e.Number_of_Pulses for e in proc.get_events()])
+                   )
+    plt.ylabel('# of Frames')
+    fig.autofmt_xdate()
+    return fig
 
 
 class High_Cases(inquiry.Inquiry):
@@ -41,7 +60,7 @@ class High_Cases(inquiry.Inquiry):
     def get_figures(self):
         hc = self.high_cases
         figs = []
-        import matplotlib.pyplot as plt
+
         pies = []
         for proc in hc.keys():
             # Pie chart of dosages by modality
@@ -70,6 +89,8 @@ class High_Cases(inquiry.Inquiry):
                     labels = ('acquisition','spot','fluoro'),
                     autopct = my_autopct)
             figs.append(fig)
+            # dose/frame accumulation plot
+            figs.append(get_accumulation_fig(proc))
         return figs
         
                 
