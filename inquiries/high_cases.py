@@ -102,10 +102,13 @@ class High_Cases(inquiry.Inquiry):
                 total=hc[proc]['total dose']
                 val=pct*total/100.0
                 return '{p:.2f}%  ({v:.3f} Gy)'.format(p=pct,v=val)
+            other_dose = hc[proc]['total dose'] - hc[proc]['spot dose'] - hc[proc]['acquisition dose'] - hc[proc]['fluoro dose']
+            if other_dose <0:
+                other_dose = 0
             plt.pie((hc[proc]['acquisition dose'],
                      hc[proc]['spot dose'],
                      hc[proc]['fluoro dose'],
-                     hc[proc]['total dose'] - (hc[proc]['spot dose'] + hc[proc]['acquisition dose'] + hc[proc]['fluoro dose'])),
+                     other_dose),
                     labels = ('acquisition','spot','fluoro ', 'other'),
                     autopct = my_autopct)
             figs.append(fig)
@@ -116,10 +119,13 @@ class High_Cases(inquiry.Inquiry):
                 total=hc[proc]['total frames']
                 val=pct*total/100.0
                 return '{p:.2f}%  ({v:.0f})'.format(p=pct,v=val)
+            other_frames = hc[proc]['total frames'] - (hc[proc]['spot frames'] + hc[proc]['acquisition frames'] + hc[proc]['fluoro frames'])
+            if other_frames < 0:
+                other_frames = 0
             plt.pie((hc[proc]['acquisition frames'],
                      hc[proc]['spot frames'],
                      hc[proc]['fluoro frames'],
-                     hc[proc]['total frames'] - (hc[proc]['spot frames'] + hc[proc]['acquisition frames'] + hc[proc]['fluoro frames'])),
+                     other_frames),
                     labels = ('acquisition','spot','fluoro', 'other'),
                     autopct = my_autopct)
             figs.append(fig)
