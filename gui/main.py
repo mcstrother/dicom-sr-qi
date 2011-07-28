@@ -4,6 +4,7 @@ from srqi.gui import report_writer
 import datetime
 import numbers
 import traceback
+import numbers
 
 
 class Inquiry_Parameter_Panel(wx.Panel):
@@ -24,7 +25,7 @@ class Inquiry_Parameter_Panel(wx.Panel):
             #important that we do this check first, since apparently True can be seen as an int
             self.ctrl = wx.CheckBox(self)
             sizer.Add(self.ctrl)
-        elif isinstance(self.param.value, int) or isinstance(self.param.value, long):
+        elif isinstance(self.param.value, numbers.Real):
             self.ctrl = wx.SpinCtrl(self)
             self.ctrl.SetRange(0,1000000)
             self.ctrl.SetValue(self.param.value)
