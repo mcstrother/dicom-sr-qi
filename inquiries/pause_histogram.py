@@ -8,6 +8,13 @@ class Pause_Histogram(inquiry.Inquiry):
     NUM_BINS = inquiry.Inquiry_Parameter(30, "Number of Bins in Histogram")
     USE_LOG = inquiry.Inquiry_Parameter(True, "Plot log of pauses?")
 
+    description = """Show a histogram of the length of pauses between fluoro events in procedures.
+
+    Data Required:
+        DICOM-SR .xml files
+
+    """
+
     def run(self, sr_procs, context, extra_procs):
         pauses = []
         irradiation_ids = []
