@@ -2,6 +2,8 @@ from srqi.core import inquiry, Parse_Syngo, my_utils
 import matplotlib.pyplot as plt
 import numpy as np
 import collections
+import math
+
 
 def get_procedures_helper(procs, extra_procs, min_reps):
     """Extract all the Syngo procedures that we're interested in
@@ -30,6 +32,16 @@ def get_procedures_helper(procs, extra_procs, min_reps):
     cpt_to_procs = my_utils.organize(syngo_procs, lambda p: p.get_cpts_as_string())
     for k in cpt_to_procs.keys():
         if len(cpt_to_procs[k]) < min_reps:
+            del cpt_to_procs[k]
+    #remove procedures where there is no variation
+    for k in cpt_to_procs.keys():
+        remove = True
+        procs = cpt_to_procs[k]
+        for i in range(1,len(cpt_to_procs[k])):
+            if not procs[i] == procs[0]:
+                remove = False
+                break
+        if remove:
             del cpt_to_procs[k]
     return cpt_to_procs
     
@@ -71,6 +83,25 @@ def get_procedure_windows(procs, procs_per_window, step_size ):
             windows.append(window)
     return windows
 
+def _get_metric(proc, medians, normalize_penalty, clamp,
+                use_log, log_fluoros, log_means, log_devs):
+    fluoro = float(proc.fluoro)
+    if use_log.value:
+        log_mean = log_means[proc.get_cpts_as_string()]
+        log_dev = log_devs[proc.get_cpts_as_string()]
+        metric = (fluoro-log_mean)/log_dev
+        if metric > 2 and clamp.value: # clamp at 2 std devs
+            metric = 2
+    else:
+        med = medians[proc.get_cpts_as_string()]
+        metric =(fluoro-med)
+        if med >0 and normalize_penalty.value:
+            metric = metric/float(med)
+            if metric > 1 and clamp.value:#clamp at 2x median value
+                metric = 1
+        if metric > med and clamp.value:
+            metric = med#clamp at 2x median value
+    return metric
 
 class Operator_Improvement(inquiry.Inquiry):
     MIN_REPS = inquiry.Inquiry_Parameter(500, "Minimum procedure count",
@@ -81,24 +112,31 @@ class Operator_Improvement(inquiry.Inquiry):
                                       "If an operator exceeds the median fluoro time on a given procedure by more than 2x the median, only penalize him by 1x the median.")
     NORMALIZE_PENALTY = inquiry.Inquiry_Parameter(True, "Normalize penalties",
                                                   "Divide penalties by the median to account for greater variation in longer procedures.")
-
+    USE_LOG = inquiry.Inquiry_Parameter(True, "Use Lognormal Z-score")
+                                        
     def run(self, procs, context, extra_procs):
         cpt_to_procs = get_procedures_helper(procs, extra_procs, self.MIN_REPS.value)
         # calculate statistics for each procedure type
         medians = {}
         std_devs = {}
         means = {}
+        log_fluoros = {}
+        log_means  = {}
+        log_devs = {}
         for cpt, p_list in cpt_to_procs.iteritems():
             fluoro_list = [p.fluoro for p in p_list]
             medians[cpt] = float(np.median(fluoro_list))
             std_devs[cpt] = np.std(fluoro_list)
             means[cpt] = np.mean(fluoro_list)
+            log_fluoros[cpt] = [math.log(x) if not x ==0 else math.log(.5) for x in fluoro_list]
+            log_means[cpt] = np.mean(log_fluoros[cpt])#default to .5 since that is the lowest number that won't be rounded down to 0
+            log_devs[cpt] = np.std(log_fluoros[cpt])
         # organize by rad1 and sort by date
         rad1_to_procs = sort_by_rads_helper( sum(cpt_to_procs.values(),[]), self.PROCS_PER_WINDOW.value )
-        self._the_meat(rad1_to_procs, medians)
+        self._the_meat(rad1_to_procs, medians, log_fluoros, log_means, log_devs)
 
     
-    def _the_meat(self, rad1_to_procs, medians):
+    def _the_meat(self, rad1_to_procs, medians, log_fluoros, log_means, log_devs):
         """Set self.lookup, which is the meat of self.run
         Everything else in self.run is basically preprocessing
 
@@ -123,13 +161,14 @@ class Operator_Improvement(inquiry.Inquiry):
             metric_queue = collections.deque()
             cum_metric = 0
             for i, proc in enumerate(p_list):
-                fluoro = float(proc.fluoro)
-                med = medians[proc.get_cpts_as_string()]
-                metric =(fluoro-med)
-                if med >0 and self.NORMALIZE_PENALTY.value:
-                    metric = metric/float(med)
-                if metric > med and self.CLAMP.value:
-                    metric = med
+                
+                metric = _get_metric(proc, medians = medians,
+                                     normalize_penalty = self.NORMALIZE_PENALTY,
+                                     clamp = self.CLAMP,
+                                     use_log = self.USE_LOG,
+                                     log_fluoros = log_fluoros,
+                                     log_means = log_means,
+                                     log_devs = log_devs)
                 cum_metric += metric
                 metric_queue.append(metric)
                 if len(metric_queue)>=self.PROCS_PER_WINDOW.value:
