@@ -1,5 +1,5 @@
 from srqi.core import inquiry
-from srqi.core import Parse_Syngo
+from srqi.core import Parse_Syngo, my_utils
 from datetime import date
 import matplotlib.pyplot as plt
 
@@ -31,7 +31,7 @@ class Syngo_Stats(inquiry.Inquiry):
         self.counts, self.with_fluoro_counts, self.bin_edges, self.count_fig = get_count_fig(self.date_bins,
                                                                     self.sprocs,
                                                                     sprocs_with_fluoro)    
-        
+        self.sprocs_by_cpt = my_utils.organize(sprocs, lambda x:x.get_cpts_as_string())
 
     def get_figures(self):
         return (self.count_fig,)
@@ -41,6 +41,9 @@ class Syngo_Stats(inquiry.Inquiry):
                         "Number of Procedures",
                         "Procedures with Recorded Fluoro Time")] +\
                         zip(self.bin_edges[1:], self.counts, self.with_fluoro_counts)
-        return (count_table,)
+        cpt_table = [("CPT Code Combination","Number of Procedures","Number of Procedures with Fluoro")]
+        for cpt, sprocs in self.sprocs_by_cpt.iteritems():
+            cpt_table += [(cpt, len(sprocs), len([p for p in sprocs if not p.fluoro is None]))]
+        return (count_table, cpt_table)
         
 
