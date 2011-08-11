@@ -182,10 +182,12 @@ class Operator_Improvement(inquiry.Inquiry):
 
     def get_tables(self):
         out = []
-        for rad1, dev_list in self.raw_devs.iteritems():
-            row = [rad1] + dev_list
-            out.append(row)
-        return [out]
+        for rad1 in self.lookup.keys():
+            dates, metrics = zip(*self.lookup[rad1])
+            dates = [''] + list(dates)
+            metrics = [rad1] + list(metrics)
+            out.append((dates,metrics))
+        return out
 
     def _get_all_together_figure(self, legend = False):
         fig = plt.figure()
