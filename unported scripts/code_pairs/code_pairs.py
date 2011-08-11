@@ -123,7 +123,7 @@ def dos_time_sort_comparator(c1, c2, s, s2):
         if s.dos_time and s2.dos_time:
             time_diff = my_utils.subtract_times(s.dos_time, s2.dos_time)
             if abs(time_diff) > datetime.timedelta(hours = 2):
-                return my_utils.total_seconds(time_diff)
+                return int(my_utils.total_seconds(time_diff))
         # if you're here, either one time is missing or the times are within
         # 2 hours of each other on the same day, so use the cpt codes to
         # break the tie
@@ -134,7 +134,7 @@ def dos_time_sort_comparator(c1, c2, s, s2):
         else:
             return 0
     else:
-        return date_delta.days
+        return int(date_delta.days)
 
 def main():
     procs = Parse_Syngo.parse_syngo_files(get_syngo_file_names())
