@@ -2,6 +2,8 @@ from srqi.core import inquiry
 from srqi.core import Parse_Syngo, my_utils
 from datetime import date
 import matplotlib.pyplot as plt
+from scipy.stats import anderson
+import math
 
 def get_count_fig(date_bins, sprocs, sprocs_with_fluoro):    
     fig = plt.figure()
@@ -37,13 +39,23 @@ class Syngo_Stats(inquiry.Inquiry):
         return (self.count_fig,)
 
     def get_tables(self):
+        #count of procedures over time
         count_table = [("Period End",
                         "Number of Procedures",
                         "Procedures with Recorded Fluoro Time")] +\
                         zip(self.bin_edges[1:], self.counts, self.with_fluoro_counts)
-        cpt_table = [("CPT Code Combination","Number of Procedures","Number of Procedures with Fluoro")]
+        #break down by cpt code
+        cpt_table = [("CPT Code Combination","Number of Procedures",
+                      "Number of Procedures with Fluoro", "Anderson Value", "Critical Values", "P-values")]
         for cpt, sprocs in self.sprocs_by_cpt.iteritems():
-            cpt_table += [('"'+cpt+'"', len(sprocs), len([p for p in sprocs if not p.fluoro is None]))]
+            cpt_table += [['"'+cpt+'"', len(sprocs), len([p for p in sprocs if not p.fluoro is None])]]
+            fluoros = [p.fluoro if not p.fluoro ==0 else .5 for p in sprocs if not p.fluoro is None] 
+            try:
+                fit_statistic = anderson([math.log(float(x)) for x in fluoros],
+                                    dist='norm')
+            except ZeroDivisionError:
+                fit_statistics = None
+            cpt_table[-1] += [fit_statistic[0], list(fit_statistic[1]),list(fit_statistic[2])]
         return (count_table, cpt_table)
         
 
