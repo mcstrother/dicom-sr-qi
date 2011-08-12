@@ -43,7 +43,7 @@ class Syngo_Stats(inquiry.Inquiry):
                         zip(self.bin_edges[1:], self.counts, self.with_fluoro_counts)
         cpt_table = [("CPT Code Combination","Number of Procedures","Number of Procedures with Fluoro")]
         for cpt, sprocs in self.sprocs_by_cpt.iteritems():
-            cpt_table += [(cpt, len(sprocs), len([p for p in sprocs if not p.fluoro is None]))]
+            cpt_table += [('"'+cpt+'"', len(sprocs), len([p for p in sprocs if not p.fluoro is None]))]
         return (count_table, cpt_table)
         
 
