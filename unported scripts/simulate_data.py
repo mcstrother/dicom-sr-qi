@@ -64,7 +64,7 @@ def simulate_from_real_data(simulate_procs, syngo_procs):
     # take the second most, since the most hasn't done any of some common procedures
     #_, most_rad1 = heapq.nlargest(2,common_cpts[most_common_cpt].keys(),
     #    key = lambda rad1: np.mean([p.fluoro for p in common_cpts[most_common_cpt][rad1]]))
-    most_rad1 = "SAAD, N."
+    most_rad1 = "MANI, N."
     simulate_procs = [p for p in simulate_procs if p.get_cpts_as_string() in common_cpts]
     get_improvement_pattern(most_rad1, least_rad1, common_cpts, simulate_procs)
     most_rad1_procs = [p for p in syngo_procs if p.get_cpts_as_string() in common_cpts and p.rad1 == most_rad1]
@@ -78,7 +78,7 @@ def main():
         if p.has_syngo():
             extra_procs.append(p.get_syngo())
     syngo_procs = [p for p in extra_procs if not p.fluoro is None]
-    simulate_procs = [p for p in syngo_procs if p.rad1 == 'KIM, S.']
+    simulate_procs = [p for p in syngo_procs if p.rad1 == 'MANI, N.']
     # manipulate the procedures
     simulate_procs, most_rad1_procs, least_rad1_procs = simulate_from_real_data(simulate_procs,
                                                                                 syngo_procs)
@@ -86,8 +86,8 @@ def main():
     from srqi.inquiries.operator_improvement import Operator_Improvement
     import matplotlib.pyplot as plt
     oi_cls = Operator_Improvement
-    oi_cls.MIN_REPS.set_value(1)
-    oi = oi_cls([], [], simulate_procs + most_rad1_procs + least_rad1_procs)
+    oi_cls.MIN_REPS.set_value(100)
+    oi = oi_cls([], [], simulate_procs + syngo_procs)
     oi.get_figures()
     plt.show()
     
