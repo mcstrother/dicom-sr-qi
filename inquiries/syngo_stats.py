@@ -57,5 +57,13 @@ class Syngo_Stats(inquiry.Inquiry):
                 fit_statistics = None
             cpt_table[-1] += [fit_statistic[0], list(fit_statistic[1]),list(fit_statistic[2])]
         return (count_table, cpt_table)
+
+    def get_figures(self):
+        import matplotlib.pyplot as plt
+        fluoros = [math.log(p.fluoro) if not p.fluoro ==0 else math.log(.5) for p in  self.sprocs_by_cpt["36558,76937,77001"] if not p.fluoro is None]
+        fig = plt.figure()
+        plt.hist(fluoros)
+        return [fig]
+        
         
 
