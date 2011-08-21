@@ -9,6 +9,7 @@ import numpy as np
 import random
 
 NUM_CPTS = 3
+WINDOW_SIZE = 50
    
 def get_improvement_pattern(most_rad1, least_rad1, common_cpts, simulate_procs):
     """
@@ -87,6 +88,7 @@ def main():
     import matplotlib.pyplot as plt
     oi_cls = Operator_Improvement
     oi_cls.MIN_REPS.set_value(100)
+    oi_cls.PROCS_PER_WINDOW.set_value(WINDOW_SIZE)
     oi = oi_cls([], [], simulate_procs + syngo_procs)
     oi.get_figures()
     plt.show()
