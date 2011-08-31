@@ -6,11 +6,12 @@ from srqi.core import my_utils
 import numpy as np
 import math
 from datetime import date
+import csv
 
 SIMULATION = 'july'
 #SIMULATION = 'improvement'
-JULY_EFFECT = .5
-WINDOW_SIZE = 50
+JULY_EFFECT = .2
+WINDOW_SIZE = 400
 
 def add_new_fellow_factor(proc):
     start_date = p.get_start_date()
@@ -33,19 +34,24 @@ def main():
             if SIMULATION == 'improvement':
                 #physician improves 20% over the course of the time period
                 p.fluoro = p.fluoro * (1.0 - .2*i/len(syngo_procs))
-            elif SIMULATION == 'july':
-                july = date(p.get_start_date().year, 7,1)
-                days = (p.get_start_date() - july).days #days since july 1
-                if days > 0:
-                    p.fluoro = p.fluoro * (1 + JULY_EFFECT - JULY_EFFECT * days/182)
+        if SIMULATION == 'july':
+            july = date(p.get_start_date().year, 7,1)
+            days = (p.get_start_date() - july).days #days since july 1
+            if days > 0:
+                p.fluoro = p.fluoro * (1 + JULY_EFFECT * (1-days/182.0))
 
     from srqi.inquiries.operator_improvement import Operator_Improvement
     import matplotlib.pyplot as plt
     oi_cls = Operator_Improvement
     oi_cls.PROCS_PER_WINDOW.set_value(WINDOW_SIZE)
+    oi_cls.MIN_REPS.set_value(100)
     oi = oi_cls([], [], syngo_procs)
+    # write tables
+    writer = csv.writer(open('sim_out_w'+str(WINDOW_SIZE)+'j'+str(int(JULY_EFFECT*100))+'.csv', 'wb'))
+    for t in oi.get_tables():
+        writer.writerows(t)
     oi.get_figures()
-    plt.show()  
+    #plt.show()  
 
 
 if __name__ == '__main__':
