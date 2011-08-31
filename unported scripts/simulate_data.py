@@ -7,9 +7,10 @@ from srqi.core import my_utils
 import heapq
 import numpy as np
 import random
+import csv
 
 NUM_CPTS = 3
-WINDOW_SIZE = 50
+WINDOW_SIZE = 400
    
 def get_improvement_pattern(most_rad1, least_rad1, common_cpts, simulate_procs):
     """
@@ -83,15 +84,20 @@ def main():
     # manipulate the procedures
     simulate_procs, most_rad1_procs, least_rad1_procs = simulate_from_real_data(simulate_procs,
                                                                                 syngo_procs)
-    # plot results
+    # analyze using inquiry
     from srqi.inquiries.operator_improvement import Operator_Improvement
     import matplotlib.pyplot as plt
     oi_cls = Operator_Improvement
     oi_cls.MIN_REPS.set_value(100)
     oi_cls.PROCS_PER_WINDOW.set_value(WINDOW_SIZE)
     oi = oi_cls([], [], simulate_procs + syngo_procs)
-    oi.get_figures()
-    plt.show()
+    # write tables
+    writer = csv.writer(open('sim_out_'+str(WINDOW_SIZE)+'.csv', 'wb'))
+    for t in oi.get_tables():
+        writer.writerows(t)
+    # plot
+    oi.get_figures()    
+    #plt.show()
     
 
 if __name__ == '__main__':
