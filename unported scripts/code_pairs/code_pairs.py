@@ -154,14 +154,15 @@ def main():
             matches.sort(cmp = lambda x,y: dos_time_sort_comparator(spec['combo1'], spec['combo2'],x,y))
             c1_match = None # a "placement" is a c1 match, just easier to think of as a placement
             for p in matches:
-                if my_utils.matches(c1, p.cpts):
-                    c1_match = p
-                elif c1_match:
+                if c1_match:
                     if (p.dos_start-c1_match.dos_start) > spec['separation']: # too far
                         c1_match = None
                     elif c1_match and my_utils.matches(c2,p.cpts): # found a match
                         pairs.append((c1_match, p))
                         c1_match =None
+                if my_utils.matches(c1, p.cpts):
+                    c1_match = p
+                
         out[sheet_name] = pairs
 
     #order the pairs so the ones without reasons come last
