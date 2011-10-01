@@ -95,7 +95,7 @@ def write_out(sdict, reasons_lookup):
                                     sheet.write(r+1,c,data, xf)
                             else:
                                     sheet.write(r+1,c,data)
-                    #take on the line days
+                    #tack on the line days
                     c = c+1
                     if r %2 == 1: # row represents the removal part of a pair
                         line_days = (syngo.dos_start - slist[r-1].dos_start).days
