@@ -14,8 +14,8 @@ class Syngo(object):
                         strings
         """
         _INT_ATTRS = ["MPI", "MRN", "ACC"]
-        _FLOAT_ATTRS = ["FLUORO"]
-        _IGNORED_ATTRS = ["KAR","KAP","Ima","DLP","CTDI","Procedure"]
+        _FLOAT_ATTRS = ["FLUORO", "DLP", "CTDI"]
+        _IGNORED_ATTRS = ["KAR","KAP","Ima","Procedure"]
         _STRING_ATTRS =["RAD1","RAD2","TECH","LOCATION","DEPT"]
         _DATETIME_PAIR_ATTRS = [("DOS Start", "DOS Time"),
                                 ("End DATE", "End Time"),
@@ -192,7 +192,7 @@ class Syngo(object):
                          'Sign Time', 'ADD DATE',
                          'Add Time', 'TECH',
                          'LOCATION', 'DEPT',
-                         'FLUORO', 'CPTs']
+                         'FLUORO','DLP','CTDI', 'CPTs']
         
 
 def no_dupes(procs):
@@ -246,7 +246,7 @@ def parse_syngo_file(file_name, run_no_dupes = True):
                 except ValueError as ve:
                         raise ValueError("Problem parsing Syngo file on row " + str(r)\
                                          + ". Found a value of '" + \
-                                         ve.message.split(':')[1:] +\
+                                         ve.message.split(':')[-1][1:] +\
                                          "' in a column of a different type.")
         if run_no_dupes:
                 return no_dupes(procedures)
