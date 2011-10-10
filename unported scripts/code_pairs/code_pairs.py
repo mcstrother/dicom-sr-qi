@@ -139,8 +139,16 @@ def dos_time_sort_comparator(c1, c2, s, s2):
 def main():
     procs = Parse_Syngo.parse_syngo_files(get_syngo_file_names())
     procs.sort(key= lambda x:x.dos_start)#sort procs by start time
-    cps = get_code_pairs(PAIR_FILE_NAME)
-    reasons_lookup = get_reasons_lookup()
+    try:
+        cps = get_code_pairs(PAIR_FILE_NAME)
+    except:
+        print "Error while parsing code_pairs.xls"
+        raise
+    try:
+        reasons_lookup = get_reasons_lookup()
+    except:
+        print "Error while parsing reasons_lookup.xls"
+        raise
     out = {}
     for sheet_name, spec in cps.iteritems():
         c1 = spec['combo1']#shorthand
