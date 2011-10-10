@@ -259,7 +259,11 @@ def parse_syngo_file(file_name, run_no_dupes = True):
 def parse_syngo_files(file_names):
         out = []
         for name in file_names:
-                out = out + parse_syngo_file(name, run_no_dupes = False)
+                try:
+                        out = out + parse_syngo_file(name, run_no_dupes = False)
+                except:
+                        print "Error while parsing Syngo file: " + name
+                        raise
         return no_dupes(out)
 
 import xlwt
