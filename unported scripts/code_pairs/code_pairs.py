@@ -64,8 +64,10 @@ def get_reasons_lookup():
                 accession = int(sheet.cell(r,0).value)
             else:
                 accession = None
-            reason = str(sheet.cell(r,1).value)
-            reasons_lookup[accession] = reason
+            reasons = []
+            for c in xrange(1,sheet.ncols):
+                reasons.append(str(sheet.cell(r,c).value))
+            reasons_lookup[accession] = reasons
     reasons_lookup[None] = ''
     return reasons_lookup
 
@@ -100,13 +102,15 @@ def write_out(sdict, reasons_lookup):
                     if r %2 == 1: # row represents the removal part of a pair
                         line_days = (syngo.dos_start - slist[r-1].dos_start).days
                         sheet.write(r+1,c,line_days)
-                    #tack on the removal reason
+                    #tack on the removal reasons
                     c=c+1
                     if syngo.acc in reasons_lookup:
-                        reason = reasons_lookup[syngo.acc]
+                        reasons = reasons_lookup[syngo.acc]
                     else:
-                        reason = ''
-                    sheet.write(r+1,c,reason)
+                        reasons = ['']
+                    for reason in reasons:
+                        sheet.write(r+1,c,reason)
+                        c=c+1
     wb.save(file_name)
 
 def dos_time_sort_comparator(c1, c2, s, s2):
