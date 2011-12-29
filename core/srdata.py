@@ -338,6 +338,19 @@ class Procedure(object):
                 """
                 return sum([e.get_duration() for e in self.get_events()], datetime.timedelta(0))
 
+        def get_total_Dose(self):
+                """Get the total Dose (RP) for the entire procedure in Gy.
+                Computed as the sum of the dosages of the irradiation events.
+                """
+                return sum([e.Dose_RP for e in self.get_events()])
+
+        def get_total_DAP(self):
+                """Get the total DAP for the entire procedure in GY*m^2.
+                Computed as the sum of the DAPs of the irradiation events.
+                """
+                return sum([e.Dose_Area_Product for e in self.get_events()])
+
+
 def add_syngo_to_procedures(procs, syngo_procs):
         """Matches procedure information from DICOM-SR (procs)
         to procedure information from Syngo files (syngo_procs)
