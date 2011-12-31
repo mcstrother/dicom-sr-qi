@@ -14,8 +14,8 @@ class Syngo(object):
                         strings
         """
         _INT_ATTRS = ["MPI", "MRN", "ACC"]
-        _FLOAT_ATTRS = ["FLUORO", "DLP", "CTDI"]
-        _IGNORED_ATTRS = ["KAR","KAP","Ima","Procedure"]
+        _FLOAT_ATTRS = ["FLUORO","KAR","KAP","Ima", "DLP", "CTDI"]
+        _IGNORED_ATTRS = ["Procedure"]
         _STRING_ATTRS =["RAD1","RAD2","TECH","LOCATION","DEPT"]
         _DATETIME_PAIR_ATTRS = [("DOS Start", "DOS Time"),
                                 ("End DATE", "End Time"),
@@ -192,7 +192,7 @@ class Syngo(object):
                          'Sign Time', 'ADD DATE',
                          'Add Time', 'TECH',
                          'LOCATION', 'DEPT',
-                         'FLUORO','DLP','CTDI', 'CPTs']
+                         'FLUORO','KAR', 'KAP', 'Ima', 'DLP','CTDI', 'CPTs']
         
 
 def no_dupes(procs):
