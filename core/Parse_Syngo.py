@@ -184,7 +184,7 @@ class Syngo(object):
                                 attr_value = getattr(self,attr)
                                 if attr_value is None:
                                         attr_value = ''
-                                out.append(getattr(self,attr))
+                                out.append(attr_value)
                 return out
 
         def get_heading_list(self):
