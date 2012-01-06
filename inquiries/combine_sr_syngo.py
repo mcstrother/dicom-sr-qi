@@ -1,10 +1,12 @@
 from srqi.core import inquiry
+from srqi.core.Parse_Syngo import Syngo
 
 class Combine_Sr_Syngo(inquiry.Inquiry):
 
 
     def run(self, sr_procs, context, extra_procs):
         self.sr_procs = sr_procs
+        self.extra_syngo = [p for p in extra_procs if isinstance(p, Syngo)]
 
     def get_tables(self):
         #get the standard heading list except for the last entry, which is 'CPTs'
@@ -32,6 +34,12 @@ class Combine_Sr_Syngo(inquiry.Inquiry):
             row += [series_instance_UID, total_Dose, total_DAP, pedal_time,
                     total_fluoro_dose, total_fluoro_DAP, total_fluoro_time]
             #tack the CPTs from the Syngo data on to the end
+            row += [sr_proc.get_syngo().get_cpts_as_string()]
+            table.append(row)
+        for syngo in self.extra_syngo:
+            row = []
+            row += syngo.get_data_list()[:-1]
+            row += ['']*7
             row += [sr_proc.get_syngo().get_cpts_as_string()]
             table.append(row)
         return [table]
