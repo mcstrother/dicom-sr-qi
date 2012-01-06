@@ -171,7 +171,9 @@ class Syngo(object):
         def get_data_list(self):
                 """Return a list of all of the data in the object
                 so that it can be written to a row of an excel or csv
-                object
+                object.
+
+                "None" values are printed as empty strings
                 """
                 attr_list = [x.lower().replace(' ','_') for x in self.get_heading_list()]
                 out = []
@@ -179,6 +181,9 @@ class Syngo(object):
                         if attr == 'cpts':
                                 out.append(','.join([str(x) for x in self.cpts]))
                         else:
+                                attr_value = getattr(self,attr)
+                                if attr_value is None:
+                                        attr_value = ''
                                 out.append(getattr(self,attr))
                 return out
 
