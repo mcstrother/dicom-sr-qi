@@ -42,7 +42,7 @@ class Combine_Sr_Syngo(inquiry.Inquiry):
             row = []
             row += syngo.get_data_list()[:-1]
             row += ['']*7
-            row += [sr_proc.get_syngo().get_cpts_as_string()]
+            row += [syngo.get_cpts_as_string()]
             table.append(row)
         my_utils.write_csv(table, path.join(my_utils.get_output_directory(), "output.csv"))
         return [table]
