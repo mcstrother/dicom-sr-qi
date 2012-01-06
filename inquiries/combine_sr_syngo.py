@@ -14,6 +14,8 @@ class Combine_Sr_Syngo(inquiry.Inquiry):
         headings += ["CPTs"]
         table = [headings]
         for sr_proc in self.sr_procs:
+            if not sr_proc.has_syngo():
+                continue
             # init row with all data from Syngo except CPTs
             row = []
             syngo = sr_proc.get_syngo()
