@@ -12,6 +12,16 @@ class Combine_Sr_Syngo(inquiry.Inquiry):
 
     def get_tables(self):
         #get the standard heading list except for the last entry, which is 'CPTs'
+        first_syngo= None
+        for p in self.sr_procs:
+            if p.has_syngo():
+                first_syngo = p.get_syngo()
+                break
+        if first_syngo is None:
+            if len(self.extra_syngo) >0:
+                first_syngo = self.extra_syngo[0]
+            else:
+                raise Exception("No syngo data found")
         headings = self.sr_procs[0].get_syngo().get_heading_list()[:-1]
         headings += ["SeriesInstanceUID","Total Dose (Gy)(SR)", "Total DAP (Gym2)(SR)", "Pedal Time (s)(SR)",
                      "Fluoro Dose (Gy)(SR)", "Fluoro DAP (Gym2)(SR)", "Fluoro Exposure Time (ms)"]
@@ -36,7 +46,7 @@ class Combine_Sr_Syngo(inquiry.Inquiry):
             row += [series_instance_UID, total_Dose, total_DAP, pedal_time,
                     total_fluoro_dose, total_fluoro_DAP, total_fluoro_time]
             #tack the CPTs from the Syngo data on to the end
-            row += [sr_proc.get_syngo().get_cpts_as_string()]
+            row += [syngo.get_cpts_as_string()]
             table.append(row)
         for syngo in self.extra_syngo:
             row = []
