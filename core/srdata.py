@@ -263,6 +263,11 @@ class Procedure(object):
                 to make sure it really corresponds. Raises
                 DataMismatchError if self and syngo
                 do not correspond.
+
+                "Corresonds" means that they have the same patient ID number
+                and the start times are within 2 hours of each other. If the
+                syngo procedure does not have a valid start date and time,
+                they will not be matched.
                 """
                 if not syngo:
                         self._syngo = None
@@ -272,8 +277,12 @@ class Procedure(object):
                 if not self.StudyDate == syngo.dos_start:
                         raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_Data have different study dates")
                 try:
-                        #check that there isn't more than an hour dispairity between start times
-                        if my_utils.total_seconds(abs(self.get_end_time() - syngo.get_end())) > 7200:
+                        #check that there isn't more than two hours dispairity between start times
+                        try:
+                                syngo_start = syngo.get_start()
+                        except TypeError: #get_start fails because either the date or time is missing
+                                raise my_exceptions.DataMismatchError("Syngo data has missing or invalid start time")
+                        if my_utils.total_seconds(abs(self.get_start_time() - syngo.get_start())) > 7200:
                                 raise my_exceptions.DataMismatchError("Procedure and Syngo_Procedure_data end times differ by more than two hours")
                 except my_exceptions.DataMissingError as dme:
                         pass #if you can't do the check, you can't do the check
@@ -355,7 +364,10 @@ def add_syngo_to_procedures(procs, syngo_procs):
         """Matches procedure information from DICOM-SR (procs)
         to procedure information from Syngo files (syngo_procs)
         according to the patient ID number and the start date
-        of the procedure
+        of the procedure.
+
+        If a syngo procedure is missing either its date or time, it
+        will not be matched with an sr procedure.
 
         Returns:
                 a list of Syngo_Procedures that haven't been paired to SR
