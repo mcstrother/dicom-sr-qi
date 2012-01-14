@@ -22,7 +22,7 @@ class Combine_Sr_Syngo(inquiry.Inquiry):
                 first_syngo = self.extra_syngo[0]
             else:
                 raise Exception("No syngo data found")
-        headings = self.sr_procs[0].get_syngo().get_heading_list()[:-1]
+        headings = first_syngo.get_heading_list()[:-1]
         headings += ["SeriesInstanceUID","Total Dose (Gy)(SR)", "Total DAP (Gym2)(SR)", "Pedal Time (s)(SR)",
                      "Fluoro Dose (Gy)(SR)", "Fluoro DAP (Gym2)(SR)", "Fluoro Exposure Time (ms)"]
         headings += ["CPTs"]
