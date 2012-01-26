@@ -134,7 +134,7 @@ class Operator_Improvement(inquiry.Inquiry):
         # organize by rad1 and sort by date
         rad1_to_procs = sort_by_rads_helper( sum(cpt_to_procs.values(),[]), self.PROCS_PER_WINDOW.value )
         self._the_meat(rad1_to_procs, medians, log_fluoros, log_means, log_devs)
-
+        self.medians = medians
     
     def _the_meat(self, rad1_to_procs, medians, log_fluoros, log_means, log_devs):
         """Set self.lookup, which is the meat of self.run
@@ -187,6 +187,10 @@ class Operator_Improvement(inquiry.Inquiry):
             dates = [''] + list(dates)
             metrics = [rad1] + list(metrics)
             out.append((dates,metrics))
+        medians_table = [("Procedure Type", "Median Fluoro Time")]
+        for cpts, median in self.medians.iteritems():
+            medians_table.append((cpts, median))
+        out.append(medians_table)
         return out
 
     def _get_all_together_figure(self, legend = False):
